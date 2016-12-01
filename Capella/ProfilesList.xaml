@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="Capella.ProfilesList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="558" d:DesignWidth="350" Background="#FFF0F0F0">
+    <Grid>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="Resources\FlatButton.xaml"/>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+        <TextBlock x:Name="title" TextAlignment="Center" Margin="0,9,0,0" TextWrapping="Wrap" Text="Timeline" VerticalAlignment="Top" FontSize="18" Width="143" Height="26" Foreground="Black" HorizontalAlignment="Center" FontFamily="Segoe UI Symbol">
+        </TextBlock>
+        <Button x:Name="backBtn" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Width="36" Style="{DynamicResource FlatButton}" Click="backBtn_Click" Height="37" Visibility="Hidden" MouseDown="backBtn_MouseDown" MouseUp="backBtn_MouseUp" MouseEnter="backBtn_MouseUp" MouseLeave="backBtn_MouseDown">
+            <Grid Margin="0,0,0,0" Height="36" Width="37">
+                <Image x:Name="backBtnImage" Margin="0,0,0,0" Height="36" Width="37" Source="Resources/back-light.png" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                <Image x:Name="backBtnImageLight" Margin="0,0,0,0" Height="36" Width="37" Source="Resources/back-light-highlighted.png" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Opacity="0"/>
+            </Grid>
+        </Button>
+        <ListBox x:Name="profilesList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,42,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False" SelectionMode="Single" HorizontalContentAlignment="Stretch" BorderThickness="0,1,1,1" BorderBrush="#FF828790" Background="Gainsboro">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid MouseUp="Profile_Click">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="{Binding firstBackgroundColor}" Offset="0"/>
+                                <GradientStop Color="{Binding secondBackgroundColor}" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="profilePicFrame" CornerRadius="4" ClipToBounds="False" HorizontalAlignment="Left" Height="50" VerticalAlignment="Center" Width="50" Margin="10,0,0,0">
+                            <Image x:Name="profilePic" Stretch="UniformToFill" Source="{Binding profilePic}">
+                                <Image.Clip>
+                                    <RectangleGeometry Rect="0,0,50,50" RadiusX="4" RadiusY="4" />
+                                </Image.Clip>
+                            </Image>
+                        </Border>
+                        <Label x:Name="nameLabel" Foreground="{Binding textColor}" Content="{Binding name}" HorizontalAlignment="Left" Margin="65,0,0,0" VerticalAlignment="Top" FontWeight="SemiBold" FontSize="15"/>
+                        <Label x:Name="handleLabel" Foreground="{Binding textColor}" Content="{Binding handle}" HorizontalAlignment="Left" Margin="65,30,0,0" VerticalAlignment="Top"/>
+                        <Image HorizontalAlignment="Right" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Width="12" Source="Resources/disclose.png"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

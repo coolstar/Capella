@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:fx="http://LearnWPF.com/Effects">
+    <Style x:Key="RibbonTab" TargetType="{x:Type Button}">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Width" Value="75" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Name="ShadowLayer">
+                        <Border CornerRadius="10,0,0,10" Name="BackgroundLayer" Margin="10,0,0,0">
+                            <ContentPresenter Name="Presenter" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ContentPresenter.Effect>
+                                    <DropShadowEffect Direction="315" Opacity="0.5" ShadowDepth="2" />
+                                </ContentPresenter.Effect>
+                            </ContentPresenter>
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="BackgroundLayer" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="White" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="ShadowLayer" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Direction="180" Opacity="0.5" ShadowDepth="2" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Presenter" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Opacity="0"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="BackgroundLayer" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="White" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="ShadowLayer" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Direction="180" Opacity="0.5" ShadowDepth="2" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Presenter" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Opacity="0"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

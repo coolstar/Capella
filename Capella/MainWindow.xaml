@@ -1,0 +1,49 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Capella" x:Class="Capella.MainWindow"
+        Title="Capella" Height="670" Width="405" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" MinWidth="405" MaxWidth="405" MinHeight="500" Icon="Resources/capella.ico" ContentRendered="OnContentRendered" Loaded="OnLoaded" Closed="Window_Closed" KeyDown="Window_KeyDown" WindowStyle="None" Activated="OnActivated" ResizeMode="NoResize">
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo ThumbnailClipMargin="5">
+            <TaskbarItemInfo.ThumbButtonInfos>
+                <ThumbButtonInfoCollection>
+                    <ThumbButtonInfo
+                        DismissWhenClicked="True"
+                        Description="Toot" 
+                        ImageSource="Resources/compose.png" Click="tootEvent" />
+                </ThumbButtonInfoCollection>
+            </TaskbarItemInfo.ThumbButtonInfos>
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources\GlassButton.xaml"/>
+                <ResourceDictionary Source="Resources\FlatButton.xaml"/>
+                <ResourceDictionary Source="Resources\FlatTab.xaml"/>
+                <ResourceDictionary Source="Resources\FlatTab-selected.xaml"/>
+                <ResourceDictionary Source="Resources\ImageHD.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid x:Name="mainGrid" MouseDown="mainGrid_MouseDown">
+        <!--Background="#7F1A1A1A"-->
+        <Button x:Name="closeBtn" HorizontalAlignment="Right" Margin="0,1,4,0" Panel.ZIndex="1000"  VerticalAlignment="Top" Width="45" Height="20" Style="{DynamicResource FlatButton}" Click="closeBtn_Click" MouseEnter="closeBtn_MouseUp" MouseLeave="closeBtn_MouseDown" MouseDown="closeBtn_MouseDown" MouseUp="closeBtn_MouseUp" SnapsToDevicePixels="False">
+            <Image x:Name="closeBtnImage" Source="Resources/close-dark-highlighted.png" Width="45" Height="20" Stretch="None"/>
+        </Button>
+        <Button x:Name="minimizeBtn" HorizontalAlignment="Right" Margin="0,1,49,0" Panel.ZIndex="1000" VerticalAlignment="Top" Width="26" Height="20" Style="{DynamicResource FlatButton}" Click="minimizeBtn_Click" MouseEnter="minimizeBtn_MouseUp" MouseLeave="minimizeBtn_MouseDown"  MouseDown="minimizeBtn_MouseDown" MouseUp="minimizeBtn_MouseUp" SnapsToDevicePixels="False">
+            <Image x:Name="minimizeBtnImage" Source="Resources/minimize-light-highlighted.png" Width="26" Height="20"/>
+        </Button>
+        <Grid x:Name="windowGrip" Width="20" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" PreviewMouseLeftButtonDown="WindowResize" Panel.ZIndex="1000" Background="Transparent" Cursor="SizeNS"></Grid>
+        <Grid Width="80" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="sidebarGrid">
+            <Image Width="30" Height="30" VerticalAlignment="Top" Source="Resources/logo-small.png" Margin="0,5,0,0" />
+            <Button HorizontalAlignment="Left" Margin="7,0,0,5" VerticalAlignment="Bottom" Width="20" Style="{DynamicResource FlatButton}" MouseEnter="button_Enter" MouseLeave="button_Leave" Click="toot_Click">
+                <local:TabImage Source="Resources/sidebar_toot.png"/>
+            </Button>
+            <Image Source="Resources/sidebar_separator.png" Margin="37,0,0,0" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Width="1" Height="30" Stretch="Fill" Opacity="0.3"></Image>
+            <Button HorizontalAlignment="Left" Margin="48,0,0,5" VerticalAlignment="Bottom" Width="20" Style="{DynamicResource FlatButton}" MouseEnter="button_Enter" MouseLeave="button_Leave" Click="settings_Click">
+                <local:TabImage Source="Resources/sidebar_settings.png"/>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>

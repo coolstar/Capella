@@ -1,0 +1,163 @@
+﻿<UserControl xmlns:Capella="clr-namespace:Capella" x:Class="Capella.TimelinePanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="515.5" Background="#FFF0F0F0">
+    <Grid MouseDown="Grid_MouseDown" MouseRightButtonUp="Grid_ContextMenu">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="Resources\FlatButton.xaml"/>
+                    <ResourceDictionary Source="Resources\ImageHD.xaml"/>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+        <ListBox x:Name="timelineBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,42,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False" SelectionMode="Single" HorizontalContentAlignment="Stretch" BorderThickness="0,1,1,1" BorderBrush="#FF828790" Background="Gainsboro">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid MouseLeftButtonDown="timelineBoxItem_Click" MouseEnter="timelineBoxItem_Enter" MouseLeave="timelineBoxItem_Leave">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="{Binding firstBackgroundColor}" Offset="0"/>
+                                <GradientStop Color="{Binding secondBackgroundColor}" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <Grid Margin="{Binding tootOffset}">
+                            <Capella:TimeLabel Foreground="{Binding lightTextColor}" time="{Binding timeTooted}" Content="1365d"  HorizontalAlignment="Right" Margin="74,7,4,0" Padding="0,0,0,5" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI" HorizontalContentAlignment="Right"></Capella:TimeLabel>
+                            <Border Height="65" Width="300"></Border>
+                            <Border CornerRadius="4" ClipToBounds="False" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="50" Margin="10,8,0,0">
+                                <Image Stretch="UniformToFill" Source="{Binding user_profilepic}">
+                                    <Image.Clip>
+                                        <RectangleGeometry Rect="0,0,50,50" RadiusX="4" RadiusY="4" />
+                                    </Image.Clip>
+                                </Image>
+                            </Border>
+                            <TextBlock MaxWidth="210" HorizontalAlignment="Left" Margin="68,6,0,0" Padding="0,0,0,10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI Symbol" MouseLeftButtonUp="nameHandleLabel_MouseLeftButtonUp">
+                                <TextBlock.Inlines>
+                                    <Run Foreground="{Binding textColor}" FontWeight="SemiBold" Text="{Binding user_name, Mode=TwoWay}" />
+                                    <Run Text="{Binding user_display_screen_name, Mode=OneTime}" Foreground="{Binding nameColor}" />
+                                </TextBlock.Inlines>
+                            </TextBlock>
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" Margin="68,0,0,0">
+                                    <Capella:CSTextBlock Foreground="{Binding textColor}" x:Name="tootText" InlineCollection="{Binding richText}" HorizontalAlignment="Left" Margin="0,24,0,0" Padding="0,0,0,10" VerticalAlignment="Top" Background="{x:Null}"  FontSize="10pt" IsHitTestVisible="True" TextWrapping="Wrap" MinHeight="45" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="{Binding imageWidth}">
+                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
+                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Bottom" Source="{Binding mediaSource2}" MouseLeftButtonUp="Image2_MouseLeftButtonUp" Margin="0,2,0,0"></Image>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Width="{Binding imageWidth}">
+                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource3}" MouseLeftButtonUp="Image3_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
+                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Bottom" Source="{Binding mediaSource4}" MouseLeftButtonUp="Image4_MouseLeftButtonUp" Margin="0,2,0,0"></Image>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <Grid MaxHeight="250" MaxWidth="260" Margin="0,0,10,0" Background="{Binding quotedBackgroundColor}" Visibility="{Binding showQuotedToot}" PreviewMouseUp="quote_Click" Cursor="Hand">
+                                        <TextBlock MaxWidth="210" HorizontalAlignment="Left" Margin="6,6,0,0" Padding="0,0,0,10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI Symbol">
+                                            <TextBlock.Inlines>
+                                                <Run Foreground="{Binding textColor, Mode=OneTime}" FontWeight="SemiBold" Text="{Binding quotedUser_name}" />
+                                                <Run Text="{Binding quotedUser_display_screen_name, Mode=OneTime}" Foreground="{Binding nameColor}" />
+                                            </TextBlock.Inlines>
+                                        </TextBlock>
+                                        <Capella:CSTextBlock Foreground="{Binding textColor}" InlineCollection="{Binding quotedRichText}" HorizontalAlignment="Left" Margin="0,24,0,0" Padding="5,0,5,10" VerticalAlignment="Top" Background="{x:Null}"  FontSize="10pt" IsHitTestVisible="True" TextWrapping="Wrap" MinHeight="45" />
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding showMoreDetails}">
+                                        <Label Content="{Binding timeTootedString}" Foreground="{Binding textColor}"></Label>
+                                        <Label HorizontalAlignment="Right" Content="{Binding clientString}" Foreground="{Binding linkColor}" Cursor="Hand" MouseLeftButtonUp="ClientLabel_MouseLeftButtonUp"></Label>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding showLocation}">
+                                        <Image Source="{Binding locationImage}" HorizontalAlignment="Left" Width="20" Height="20"></Image>
+                                        <Label Content="{Binding location}" Foreground="{Binding textColor}"></Label>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding showShareDetails}">
+                                        <Label Foreground="{Binding linkColor}" Content="{Binding retootsCount}"  Cursor="Hand" MouseLeftButtonUp="RetootLabel_MouseLeftButtonUp"></Label>
+                                        <Label HorizontalAlignment="Right" Foreground="{Binding linkColor}" Content="{Binding favoritesCount}" MouseLeftButtonUp="FavoriteLabel_MouseLeftButtonUp"></Label>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Grid Height="30" VerticalAlignment="Top" Visibility="{Binding retootedVisibility}">
+                                    <Image HorizontalAlignment="Left" Height="15" Margin="22,6,0,0" VerticalAlignment="Top" Width="23" Source="Resources/retooted.png" Opacity="0.75" />
+                                    <Label Content="{Binding displayorig_user_name}" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" Height="27" FontSize="9pt" Foreground="{Binding textColor}" Opacity="0.75" />
+                                </Grid>
+                                <Border Padding="{Binding bottomPadding}"></Border>
+                            </StackPanel>
+                            <!--<Border CornerRadius="10" ClipToBounds="False" HorizontalAlignment="Right" Height="70" Margin="0,30,20,0" VerticalAlignment="Top" Width="70" Visibility="{Binding mediaVisibility}">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="2" BlurRadius="2" Opacity="0.25"/>
+                                </Border.Effect>
+                                <Image Stretch="UniformToFill" Source="{Binding mediaSource}" MouseLeftButtonUp="Image_MouseLeftButtonUp">
+                                    <Image.Clip>
+                                        <RectangleGeometry Rect="0,0,70,70" RadiusX="10" RadiusY="10" />
+                                    </Image.Clip>
+                                </Image>
+                            </Border>
+                            <Border Height="70" Margin="0,40,20,0" VerticalAlignment="Top" Visibility="{Binding mediaVisibility}"></Border>-->
+                            <Border VerticalAlignment="Bottom" Height="35" Margin="0,0,0,-35" Visibility="Collapsed">
+                                <Grid>
+                                    <Button Margin="10,1,221,1" Height="26" Width="47" Click="replyBtn_Click" Style="{DynamicResource FlatButton}">
+                                        <Image Height="12" Width="19" Source="{Binding replyBtnImage}"/>
+                                    </Button>
+                                    <Button Margin="81,1,150,1" Height="26" Width="47" Click="retootBtn_Click" Style="{DynamicResource FlatButton}">
+                                        <Image Height="14" Width="23" Source="{Binding retootStatusDisplay}"/>
+                                    </Button>
+                                    <Button Margin="152,0,79,1" Height="24" Width="47" Click="favoriteBtn_Click" Style="{DynamicResource FlatButton}">
+                                        <Image Height="19" Width="20" Source="{Binding favoriteStatusDisplay}"/>
+                                    </Button>
+                                    <Button Margin="221,1,10,1" Height="26" Width="47" Click="moreBtn_Click" Style="{DynamicResource FlatButton}">
+                                        <Image Height="20" Width="20" Source="{Binding moreBtnImage}"/>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,42,0,0" x:Name="errorDisplay" Visibility="Collapsed">
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="errorReason"></Label>
+        </Grid>
+        <StackPanel Orientation="Horizontal" Margin="0,9,0,0" HorizontalAlignment="Center" Height="26" VerticalAlignment="Top">
+            <Border ClipToBounds="False" CornerRadius="25"  HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="25" Margin="0,0,10,0">
+                <Image x:Name="accountImg">
+                    <Image.Clip>
+                        <RectangleGeometry Rect="0,0,25,25" RadiusX="2" RadiusY="2" />
+                    </Image.Clip>
+                </Image>
+            </Border>
+            <TextBlock x:Name="title" HorizontalAlignment="Right" TextAlignment="Center" TextWrapping="Wrap" Text="Timeline" FontSize="18" Foreground="Black" FontFamily="Segoe UI Symbol">
+            </TextBlock>
+        </StackPanel>
+        <Button x:Name="reloadBtn" HorizontalAlignment="Left" Margin="53,5,0,0" VerticalAlignment="Top" Width="25" Height="34" Style="{DynamicResource FlatButton}" Click="reloadBtn_Click" ToolTip="Refresh Toots">
+            <Grid>
+                <Image x:Name="reloadImg" Height="24" Width="24" Source="Resources/reload.png"/>
+                <Image x:Name="reloadImgSelected" Height="24" Width="24" Source="Resources/reload-selected.png" MouseEnter="reloadImg_MouseEnter" MouseLeave="reloadImg_MouseLeave" Opacity="0"/>
+            </Grid>
+        </Button>
+        <!--<Button x:Name="tootBtn" HorizontalAlignment="Right" Margin="0,5,15,0" VerticalAlignment="Top" Width="34" Height="34" Style="{DynamicResource FlatButton}" Click="tootBtn_Click">
+            <Button.Effect>
+                <DropShadowEffect Opacity="0.5" ShadowDepth="3"/>
+            </Button.Effect>
+            <Grid>
+                <Image x:Name="tootImg" Height="32" Width="32" Source="Resources/compose.png" MouseEnter="tootImg_MouseEnter" MouseLeave="tootImg_MouseLeave"/>
+                <Image x:Name="tootImgSelected" Height="32" Width="32" Source="Resources/compose-selected.png" MouseEnter="tootImg_MouseEnter" MouseLeave="tootImg_MouseLeave" Opacity="0"/>
+            </Grid>
+        </Button>-->
+        <Button x:Name="backBtn" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Width="36" Style="{DynamicResource FlatButton}" Click="backBtn_Click" Height="37" Visibility="Hidden" MouseDown="backBtn_MouseDown" MouseUp="backBtn_MouseUp" MouseEnter="backBtn_MouseUp" MouseLeave="backBtn_MouseDown">
+            <Grid Margin="0,0,0,0" Height="36" Width="37">
+                <Image x:Name="backBtnImage" Margin="0,0,0,0" Height="36" Width="37" Source="Resources/back-light.png" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                <Image x:Name="backBtnImageLight" Margin="0,0,0,0" Height="36" Width="37" Source="Resources/back-light-highlighted.png" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Opacity="0"/>
+            </Grid>
+        </Button>
+        <!--<Grid x:Name="spinner" HorizontalAlignment="Right" Margin="0,10,63,0" Height="48" VerticalAlignment="Top" Width="48" Visibility="Hidden" >
+            <Image Source="Resources/spinner.png" ToolTip="Streaming...">
+                <Image.RenderTransform>
+                    <RotateTransform x:Name="spinRotation" Angle="0" CenterX="24" CenterY="24"/>
+                </Image.RenderTransform>
+            </Image>
+        </Grid>-->
+    </Grid>
+</UserControl>

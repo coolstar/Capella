@@ -1,0 +1,513 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C0D44E85-F570-4DC3-873D-BAF42AA4FF18}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Capella</RootNamespace>
+    <AssemblyName>Capella</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Capella.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="CommonWin32, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a0a4edcfe233918d, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonWin32.2.1.0.3\lib\net35-Client\CommonWin32.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="TaskDialog">
+      <HintPath>.\TaskDialog.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="websocket-sharp, Version=1.0.2.40826, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
+      <HintPath>..\packages\websocket-sharp-danielsonjh.0.1.1\lib\websocket-sharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Account.cs" />
+    <Compile Include="AccountUIHandler.cs" />
+    <Compile Include="CSTextBlock.cs" />
+    <Compile Include="GrowlNotifiactions.xaml.cs">
+      <DependentUpon>GrowlNotifiactions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LineReader.cs" />
+    <Compile Include="NavController.xaml.cs">
+      <DependentUpon>NavController.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notification.cs" />
+    <Compile Include="NotificationsHandler.cs" />
+    <Compile Include="OAuthUtils.cs" />
+    <Compile Include="Profile.cs" />
+    <Compile Include="ProfilePanel.xaml.cs">
+      <DependentUpon>ProfilePanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProfilesList.xaml.cs">
+      <DependentUpon>ProfilesList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PictureViewer.xaml.cs">
+      <DependentUpon>PictureViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ScrollViewerOffsetMediator.cs" />
+    <Compile Include="SearchPanel.xaml.cs">
+      <DependentUpon>SearchPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SignInWindow.xaml.cs">
+      <DependentUpon>SignInWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TabImage.cs" />
+    <Compile Include="TableCell.xaml.cs">
+      <DependentUpon>TableCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TabsController.xaml.cs">
+      <DependentUpon>TabsController.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TimeLabel.cs" />
+    <Compile Include="TimelinePanel.xaml.cs">
+      <DependentUpon>TimelinePanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Message.cs" />
+    <Compile Include="Toot.cs" />
+    <Compile Include="TootCell.xaml.cs">
+      <DependentUpon>TootCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TootWindow.xaml.cs">
+      <DependentUpon>TootWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MastodonAPIWrapper.cs" />
+    <Compile Include="ProfileListItem.xaml.cs">
+      <DependentUpon>ProfileListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Watermark\WatermarkAdorner.cs" />
+    <Compile Include="Watermark\WatermarkService.cs" />
+    <Compile Include="WelcomeWindow.xaml.cs">
+      <DependentUpon>WelcomeWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="DesignTimeNotificationData.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GrowlNotifiactions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Resource Include="Resources\GlassButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Page Include="NavController.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProfilePanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProfilesList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ButtonStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\FlatButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PictureViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\FlatTab-selected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\FlatTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ImageHD.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\RibbonTab-selected.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\RibbonTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SignInWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TableCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TabsController.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimelinePanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TootCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TootWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProfileListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WelcomeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Capella-large.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\reply.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\favorite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\more.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\favorite-glow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Capella-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\reload.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\reload-selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\compose-selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\compose.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\disclose.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\spinner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\settings-black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\checkmark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\image_attach.png" />
+    <Resource Include="Resources\image_attach_selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\forward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\more-night.png" />
+    <Resource Include="Resources\reply-night.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\favorite-night.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\minimize-dark-highlighted.png" />
+    <Resource Include="Resources\minimize-dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logo-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\back-light.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\back-light-highlighted.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pagedot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\minimize-light-highlighted.png" />
+    <Resource Include="Resources\minimize-light.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\close-dark-highlighted.png" />
+    <Resource Include="Resources\close-dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\sidebar_home.png" />
+    <Resource Include="Resources\sidebar_notifications.png" />
+    <Resource Include="Resources\sidebar_profile.png" />
+    <Resource Include="Resources\sidebar_search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\sidebar_messages.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\selectedtab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\capella.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\sidebar_toot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\sidebar_settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\sidebar_separator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\retoot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\retootted.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\verified.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\protected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\location.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\location-night.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\sidebar_public.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="../packages/UnmanagedExports.1.2.6/tools/RGiesecke.DllExport.targets" Condition="Exists('../packages/UnmanagedExports.1.2.6/tools/RGiesecke.DllExport.targets')" />
+</Project>
