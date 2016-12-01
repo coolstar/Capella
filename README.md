@@ -2,6 +2,8 @@
 
 Capella, a social media client for Mastodon
 
+https://coolstar.org/capella
+
 ## Screenshot
 
 ![Screenshot](https://coolstar.org/capella/screenshot.jpg)
