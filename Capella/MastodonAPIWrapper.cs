@@ -371,10 +371,6 @@ namespace Capella
                 foreach (JObject rawToot in timeline.Children())
                 {
                     JObject toot = rawToot;
-                    if ((bool)toot["reblogged"] == true)
-                    {
-                        toot = (JObject)toot["reblog"];
-                    }
                     String tootID = (String)toot["id"];
                     String text = (String)toot["content"];
                     bool mute = false;
