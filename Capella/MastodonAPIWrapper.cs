@@ -509,24 +509,32 @@ namespace Capella
             Console.WriteLine("Added " + added + " and skipped " + skipped);
         }
 
-        public String postToot(String tootText, String tootInReplyTo, Account account)
+        public String postToot(String tootText, String tootInReplyTo, bool sensitive, bool unlisted, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
             if (tootInReplyTo != "")
                 uploadText += "in_reply_to_id=" + sharedOAuthUtils.UrlEncode(tootInReplyTo) + "&";
+            if (sensitive)
+                uploadText += "sensitive=true&";
+            if (unlisted)
+                uploadText += "unlisted=true&";
             uploadText += "status=" + tootText2;
             String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses", uploadText, account, false);
             return output;
         }
 
-        public String postToot(String tootText, String tootInReplyTo, String imageIds, Account account)
+        public String postToot(String tootText, String tootInReplyTo, bool sensitive, bool unlisted, String imageIds, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
             if (tootInReplyTo != "")
                 uploadText += "in_reply_to_id=" + sharedOAuthUtils.UrlEncode(tootInReplyTo) + "&";
             uploadText += "status=" + tootText2;
+            if (sensitive)
+                uploadText += "sensitive=true&";
+            if (unlisted)
+                uploadText += "unlisted=true&";
             uploadText += "&media_ids[]=" + imageIds;
             Console.WriteLine(uploadText);
             String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses", uploadText, account, false);

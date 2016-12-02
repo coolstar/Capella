@@ -108,7 +108,7 @@ namespace Capella
                     else
                         TwitterAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, imageFileName, twitterAccount);*/
                     if (imageFileNames.Count == 0)
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, false, false, twitterAccount);
                     else
                     {
                         ArrayList mediaIds = new ArrayList();
@@ -122,7 +122,7 @@ namespace Capella
                         String mediaIdsStr = string.Join("&media_ids[]=", ((String[])mediaIds.ToArray(Type.GetType("System.String"))));
                         String mediaUrlsStr = string.Join("\n", ((String[])mediaURLs.ToArray(Type.GetType("System.String"))));
                         text += "\n" + mediaUrlsStr;
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, mediaIdsStr, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, false, false, mediaIdsStr, twitterAccount);
                     }
                 };
             worker.RunWorkerCompleted += (sender2, e2) =>
