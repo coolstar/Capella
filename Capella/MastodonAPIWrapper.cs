@@ -44,6 +44,9 @@ namespace Capella
 
             sharedOAuthUtils.getTokens("https://"+endpoint+"/", out this.consumerKey, out this.consumerSecret);
 
+            Console.WriteLine(this.consumerKey);
+            Console.WriteLine(this.consumerSecret);
+
             try
             {
                 if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json"))
@@ -52,6 +55,18 @@ namespace Capella
                 }
                 String rawJson = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json");
                 dynamic json = JsonConvert.DeserializeObject(rawJson);
+
+                if (json["version"] != null)
+                {
+                    double version = json["version"];
+                    if (version < 0.2)
+                    {
+                        return;
+                    }
+                } else
+                {
+                    return;
+                }
 
                 if (json["nightModeEnabled"] != null)
                 {
@@ -90,6 +105,8 @@ namespace Capella
                     Object rawAccessToken = (String)accountTokens["token"];
 
                     account.accessToken = (String)rawAccessToken;
+
+                    account.streamCookie = accountTokens["cookie"];
 
                     account.myHandle = getCurrentHandle(account);
 
@@ -133,9 +150,9 @@ namespace Capella
             //this.accessTokenSecret = "Usm5pK86YoorXk7VaUAgRnCQXzZTnoB0g4Q2ATo0";
         }
 
-        public String getAccountToken(String username, String password)
+        public String getAccountToken(String username, String password, out String streamCookie)
         {
-            return sharedOAuthUtils.getAccountToken("https://" + endpoint + "/", consumerKey, consumerSecret, username, password);
+            return sharedOAuthUtils.getAccountToken("https://" + endpoint + "/", consumerKey, consumerSecret, username, password, out streamCookie);
         }
 
         public Account accountWithToken(String accessToken)
@@ -159,6 +176,7 @@ namespace Capella
             }
             if (account.streamCookie == null)
             {
+                Console.WriteLine(cookieHeader);
                 String cookieName = "_mastodon_session=";
                 int mastoIdx = cookieHeader.IndexOf(cookieName);
                 if (mastoIdx != -1)
@@ -167,7 +185,7 @@ namespace Capella
                     int endIdx = cookieHeader.IndexOf(";");
                     if (endIdx != -1)
                         cookieHeader = cookieHeader.Substring(0, endIdx);
-                    account.streamCookie = cookieHeader;
+                    account.streamCookie = WebUtility.UrlDecode(cookieHeader);
                 }
             }
             return accountData["username"];
@@ -481,7 +499,7 @@ namespace Capella
                         //status found
                         MainWindow.sharedMainWindow.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            NotificationsHandler.sharedNotificationsHandler.pushNotification(toot, 0);
+                            NotificationsHandler.sharedNotificationsHandler.pushNotification(toot/*, 0*/);
                         }));
 
                         mentionsTimelineChanged(this, "insert", 0, account);
@@ -650,6 +668,152 @@ namespace Capella
             return retootUsers;
         }
 
+        public void handleStreamInput(String rawData, Account account)
+        {
+            dynamic streamData = JsonConvert.DeserializeObject(rawData);
+            if (streamData["identifier"] != null)
+            {
+                dynamic channelData = JsonConvert.DeserializeObject((String)streamData["identifier"]);
+                String channelName = channelData["channel"];
+
+                dynamic messageData = streamData["message"];
+                if (messageData != null)
+                {
+                    String messageType = messageData["type"];
+                    if (messageType.Equals("notification"))
+                    {
+                        dynamic notificationMessage = JsonConvert.DeserializeObject((String)messageData["message"]);
+
+                        MainWindow.sharedMainWindow.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            NotificationsHandler.sharedNotificationsHandler.pushNotification(notificationMessage);
+                        }));
+
+                        String notificationType = notificationMessage["type"];
+                        if (notificationType.Equals("mention"))
+                        {
+                            dynamic toot = notificationMessage["status"];
+
+                            String id = toot["id"];
+                            String text = (String)toot["content"];
+                            bool mute = false;
+                            foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
+                            {
+                                if (text.ToLower().Contains(keyword.ToLower()))
+                                {
+                                    mute = true;
+                                }
+                            }
+                            if (mute)
+                                return;
+
+                            if (!account.mentionsTimelineIds.Contains(id))
+                            {
+                                account.mentionsTimelineIds.Insert(0, id);
+                                account.mentionsTimeline.Insert(0, toot);
+
+                                mentionsTimelineChanged(this, "insert", 0, account);
+                            }
+                        }
+                    }
+                    else if (messageType.Equals("update"))
+                    {
+                        dynamic toot = JsonConvert.DeserializeObject((String)messageData["message"]);
+
+                        String id = toot["id"];
+                        String text = (String)toot["content"];
+                        bool mute = false;
+                        foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
+                        {
+                            if (text.ToLower().Contains(keyword.ToLower()))
+                            {
+                                mute = true;
+                            }
+                        }
+                        if (mute)
+                            return;
+
+                        JArray timeline = null;
+                        List<String> timelineIds = null;
+
+                        if (channelName == "PublicChannel")
+                        {
+                            timeline = account.publicTimeline;
+                            timelineIds = account.publicTimelineIds;
+                        }
+                        else if (channelName == "TimelineChannel")
+                        {
+                            timeline = account.homeTimeline;
+                            timelineIds = account.homeTimelineIds;
+                        }
+
+                        if (timeline == null || timelineIds == null)
+                            return;
+
+                        if (!timelineIds.Contains(id))
+                        {
+                            timelineIds.Insert(0, id);
+                            timeline.Insert(0, toot);
+
+                            if (channelName == "PublicChannel")
+                            {
+                                account.publicTimeline = timeline;
+                                account.publicTimelineIds = timelineIds;
+                                publicTimelineChanged(this, "insert", 0, account);
+                            }
+                            else if (channelName == "TimelineChannel")
+                            {
+                                account.homeTimeline = timeline;
+                                account.homeTimelineIds = timelineIds;
+                                homeTimelineChanged(this, "insert", 0, account);
+                            }
+                        }
+                    } else if (messageType.Equals("delete"))
+                    {
+                        String id = messageData["id"];
+
+                        if (channelName == "PublicChannel")
+                        {
+                            if (account.publicTimeline == null || account.publicTimelineIds == null)
+                                return;
+
+                            int indexToDelete = account.publicTimelineIds.IndexOf(id);
+                            if (indexToDelete >= 0)
+                            {
+                                account.publicTimelineIds.RemoveAt(indexToDelete);
+                                account.publicTimeline.RemoveAt(indexToDelete);
+                                if (publicTimelineChanged != null)
+                                    publicTimelineChanged(this, "delete", indexToDelete, account);
+                            }
+                        }
+                        else if (channelName == "TimelineChannel")
+                        {
+                            int indexToDelete = account.mentionsTimelineIds.IndexOf(id);
+                            if (indexToDelete >= 0)
+                            {
+                                account.mentionsTimelineIds.RemoveAt(indexToDelete);
+                                account.mentionsTimeline.RemoveAt(indexToDelete);
+                                if (mentionsTimelineChanged != null)
+                                    mentionsTimelineChanged(this, "delete", indexToDelete, account);
+                            }
+
+                            if (account.homeTimeline == null || account.homeTimelineIds == null)
+                                return;
+
+                            indexToDelete = account.homeTimelineIds.IndexOf(id);
+                            if (indexToDelete >= 0)
+                            {
+                                account.homeTimelineIds.RemoveAt(indexToDelete);
+                                account.homeTimeline.RemoveAt(indexToDelete);
+                                if (homeTimelineChanged != null)
+                                    homeTimelineChanged(this, "delete", indexToDelete, account);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public void startStreaming(Account account)
         {
             Console.WriteLine("Stream Cookie: " + account.streamCookie);
@@ -669,7 +833,15 @@ namespace Capella
 
             socket.OnMessage += (sender, e) =>
             {
-                Console.WriteLine("Server says: " + e.Data);
+                if (e.Data.Equals("{\"type\":\"welcome\"}"))
+                {
+                    Console.WriteLine("Subscribing...");
+                    socket.Send("{\"command\":\"subscribe\",\"identifier\":\"{\\\"channel\\\":\\\"TimelineChannel\\\"}\"}");
+                    socket.Send("{\"command\":\"subscribe\",\"identifier\":\"{\\\"channel\\\":\\\"PublicChannel\\\"}\"}");
+                } else
+                {
+                    handleStreamInput(e.Data, account);
+                }
             };
 
             socket.OnClose += (sender, e) =>
@@ -678,7 +850,6 @@ namespace Capella
             };
             
             socket.Connect();
-            socket.Send("{command: \"subscribe\", identifier: \"{\"channel\":\"TimelineChannel\"}\"}");
             Console.WriteLine("Is secure? " + socket.IsSecure);
             Console.WriteLine("Connected");
         }

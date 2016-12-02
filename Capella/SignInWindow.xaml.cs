@@ -28,10 +28,12 @@ namespace Capella
 
         private void okBtn_Click(object sender, RoutedEventArgs e)
         {
-            String token = MastodonAPIWrapper.sharedApiWrapper.getAccountToken(username.Text, password.Password);
+            String streamCookie = "";
+            String token = MastodonAPIWrapper.sharedApiWrapper.getAccountToken(username.Text, password.Password, out streamCookie);
             if (token != "")
             {
                 callbackDelegate.accountToken = token;
+                callbackDelegate.streamCookie = streamCookie;
                 callbackDelegate.authenticated = true;
                 this.Close();
             } else

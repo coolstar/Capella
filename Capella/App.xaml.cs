@@ -45,26 +45,13 @@ namespace Capella
         }
         public bool accountExists()
         {
-            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json"))
-            {
+            new MastodonAPIWrapper();
+
+            if (MastodonAPIWrapper.sharedApiWrapper.accounts == null)
                 return false;
-            }
-            String rawJson = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json");
-            dynamic json = JsonConvert.DeserializeObject(rawJson);
-
-            dynamic accounts = json["accounts"];
-
-            if (accounts == null)
-            {
-                return false;
-            }
-
-            if (accounts.Count == 0)
-            {
-                return false;
-            }
-
-            return true;
+            if (MastodonAPIWrapper.sharedApiWrapper.accounts.Count > 0)
+                return true;
+            return false;
         }
     }
 }

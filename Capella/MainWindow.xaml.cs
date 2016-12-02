@@ -141,7 +141,7 @@ namespace Capella
                 mainGrid.Background = new SolidColorBrush(Color.FromArgb(64, 0, 0, 0));
             }
 
-            this.apiWrapper = new MastodonAPIWrapper();
+            this.apiWrapper = MastodonAPIWrapper.sharedApiWrapper;
 
             new NotificationsHandler();
             sharedMainWindow = this;
@@ -684,7 +684,7 @@ namespace Capella
                 worker.DoWork += (sender2, e2) =>
                 {
                     Console.WriteLine("Start Streaming for {0}...", twitterAccount.accessToken);
-                    OAuthUtils utils = new OAuthUtils();
+                    /*OAuthUtils utils = new OAuthUtils();
 
                     MastodonAPIWrapper.sharedApiWrapper.getTimeline(twitterAccount, "mentions", "", "");
 
@@ -696,9 +696,9 @@ namespace Capella
                         MastodonAPIWrapper.sharedApiWrapper.updateAccount(twitterAccount);
 
                         Thread.Sleep(10 * 1000);
-                    }
+                    }*/
 
-                    //TwitterAPIWrapper.sharedApiWrapper.startStreaming(twitterAccount);
+                    MastodonAPIWrapper.sharedApiWrapper.startStreaming(twitterAccount);
                     //utils.StreamGet("https://userstream.twitter.com/1.1/user.json", "stringify_friend_ids=true", TwitterAPIWrapper.sharedApiWrapper.handleStreamInput, twitterAccount);
                 };
                 worker.RunWorkerAsync();

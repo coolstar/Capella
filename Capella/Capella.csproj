@@ -477,7 +477,7 @@
     <Resource Include="Resources\retoot.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\retootted.png" />
+    <Resource Include="Resources\retooted.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\verified.png" />

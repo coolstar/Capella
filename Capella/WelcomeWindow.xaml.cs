@@ -34,6 +34,7 @@ namespace Capella
 
         public bool authenticated;
         public String accountToken;
+        public String streamCookie;
 
         public WelcomeWindow()
         {
@@ -119,15 +120,32 @@ namespace Capella
                             if (twitterAccount.accessToken.Equals(accountToken))
                                 return;
                             rawAccount.Add("token", twitterAccount.accessToken);
+                            if (twitterAccount.streamCookie != null)
+                                rawAccount.Add("cookie", twitterAccount.streamCookie);
                             accounts.Add(rawAccount);
                         }
                     }
 
                     JObject account = new JObject();
                     account.Add("token", accountToken);
+
+                    String cookieName = "_mastodon_session=";
+                    int mastoIdx = streamCookie.IndexOf(cookieName);
+                    if (mastoIdx != -1)
+                    {
+                        streamCookie = streamCookie.Substring(mastoIdx + cookieName.Length);
+                        int endIdx = streamCookie.IndexOf(";");
+                        if (endIdx != -1)
+                            streamCookie = streamCookie.Substring(0, endIdx);
+                        account.Add("cookie", streamCookie);
+                    }
                     accounts.Add(account);
 
                     json.Add("accounts", accounts);
+
+                    json.Add("nightModeEnabled", MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled);
+
+                    json.Add("version", 0.2);
 
                     String output = json.ToString();
                     File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json", output);

@@ -23,10 +23,25 @@ namespace Capella
             growlNotifications.Top = SystemParameters.WorkArea.Top + topOffset;
             growlNotifications.Left = SystemParameters.WorkArea.Left + SystemParameters.WorkArea.Width - leftOffset;
         }
-        public void pushNotification(dynamic tootNotification, int type)
+        public void pushNotification(dynamic tootNotification/*, int type*/)
         {
-            String typeStr = "";
-            if (type == 0)
+            String typeStr = tootNotification["type"];
+            if (typeStr == null)
+                return;
+
+            if (typeStr == "favourite")
+                typeStr = "favorited your post";
+            else if (typeStr == "mention")
+                typeStr = "mentioned you";
+            else if (typeStr == "reblog")
+                typeStr = "boosted you";
+            else
+            {
+                Console.WriteLine("Unhandled type: " + typeStr);
+                return;
+            }
+
+            /*if (type == 0)
                 typeStr = "mentioned you.";
             else if (type == 1)
                 typeStr = "sent you a direct message.";
@@ -34,9 +49,13 @@ namespace Capella
             if (type == 1)
                 user = tootNotification["sender"];
             else
-                user = tootNotification["account"];
+                user = tootNotification["account"];*/
 
-            String content = tootNotification["content"];
+            dynamic user = tootNotification["account"];
+
+            dynamic toot = tootNotification["status"];
+
+            String content = toot["content"];
             content = Regex.Replace(content, "<.*?>", String.Empty);
 
             Notification notification = new Notification {

@@ -857,9 +857,9 @@ namespace Capella
             get
             {
                 if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
-                    return new BitmapImage(new Uri("Resources/toot_retooted_night.png", UriKind.Relative));
+                    return new BitmapImage(new Uri("Resources/retooted.png", UriKind.Relative));
                 else
-                    return new BitmapImage(new Uri("Resources/toot_retooted.png", UriKind.Relative));
+                    return new BitmapImage(new Uri("Resources/retooted.png", UriKind.Relative));
             }
         }
 
@@ -1119,11 +1119,11 @@ namespace Capella
             {
                 if (isRetooted)
                 {
-                    retootImg.Source = new BitmapImage(new Uri("Resources/retooted-glow.png", UriKind.Relative));
+                    retootImg.Source = new BitmapImage(new Uri("Resources/retooted.png", UriKind.Relative));
                 }
                 else
                 {
-                    retootImg.Source = new BitmapImage(new Uri("Resources/toot_retooted.png", UriKind.Relative));
+                    retootImg.Source = new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
                 }
             };
             worker.RunWorkerAsync();
