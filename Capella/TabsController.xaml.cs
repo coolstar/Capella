@@ -58,9 +58,9 @@ namespace Capella
                 };
                 menu.Items.Add(open);
 
-                MenuItem addCollumn = new MenuItem();
-                addCollumn.Header = "Add Collumn";
-                addCollumn.Click += (object sender2, RoutedEventArgs e2) =>
+                MenuItem addColumn = new MenuItem();
+                addColumn.Header = "Add Column";
+                addColumn.Click += (object sender2, RoutedEventArgs e2) =>
                 {
                     Console.WriteLine(windowWidth);
                     dynamic controlCopy = control.createCopy();
@@ -77,7 +77,7 @@ namespace Capella
                     this.parentWindow.MaxWidth = windowWidth;
                     controlCopy.WillDisplay();
                 };
-                menu.Items.Add(addCollumn);
+                menu.Items.Add(addColumn);
 
                 menu.PlacementTarget = (UIElement)sender;
                 menu.IsOpen = true;
