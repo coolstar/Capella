@@ -703,35 +703,6 @@ namespace Capella
                             else
                             {
                                 String rawURL = (String)entity["expanded_url"];
-                                if (rawURL.StartsWith("http://twitter.com") || rawURL.StartsWith("https://twitter.com"))
-                                {
-                                    Uri myUri = new Uri(rawURL);
-                                    String[] urlComponents = myUri.LocalPath.Split('/');
-                                    if (urlComponents.Count() >= 4)
-                                    {
-                                        if (urlComponents[2].ToLower().Equals("status"))
-                                        {
-                                            TimelinePanel linkedTimeline = new TimelinePanel();
-                                            linkedTimeline.twitterAccountToken = twitterAccountToken;
-                                            linkedTimeline.setTitle("");
-                                            linkedTimeline.timelineType = "conversation";
-                                            linkedTimeline.isConversation = true;
-                                            linkedTimeline.conversationStartToot = urlComponents[3];
-                                            linkedTimeline.refreshTimeline();
-                                            this.displayNavController.pushControl(linkedTimeline);
-                                            return;
-                                        }
-                                    }
-                                    if (urlComponents.Count() == 2)
-                                    {
-                                        ProfilePanel linkedProfile = new ProfilePanel();
-                                        linkedProfile.twitterAccountToken = twitterAccountToken;
-                                        linkedProfile.profileScreenName = urlComponents[1];
-                                        linkedProfile.refreshProfile();
-                                        this.displayNavController.pushControl(linkedProfile);
-                                        return;
-                                    }
-                                }
                                 Process.Start((String)entity["url"]);
                             }
                         };

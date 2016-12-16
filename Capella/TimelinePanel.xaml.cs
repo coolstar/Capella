@@ -345,7 +345,7 @@ namespace Capella
 
             JArray urls = new JArray();
             String rawHtml = rawOrigToot["content"];
-            Regex regex = new Regex("rel=\\\"nofollow noopener\\\" href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|(?<1>\\S+))>.*</a>", RegexOptions.IgnoreCase);
+            Regex regex = new Regex("href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|(?<1>\\S+))>.*</a>", RegexOptions.IgnoreCase);
             Match match;
             for (match = regex.Match(rawHtml); match.Success; match = match.NextMatch())
             {
