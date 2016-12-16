@@ -23,6 +23,12 @@
                 <ResourceDictionary Source="Resources\FlatTab.xaml"/>
                 <ResourceDictionary Source="Resources\FlatTab-selected.xaml"/>
                 <ResourceDictionary Source="Resources\ImageHD.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <!-- Accent and AppTheme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -42,7 +48,7 @@
             </Button>
             <Image Source="Resources/sidebar_separator.png" Margin="37,0,0,0" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Width="1" Height="30" Stretch="Fill" Opacity="0.3"></Image>
             <Button HorizontalAlignment="Left" Margin="48,0,0,5" VerticalAlignment="Bottom" Width="20" Style="{DynamicResource FlatButton}" MouseEnter="button_Enter" MouseLeave="button_Leave" Click="settings_Click">
-                <local:TabImage Source="Resources/sidebar_settings.png"/>
+                <local:TabImage Source="Resources/sidebar_add.png"/>
             </Button>
         </Grid>
     </Grid>

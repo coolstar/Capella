@@ -108,7 +108,7 @@ namespace Capella
                     else
                         TwitterAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, imageFileName, twitterAccount);*/
                     if (imageFileNames.Count == 0)
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, false, false, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, markSensitive.IsChecked.Value, markUnlisted.IsChecked.Value, twitterAccount);
                     else
                     {
                         ArrayList mediaIds = new ArrayList();
@@ -122,7 +122,7 @@ namespace Capella
                         String mediaIdsStr = string.Join("&media_ids[]=", ((String[])mediaIds.ToArray(Type.GetType("System.String"))));
                         String mediaUrlsStr = string.Join("\n", ((String[])mediaURLs.ToArray(Type.GetType("System.String"))));
                         text += "\n" + mediaUrlsStr;
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, false, false, mediaIdsStr, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, markSensitive.IsChecked.Value, markUnlisted.IsChecked.Value, mediaIdsStr, twitterAccount);
                     }
                 };
             worker.RunWorkerCompleted += (sender2, e2) =>
@@ -265,6 +265,19 @@ namespace Capella
             //}
         }
 
+        private void optionsBtnImg_MouseLeave(object sender, MouseEventArgs e)
+        {
+            optionsButtonImage.Opacity = 0.3;
+        }
+
+        private void optionsBtnImg_MouseEnter(object sender, MouseEventArgs e)
+        {
+            //if (imageFileName.Equals(""))
+            //{
+            optionsButtonImage.Opacity = 0.8;
+            //}
+        }
+
         private void imageSelectorImg_MouseLeave(object sender, MouseEventArgs e)
         {
             imageSelectorImg.Opacity = 0.3;
@@ -325,6 +338,18 @@ namespace Capella
         private void Textbox_DragOver(object sender, DragEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void optionsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            optionsPopupBackdrop.Visibility = Visibility.Visible;
+            optionsPopup.Visibility = Visibility.Visible;
+        }
+
+        private void optionsPopupBackdrop_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            optionsPopupBackdrop.Visibility = Visibility.Collapsed;
+            optionsPopup.Visibility = Visibility.Collapsed;
         }
     }
 }

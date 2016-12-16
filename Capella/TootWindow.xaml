@@ -1,11 +1,18 @@
 ﻿<Window x:Class="Capella.TootWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         Title="New Toot" Background="#FFF0F0F0" Height="200" Width="330" Icon="Resources/capella.ico" ResizeMode="CanMinimize" AllowDrop="True" Drop="FileDropped" KeyDown="KeyPressed">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources\FlatButton.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <!-- Accent and AppTheme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -31,9 +38,22 @@
                 </Image>
             </Grid>
         </Button>
+        <Button x:Name="optionsButton" HorizontalAlignment="Right" Margin="0,0,70,0" VerticalAlignment="Bottom" Width="32" Click="optionsBtn_Click" Height="32"  Style="{DynamicResource FlatButton}">
+            <Grid ClipToBounds="True">
+                <Image x:Name="optionsButtonImage" Height="20" Width="20" Source="Resources/sidebar_settings.png" MouseEnter="optionsBtnImg_MouseEnter" MouseLeave="optionsBtnImg_MouseLeave" Opacity="0.3"></Image>
+            </Grid>
+        </Button>
         <Label x:Name="characterCount" Content="500" HorizontalAlignment="Left" Margin="35,0,0,0" VerticalAlignment="Bottom" FontSize="16" Opacity="0.6"/>
         <Label Content="0 Drafts" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Bottom" FontSize="16" Opacity="0.6" />
         <Grid x:Name="replyTootContainer" VerticalAlignment="Top" Margin="0,134,0,0" Visibility="Collapsed"></Grid>
         <Grid x:Name="tootImages" Height="200" VerticalAlignment="Top" Margin="0,134,0,0" Visibility="Collapsed"></Grid>
+
+        <Grid x:Name="optionsPopupBackdrop" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" MouseDown="optionsPopupBackdrop_MouseDown" ></Grid>
+        
+        <Grid x:Name="optionsPopup" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="120" Margin="0,2,5,0" Visibility="Collapsed">
+            <Image Source="Resources/post-popoverbg.png"></Image>
+            <Controls:ToggleSwitch x:Name="markUnlisted" OnLabel="Mark Unlisted" OffLabel="Mark Unlisted" Margin="15,15,15,0" VerticalAlignment="Top"/>
+            <Controls:ToggleSwitch x:Name="markSensitive" OnLabel="Mark Sensitive" OffLabel="Mark Sensitive" Margin="15,0,15,25" VerticalAlignment="Bottom"></Controls:ToggleSwitch>
+        </Grid>
     </Grid>
 </Window>

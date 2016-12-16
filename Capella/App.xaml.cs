@@ -29,7 +29,7 @@ namespace Capella
         public App()
         {
             ServicePointManager.DefaultConnectionLimit = 5000;
-            AllocConsole();
+            //AllocConsole();
             Console.WriteLine("Capella Debug Console Started");
 
             Console.WriteLine("Initializing Capella...");
