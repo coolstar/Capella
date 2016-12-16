@@ -101,6 +101,8 @@ namespace Capella
             tootText.IsEnabled = false;
             BackgroundWorker worker = new BackgroundWorker();
             String text = this.tootText.Text;
+            bool isSensitive = markSensitive.IsChecked.Value;
+            bool isUnlisted = markUnlisted.IsChecked.Value;
             worker.DoWork += (sender2, e2) =>
                 {
                     /*if (imageFileName.Equals(""))
@@ -108,7 +110,7 @@ namespace Capella
                     else
                         TwitterAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, imageFileName, twitterAccount);*/
                     if (imageFileNames.Count == 0)
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, markSensitive.IsChecked.Value, markUnlisted.IsChecked.Value, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, isSensitive, isUnlisted, twitterAccount);
                     else
                     {
                         ArrayList mediaIds = new ArrayList();
@@ -122,7 +124,7 @@ namespace Capella
                         String mediaIdsStr = string.Join("&media_ids[]=", ((String[])mediaIds.ToArray(Type.GetType("System.String"))));
                         String mediaUrlsStr = string.Join("\n", ((String[])mediaURLs.ToArray(Type.GetType("System.String"))));
                         text += "\n" + mediaUrlsStr;
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, markSensitive.IsChecked.Value, markUnlisted.IsChecked.Value, mediaIdsStr, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, isSensitive, isUnlisted, mediaIdsStr, twitterAccount);
                     }
                 };
             worker.RunWorkerCompleted += (sender2, e2) =>
