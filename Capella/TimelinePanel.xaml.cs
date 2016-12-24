@@ -231,6 +231,7 @@ namespace Capella
             }
             toot.rawText = (String)rawOrigToot["content"];
             toot.rawText = Regex.Replace(toot.rawText, "<.*?>", String.Empty);
+
             foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
             {
                 if (toot.rawText.ToLower().Contains(keyword.ToLower()))

@@ -117,12 +117,12 @@ namespace Capella
             nameLabel.Content = profile["display_name"];
             handleLabel.Content = "@" + profile["acct"];
 
-            /*if ((bool)profile["protected"] == true)
+            if ((bool)profile["locked"] == true)
             {
                 tootsProtected.Visibility = Visibility.Visible;
             }
 
-            if ((bool)profile["verified"] == true)
+            /*if ((bool)profile["verified"] == true)
             {
                 verified.Visibility = Visibility.Visible;
             }*/

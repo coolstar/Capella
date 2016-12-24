@@ -509,7 +509,7 @@ namespace Capella
             Console.WriteLine("Added " + added + " and skipped " + skipped);
         }
 
-        public String postToot(String tootText, String tootInReplyTo, bool sensitive, bool unlisted, Account account)
+        public String postToot(String tootText, String tootInReplyTo, bool sensitive, bool isPrivate, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
@@ -517,8 +517,10 @@ namespace Capella
                 uploadText += "in_reply_to_id=" + sharedOAuthUtils.UrlEncode(tootInReplyTo) + "&";
             if (sensitive)
                 uploadText += "sensitive=true&";
-            if (unlisted)
-                uploadText += "unlisted=true&";
+            if (isPrivate)
+                uploadText += "visibility=private&";
+            else
+                uploadText += "visibility=public&";
             uploadText += "status=" + tootText2;
             String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses", uploadText, account, false);
             return output;

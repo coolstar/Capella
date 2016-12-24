@@ -52,7 +52,7 @@
         
         <Grid x:Name="optionsPopup" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="120" Margin="0,2,5,0" Visibility="Collapsed">
             <Image Source="Resources/post-popoverbg.png"></Image>
-            <Controls:ToggleSwitch x:Name="markUnlisted" OnLabel="Mark Unlisted" OffLabel="Mark Unlisted" Margin="15,15,15,0" VerticalAlignment="Top"/>
+            <Controls:ToggleSwitch x:Name="markPrivate" OnLabel="Mark Private" OffLabel="Mark Private" Margin="15,15,15,0" VerticalAlignment="Top"/>
             <Controls:ToggleSwitch x:Name="markSensitive" OnLabel="Mark Sensitive" OffLabel="Mark Sensitive" Margin="15,0,15,25" VerticalAlignment="Bottom"></Controls:ToggleSwitch>
         </Grid>
     </Grid>
