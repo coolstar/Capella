@@ -241,10 +241,20 @@ namespace Capella
             }
             //toot.rawEntities = rawOrigToot["entities"];
             //toot.rawExtendedEntities = rawOrigToot["extended_entities"];
-            toot.isRetooted = (bool)rawOrigToot["reblogged"];
-            toot.isFavorited = (bool)rawOrigToot["favourited"];
-            toot.numRetoots = (int)rawOrigToot["reblogs_count"];
-            toot.numFavorites = (int)rawOrigToot["reblogs_count"];
+
+            toot.isRetooted = false;
+            toot.isFavorited = false;
+            toot.numRetoots = 0;
+            toot.numFavorites = 0;
+
+            if (rawOrigToot["reblogged"] != null && rawOrigToot["reblogged"].Type == JTokenType.Boolean)
+                toot.isRetooted = (bool)rawOrigToot["reblogged"];
+            if (rawOrigToot["favourited"] != null && rawOrigToot["favourited"].Type == JTokenType.Boolean)
+                toot.isFavorited = (bool)rawOrigToot["favourited"];
+            if (rawOrigToot["reblogs_count"] != null && rawOrigToot["reblogs_count"].Type == JTokenType.Integer)
+                toot.numRetoots = (int)rawOrigToot["reblogs_count"];
+            if (rawOrigToot["favourites_count"] != null && rawOrigToot["favourites_count"].Type == JTokenType.Integer)
+                toot.numFavorites = (int)rawOrigToot["favourites_count"];
             try
             {
                 const string format = "MM/dd/yyyy HH:mm:ss";
