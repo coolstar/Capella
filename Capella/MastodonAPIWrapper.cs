@@ -317,8 +317,7 @@ namespace Capella
                 foreach (JObject rawToot in timeline.Children())
                 {
                     JObject toot = rawToot;
-                    if ((bool)toot["reblogged"] == true)
-                    {
+                    if (toot["reblog"] != null && toot["reblog"].Type == JTokenType.Object){
                         toot = (JObject)toot["reblog"];
                     }
                     String tootID = (String)toot["id"];
