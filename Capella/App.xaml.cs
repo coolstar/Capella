@@ -29,6 +29,7 @@ namespace Capella
         public App()
         {
             ServicePointManager.DefaultConnectionLimit = 5000;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             //AllocConsole();
             Console.WriteLine("Capella Debug Console Started");
 

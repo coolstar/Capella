@@ -431,12 +431,15 @@ namespace Capella
         {
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(new Uri(endpoint + "api/v1/apps", UriKind.Absolute));
             req.Method = "POST";
-            req.UserAgent = "Mozilla/5.0 (Windows; U; MSIE 11.0; Windows NT 6.1; en-US))";
+            req.UserAgent = "Mozilla/5.0 (Windows; U; MSIE 11.0; Windows NT 6.1; en-US))"; 
+            req.ContentType = "application/x-www-form-urlencoded";
             req.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, deflate";
             req.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             req.KeepAlive = true;
 
-            String request = "client_name=" + UrlEncode("Capella") + "&redirect_uris=" + UrlEncode("https://localhost/") + "&scopes=" + UrlEncode("read write follow");
+            String request = "client_name=" + UrlEncode("Capella") + "&redirect_uris=" + UrlEncode("https://localhost/") + "&scopes=" + UrlEncode("read write follow") + "&website=" + UrlEncode("https://coolstar.org/capella");
+
+            Console.WriteLine(request);
 
             using (var writer = new StreamWriter(req.GetRequestStream()))
                 writer.Write(request);
