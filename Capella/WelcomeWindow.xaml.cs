@@ -114,14 +114,12 @@ namespace Capella
 
                     if (MastodonAPIWrapper.sharedApiWrapper.accounts != null)
                     {
-                        foreach (Account twitterAccount in MastodonAPIWrapper.sharedApiWrapper.accounts)
+                        foreach (Account mastodonAccount in MastodonAPIWrapper.sharedApiWrapper.accounts)
                         {
                             JObject rawAccount = new JObject();
-                            if (twitterAccount.accessToken.Equals(accountToken))
+                            if (mastodonAccount.accessToken.Equals(accountToken))
                                 return;
-                            rawAccount.Add("token", twitterAccount.accessToken);
-                            if (twitterAccount.streamCookie != null)
-                                rawAccount.Add("cookie", twitterAccount.streamCookie);
+                            rawAccount.Add("token", mastodonAccount.accessToken);
                             accounts.Add(rawAccount);
                         }
                     }

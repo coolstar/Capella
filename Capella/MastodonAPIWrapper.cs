@@ -60,7 +60,7 @@ namespace Capella
                 if (json["version"] != null)
                 {
                     double version = json["version"];
-                    if (version < 0.2)
+                    if (version < 0.25)
                     {
                         return;
                     }
@@ -106,8 +106,6 @@ namespace Capella
                     Object rawAccessToken = (String)accountTokens["token"];
 
                     account.accessToken = (String)rawAccessToken;
-
-                    account.streamCookie = accountTokens["cookie"];
 
                     account.myHandle = getCurrentHandle(account);
 
@@ -174,20 +172,6 @@ namespace Capella
             if (account.accountID == null)
             {
                 account.accountID = "" + accountData["id"];
-            }
-            if (account.streamCookie == null)
-            {
-                Console.WriteLine(cookieHeader);
-                String cookieName = "_mastodon_session=";
-                int mastoIdx = cookieHeader.IndexOf(cookieName);
-                if (mastoIdx != -1)
-                {
-                    cookieHeader = cookieHeader.Substring(mastoIdx + cookieName.Length);
-                    int endIdx = cookieHeader.IndexOf(";");
-                    if (endIdx != -1)
-                        cookieHeader = cookieHeader.Substring(0, endIdx);
-                    account.streamCookie = WebUtility.UrlDecode(cookieHeader);
-                }
             }
             return accountData["username"];
         }
@@ -766,12 +750,14 @@ namespace Capella
             return retootUsers;
         }
 
-        public void handleStreamInput(String rawData, Account account)
+        public void handleStreamInput(String rawData, Account account, String streamName)
         {
             dynamic streamData = JsonConvert.DeserializeObject(rawData);
             String messageType = streamData["event"];
             if (messageType.Equals("notification"))
             {
+                if (streamName != "user")
+                    return;
                 dynamic notification = JsonConvert.DeserializeObject((String)streamData["payload"]);
 
                 MainWindow.sharedMainWindow.Dispatcher.BeginInvoke(new Action(() =>
@@ -826,8 +812,15 @@ namespace Capella
                 JArray timeline = null;
                 List<String> timelineIds = null;
 
-                timeline = account.homeTimeline;
-                timelineIds = account.homeTimelineIds;
+                if (streamName == "user")
+                {
+                    timeline = account.homeTimeline;
+                    timelineIds = account.homeTimelineIds;
+                } else if (streamName == "public")
+                {
+                    timeline = account.publicTimeline;
+                    timelineIds = account.publicTimelineIds;
+                }
 
                 if (timeline == null || timelineIds == null)
                     return;
@@ -837,16 +830,34 @@ namespace Capella
                     timelineIds.Insert(0, id);
                     timeline.Insert(0, toot);
 
-                    account.homeTimeline = timeline;
-                    account.homeTimelineIds = timelineIds;
-                    homeTimelineChanged(this, "insert", 0, account);
+                    if (streamName == "user")
+                    {
+                        account.homeTimeline = timeline;
+                        account.homeTimelineIds = timelineIds;
+                        homeTimelineChanged(this, "insert", 0, account);
+                    }
+                    else if (streamName == "public")
+                    {
+                        account.publicTimeline = timeline;
+                        account.publicTimelineIds = timelineIds;
+                        publicTimelineChanged(this, "insert", 0, account);
+                    }
                 }
             }
             else if (messageType.Equals("delete"))
             {
                 string id = streamData["payload"];
 
-                int indexToDelete = account.mentionsTimelineIds.IndexOf(id);
+                int indexToDelete = account.publicTimelineIds.IndexOf(id);
+                if (indexToDelete >= 0)
+                {
+                    account.publicTimelineIds.RemoveAt(indexToDelete);
+                    account.publicTimeline.RemoveAt(indexToDelete);
+                    if (publicTimelineChanged != null)
+                        publicTimelineChanged(this, "delete", indexToDelete, account);
+                }
+
+                indexToDelete = account.mentionsTimelineIds.IndexOf(id);
                 if (indexToDelete >= 0)
                 {
                     account.mentionsTimelineIds.RemoveAt(indexToDelete);
@@ -871,15 +882,21 @@ namespace Capella
 
         public void startStreaming(Account account)
         {
-            Console.WriteLine("Stream Cookie: " + account.streamCookie);
-            String wsURL = "wss://" + endpoint + "/api/v1/streaming/?access_token="+account.accessToken+"&stream=user";
+            setupStreaming(account, "user");
+            setupStreaming(account, "public");
+        }
+
+        public void setupStreaming(Account account, String streamName)
+        {
+            String wsURL = "wss://" + endpoint + "/api/v1/streaming/?access_token="+account.accessToken+"&stream="+ streamName;
 
             WebSocket socket = new WebSocket(wsURL);
-            //WebSocket socket = new WebSocket("wss://echo.websocket.org/");
             socket.Origin = "https://" + endpoint;
             socket.SslConfiguration.EnabledSslProtocols = SslProtocols.Tls12;
-            socket.Log.Level = LogLevel.Debug;
-            socket.SetCookie(new WebSocketSharp.Net.Cookie("_mastodon_session", account.streamCookie, "/", "mastodon.social"));
+            if (App.isDebugEnabled)
+                socket.Log.Level = LogLevel.Warn;
+            else
+                socket.Log.Level = LogLevel.Error;
             socket.WaitTime = TimeSpan.MaxValue;
 
             socket.OnOpen += (sender, e) =>
@@ -889,8 +906,9 @@ namespace Capella
 
             socket.OnMessage += (sender, e) =>
             {
-                Console.WriteLine(e.Data);
-                handleStreamInput(e.Data, account);
+                if (streamName == "public")
+                    Console.WriteLine("Streamed Data" + e.Data);
+                handleStreamInput(e.Data, account, streamName);
             };
 
             socket.OnClose += (sender, e) =>
