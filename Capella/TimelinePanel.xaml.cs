@@ -231,6 +231,10 @@ namespace Capella
                 //no profile pic ;-;
             }
             toot.rawText = (String)rawOrigToot["content"];
+            toot.rawText = toot.rawText.Replace("<br>", "\n");
+            toot.rawText = toot.rawText.Replace("<br/>", "\n");
+            toot.rawText = toot.rawText.Replace("<br />", "\n");
+            toot.rawText = toot.rawText.Replace("</p><p>", "\n\n");
             toot.rawText = Regex.Replace(toot.rawText, "<.*?>", String.Empty);
 
             foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
@@ -365,7 +369,7 @@ namespace Capella
             String rawHtml = rawOrigToot["content"];
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(rawHtml);
-            HtmlNodeCollection collection = doc.DocumentNode.SelectNodes("//a[@href and @target=\"_blank\"]");
+            HtmlNodeCollection collection = doc.DocumentNode.SelectNodes("//a[@href and (@rel=\"nofollow noopener\" or @target=\"_blank\")]");
             if (collection != null)
             {
                 foreach (HtmlNode link in collection)
@@ -389,7 +393,6 @@ namespace Capella
                         String displayText = hrefValue;
 
                         int idx = toot.rawText.IndexOf(displayText);
-                        Console.WriteLine("Idx: " + idx);
 
                         if (idx == -1)
                             continue;
