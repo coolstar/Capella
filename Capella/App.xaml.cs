@@ -26,7 +26,7 @@ namespace Capella
         [DllImport("dwmapi.dll", PreserveSig = false)]
         public static extern bool DwmIsCompositionEnabled();
 
-        public static bool isDebugEnabled = true;
+        public static bool isDebugEnabled = false;
 
         public App()
         {
