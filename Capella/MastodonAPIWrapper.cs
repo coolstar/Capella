@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
+using System.Security.Authentication;
 
 namespace Capella
 {
@@ -676,145 +677,41 @@ namespace Capella
         public void handleStreamInput(String rawData, Account account)
         {
             dynamic streamData = JsonConvert.DeserializeObject(rawData);
-            if (streamData["identifier"] != null)
+            String messageType = streamData["event"];
+            if (messageType.Equals("update"))
             {
-                dynamic channelData = JsonConvert.DeserializeObject((String)streamData["identifier"]);
-                String channelName = channelData["channel"];
+                dynamic toot = JsonConvert.DeserializeObject((String)streamData["payload"]);
 
-                dynamic messageData = streamData["message"];
-                if (messageData != null)
+                String id = toot["id"];
+                String text = (String)toot["content"];
+                bool mute = false;
+                foreach (String keyword in this.keywords)
                 {
-                    String messageType = messageData["type"];
-                    if (messageType.Equals("notification"))
+                    if (text.ToLower().Contains(keyword.ToLower()))
                     {
-                        dynamic notificationMessage = JsonConvert.DeserializeObject((String)messageData["message"]);
-
-                        MainWindow.sharedMainWindow.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            NotificationsHandler.sharedNotificationsHandler.pushNotification(notificationMessage);
-                        }));
-
-                        String notificationType = notificationMessage["type"];
-                        if (notificationType.Equals("mention"))
-                        {
-                            dynamic toot = notificationMessage["status"];
-
-                            String id = toot["id"];
-                            String text = (String)toot["content"];
-                            bool mute = false;
-                            foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
-                            {
-                                if (text.ToLower().Contains(keyword.ToLower()))
-                                {
-                                    mute = true;
-                                }
-                            }
-                            if (mute)
-                                return;
-
-                            if (!account.mentionsTimelineIds.Contains(id))
-                            {
-                                account.mentionsTimelineIds.Insert(0, id);
-                                account.mentionsTimeline.Insert(0, toot);
-
-                                mentionsTimelineChanged(this, "insert", 0, account);
-                            }
-                        }
+                        mute = true;
                     }
-                    else if (messageType.Equals("update"))
-                    {
-                        dynamic toot = JsonConvert.DeserializeObject((String)messageData["message"]);
+                }
+                if (mute)
+                    return;
 
-                        String id = toot["id"];
-                        String text = (String)toot["content"];
-                        bool mute = false;
-                        foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
-                        {
-                            if (text.ToLower().Contains(keyword.ToLower()))
-                            {
-                                mute = true;
-                            }
-                        }
-                        if (mute)
-                            return;
+                JArray timeline = null;
+                List<String> timelineIds = null;
 
-                        JArray timeline = null;
-                        List<String> timelineIds = null;
+                timeline = account.homeTimeline;
+                timelineIds = account.homeTimelineIds;
 
-                        if (channelName == "PublicChannel")
-                        {
-                            timeline = account.publicTimeline;
-                            timelineIds = account.publicTimelineIds;
-                        }
-                        else if (channelName == "TimelineChannel")
-                        {
-                            timeline = account.homeTimeline;
-                            timelineIds = account.homeTimelineIds;
-                        }
+                if (timeline == null || timelineIds == null)
+                    return;
 
-                        if (timeline == null || timelineIds == null)
-                            return;
+                if (!timelineIds.Contains(id))
+                {
+                    timelineIds.Insert(0, id);
+                    timeline.Insert(0, toot);
 
-                        if (!timelineIds.Contains(id))
-                        {
-                            timelineIds.Insert(0, id);
-                            timeline.Insert(0, toot);
-
-                            if (channelName == "PublicChannel")
-                            {
-                                account.publicTimeline = timeline;
-                                account.publicTimelineIds = timelineIds;
-                                publicTimelineChanged(this, "insert", 0, account);
-                            }
-                            else if (channelName == "TimelineChannel")
-                            {
-                                account.homeTimeline = timeline;
-                                account.homeTimelineIds = timelineIds;
-                                homeTimelineChanged(this, "insert", 0, account);
-                            }
-                        }
-                    } else if (messageType.Equals("delete"))
-                    {
-                        String id = messageData["id"];
-
-                        if (channelName == "PublicChannel")
-                        {
-                            if (account.publicTimeline == null || account.publicTimelineIds == null)
-                                return;
-
-                            int indexToDelete = account.publicTimelineIds.IndexOf(id);
-                            if (indexToDelete >= 0)
-                            {
-                                account.publicTimelineIds.RemoveAt(indexToDelete);
-                                account.publicTimeline.RemoveAt(indexToDelete);
-                                if (publicTimelineChanged != null)
-                                    publicTimelineChanged(this, "delete", indexToDelete, account);
-                            }
-                        }
-                        else if (channelName == "TimelineChannel")
-                        {
-                            int indexToDelete = account.mentionsTimelineIds.IndexOf(id);
-                            if (indexToDelete >= 0)
-                            {
-                                account.mentionsTimelineIds.RemoveAt(indexToDelete);
-                                account.mentionsTimeline.RemoveAt(indexToDelete);
-                                if (mentionsTimelineChanged != null)
-                                    mentionsTimelineChanged(this, "delete", indexToDelete, account);
-                            }
-
-                            if (account.homeTimeline == null || account.homeTimelineIds == null)
-                                return;
-
-                            indexToDelete = account.homeTimelineIds.IndexOf(id);
-                            if (indexToDelete >= 0)
-                            {
-                                account.homeTimelineIds.RemoveAt(indexToDelete);
-                                account.homeTimeline.RemoveAt(indexToDelete);
-                                if (homeTimelineChanged != null)
-                                    homeTimelineChanged(this, "delete", indexToDelete, account);
-                            }
-                        }
-                    }
+                    account.homeTimeline = timeline;
+                    account.homeTimelineIds = timelineIds;
+                    homeTimelineChanged(this, "insert", 0, account);
                 }
             }
         }
@@ -822,11 +719,12 @@ namespace Capella
         public void startStreaming(Account account)
         {
             Console.WriteLine("Stream Cookie: " + account.streamCookie);
-            String wsURL = "wss://" + endpoint + "/cable";
+            String wsURL = "wss://" + endpoint + "/api/v1/streaming/?access_token="+account.accessToken+"&stream=user";
 
             WebSocket socket = new WebSocket(wsURL);
             //WebSocket socket = new WebSocket("wss://echo.websocket.org/");
             socket.Origin = "https://" + endpoint;
+            socket.SslConfiguration.EnabledSslProtocols = SslProtocols.Tls12;
             socket.Log.Level = LogLevel.Debug;
             socket.SetCookie(new WebSocketSharp.Net.Cookie("_mastodon_session", account.streamCookie, "/", "mastodon.social"));
             socket.WaitTime = TimeSpan.MaxValue;
@@ -838,15 +736,8 @@ namespace Capella
 
             socket.OnMessage += (sender, e) =>
             {
-                if (e.Data.Equals("{\"type\":\"welcome\"}"))
-                {
-                    Console.WriteLine("Subscribing...");
-                    socket.Send("{\"command\":\"subscribe\",\"identifier\":\"{\\\"channel\\\":\\\"TimelineChannel\\\"}\"}");
-                    socket.Send("{\"command\":\"subscribe\",\"identifier\":\"{\\\"channel\\\":\\\"PublicChannel\\\"}\"}");
-                } else
-                {
-                    handleStreamInput(e.Data, account);
-                }
+                Console.WriteLine(e.Data);
+                handleStreamInput(e.Data, account);
             };
 
             socket.OnClose += (sender, e) =>
