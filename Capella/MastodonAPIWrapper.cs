@@ -910,6 +910,7 @@ namespace Capella
             socket.OnClose += (sender, e) =>
             {
                 Console.WriteLine("Disconnected");
+                setupStreaming(account, streamName);
             };
             
             socket.Connect();
