@@ -309,26 +309,32 @@ namespace Capella
             rawEntities.Add("user_mentions", userMentions);
 
             JArray media = new JArray();
-            foreach (dynamic rawMedia in rawOrigToot["media_attachments"].Children())
+            foreach (JToken rawMedia in rawOrigToot["media_attachments"].Children())
             {
-                JObject image = new JObject();
-                image.Add("id", rawMedia["id"]);
-                image.Add("preview_url", rawMedia["preview_url"]);
-                image.Add("url", rawMedia["url"]);
+                if (((String)rawMedia["type"]).Equals("image"))
+                {
+                    JObject image = new JObject();
+                    image.Add("id", rawMedia["id"]);
+                    image.Add("preview_url", rawMedia["preview_url"]);
+                    image.Add("url", rawMedia["url"]);
 
-                JArray indices = new JArray();
+                    JArray indices = new JArray();
 
-                String mediaDisplay = "mastodon.social/media/"+rawMedia["id"];
-                image.Add("display_url", mediaDisplay);
+                    String mediaDisplay = (String)rawMedia["text_url"];
+                    image.Add("display_url", mediaDisplay);
 
-                int firstidx = toot.rawText.IndexOf(mediaDisplay);
-                if (firstidx == -1)
-                    continue;
-                indices.Add(firstidx);
-                indices.Add(firstidx + mediaDisplay.Length);
+                    if (mediaDisplay == null || mediaDisplay.Length == 0)
+                        continue;
 
-                image.Add("indices", indices);
-                media.Add(image);
+                    int firstidx = toot.rawText.IndexOf(mediaDisplay);
+                    if (firstidx == -1)
+                        continue;
+                    indices.Add(firstidx);
+                    indices.Add(firstidx + mediaDisplay.Length);
+
+                    image.Add("indices", indices);
+                    media.Add(image);
+                }
             }
             rawEntities.Add("media", media);
             extendedEntities.Add("media", media);
@@ -360,13 +366,13 @@ namespace Capella
             Match match;
             for (match = regex.Match(rawHtml); match.Success; match = match.NextMatch())
             {
-                //Console.WriteLine("Found a href. Groups: ");
+                Console.WriteLine("Found a href. Groups: ");
 
                 String rawHTML = "";
 
                 foreach (Group group in match.Groups)
                 {
-                    //Console.WriteLine("Group value: {0}", group);
+                    Console.WriteLine("Group value: {0}", group);
                     if (group.ToString().StartsWith("https://") || group.ToString().StartsWith("http://"))
                     {
                         String rawUrl = group.ToString();
