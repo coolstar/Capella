@@ -28,12 +28,11 @@ namespace Capella
 
         private void okBtn_Click(object sender, RoutedEventArgs e)
         {
-            String streamCookie = "";
-            String token = MastodonAPIWrapper.sharedApiWrapper.getAccountToken(username.Text, password.Password, out streamCookie);
+            String token = MastodonAPIWrapper.sharedApiWrapper.getAccountToken(endpoint.Text, username.Text, password.Password);
             if (token != "")
             {
                 callbackDelegate.accountToken = token;
-                callbackDelegate.streamCookie = streamCookie;
+                callbackDelegate.accountEndpoint = endpoint.Text.Remove(0, "https://".Length);
                 callbackDelegate.authenticated = true;
                 this.Close();
             } else
@@ -45,6 +44,14 @@ namespace Capella
         private void cancelBtn_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void endpoint_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!endpoint.Text.StartsWith("https://"))
+            {
+                endpoint.Text = "https://mastodon.social";
+            }
         }
     }
 }

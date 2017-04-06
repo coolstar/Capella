@@ -26,11 +26,14 @@ namespace Capella
         [DllImport("dwmapi.dll", PreserveSig = false)]
         public static extern bool DwmIsCompositionEnabled();
 
+        public static bool isDebugEnabled = true;
+
         public App()
         {
             ServicePointManager.DefaultConnectionLimit = 5000;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            //AllocConsole();
+            if (isDebugEnabled)
+                AllocConsole();
             Console.WriteLine("Capella Debug Console Started");
 
             Console.WriteLine("Initializing Capella...");

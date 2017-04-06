@@ -460,7 +460,7 @@ namespace Capella
             reader.Dispose();
         }
 
-        public string getAccountToken(String endpoint, String consumerKey, String consumerSecret, String username, String password, out String streamCookie)
+        public string getAccountToken(String endpoint, String consumerKey, String consumerSecret, String username, String password)
         {
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(new Uri(endpoint + "oauth/token", UriKind.Absolute));
             req.Method = "POST";
@@ -475,10 +475,6 @@ namespace Capella
                 writer.Write(request);
 
             HttpWebResponse response = (HttpWebResponse)req.GetResponse();
-
-            String cookie = response.GetResponseHeader("Set-Cookie");
-            streamCookie = cookie;
-            Console.WriteLine(cookie);
 
             Stream stream = response.GetResponseStream();
             StreamReader reader = new StreamReader(stream);

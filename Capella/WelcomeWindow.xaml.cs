@@ -34,6 +34,7 @@ namespace Capella
 
         public bool authenticated;
         public String accountToken;
+        public String accountEndpoint;
         public String streamCookie;
 
         public WelcomeWindow()
@@ -41,6 +42,7 @@ namespace Capella
             InitializeComponent();
             authenticated = false;
             accountToken = "";
+            accountEndpoint = "";
         }
 
         private void OnContentRendered(object sender, EventArgs e)
@@ -120,30 +122,22 @@ namespace Capella
                             if (mastodonAccount.accessToken.Equals(accountToken))
                                 return;
                             rawAccount.Add("token", mastodonAccount.accessToken);
+                            rawAccount.Add("endpoint", mastodonAccount.endpoint);
                             accounts.Add(rawAccount);
                         }
                     }
 
                     JObject account = new JObject();
                     account.Add("token", accountToken);
+                    account.Add("endpoint", accountEndpoint);
 
-                    String cookieName = "_mastodon_session=";
-                    int mastoIdx = streamCookie.IndexOf(cookieName);
-                    if (mastoIdx != -1)
-                    {
-                        streamCookie = streamCookie.Substring(mastoIdx + cookieName.Length);
-                        int endIdx = streamCookie.IndexOf(";");
-                        if (endIdx != -1)
-                            streamCookie = streamCookie.Substring(0, endIdx);
-                        account.Add("cookie", streamCookie);
-                    }
                     accounts.Add(account);
 
                     json.Add("accounts", accounts);
 
                     json.Add("nightModeEnabled", MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled);
 
-                    json.Add("version", 0.2);
+                    json.Add("version", 0.3);
 
                     String output = json.ToString();
                     File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json", output);

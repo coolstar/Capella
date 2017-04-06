@@ -10,7 +10,7 @@ namespace Capella
     public class Account
     {
         public String accessToken;
-        public String streamCookie;
+        public String endpoint;
         public String accountID = null;
         public String myHandle = null;
         public JArray publicTimeline;

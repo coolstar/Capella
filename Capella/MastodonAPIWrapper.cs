@@ -32,7 +32,11 @@ namespace Capella
         public List<String> keywords = new List<String>();
         public Dictionary<String, Image> accountImages;
 
-        public String endpoint = "mastodon.social";
+        //public String consumerKey;
+        //public String consumerSecret;
+
+
+        public static MastodonAPIWrapper sharedApiWrapper;
 
         public MastodonAPIWrapper()
         {
@@ -40,13 +44,6 @@ namespace Capella
 
             sharedApiWrapper = this;
             sharedOAuthUtils = new OAuthUtils();
-            this.consumerKey = "";
-            this.consumerSecret = "";
-
-            sharedOAuthUtils.getTokens("https://"+endpoint+"/", out this.consumerKey, out this.consumerSecret);
-
-            Console.WriteLine(this.consumerKey);
-            Console.WriteLine(this.consumerSecret);
 
             try
             {
@@ -60,7 +57,7 @@ namespace Capella
                 if (json["version"] != null)
                 {
                     double version = json["version"];
-                    if (version < 0.25)
+                    if (version < 0.3)
                     {
                         return;
                     }
@@ -102,10 +99,9 @@ namespace Capella
                 accounts = new List<Account>();
                 foreach (dynamic accountTokens in accountsTokens){
                     Account account = new Account();
+                    account.accessToken = (String)accountTokens["token"];
 
-                    Object rawAccessToken = (String)accountTokens["token"];
-
-                    account.accessToken = (String)rawAccessToken;
+                    account.endpoint = (String)accountTokens["endpoint"];
 
                     account.myHandle = getCurrentHandle(account);
 
@@ -145,13 +141,13 @@ namespace Capella
             {
                 Console.WriteLine(e.ToString());
             }
-            //this.accessToken = "379029313-avcZCimJqvy0sA86fkKESqAuadqCzGnWCDXsg0i4";
-            //this.accessTokenSecret = "Usm5pK86YoorXk7VaUAgRnCQXzZTnoB0g4Q2ATo0";
         }
 
-        public String getAccountToken(String username, String password, out String streamCookie)
+        public String getAccountToken(String endpoint, String username, String password)
         {
-            return sharedOAuthUtils.getAccountToken("https://" + endpoint + "/", consumerKey, consumerSecret, username, password, out streamCookie);
+            String consumerKey, consumerSecret;
+            sharedOAuthUtils.getTokens(endpoint + "/", out consumerKey, out consumerSecret);
+            return sharedOAuthUtils.getAccountToken(endpoint + "/", consumerKey, consumerSecret, username, password);
         }
 
         public Account accountWithToken(String accessToken)
@@ -167,7 +163,7 @@ namespace Capella
         public String getCurrentHandle(Account account)
         {
             String cookieHeader;
-            String halfProfile = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/verify_credentials", "", account, false, out cookieHeader);
+            String halfProfile = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/verify_credentials", "", account, false, out cookieHeader);
             dynamic accountData = JsonConvert.DeserializeObject(halfProfile);
             if (account.accountID == null)
             {
@@ -182,7 +178,7 @@ namespace Capella
             {
                 if (accountID == null || accountID == "")
                 {
-                    String halfProfile = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/verify_credentials", "", account, true);
+                    String halfProfile = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/verify_credentials", "", account, true);
                     dynamic accountData = JsonConvert.DeserializeObject(halfProfile);
                     accountID = "" + accountData["id"];
                     if (account.accountID == null)
@@ -191,7 +187,7 @@ namespace Capella
                     }
                 }
 
-                String json = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/"+ accountID, "", account, true);
+                String json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+ accountID, "", account, true);
                 dynamic profile = JsonConvert.DeserializeObject(json);
                 return profile;
             }
@@ -266,7 +262,7 @@ namespace Capella
                 String queryStr = "limit=30";
                 if (maximumID != null && maximumID != "")
                     queryStr += "&max_id=" + maximumID;
-                json = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/notifications/", queryStr, account, false);
+                json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/notifications/", queryStr, account, false);
 
                 if (!Directory.Exists(Path.GetTempPath() + "Capella\\"))
                     Directory.CreateDirectory(Path.GetTempPath() + "Capella\\");
@@ -360,9 +356,9 @@ namespace Capella
                     query = "?since_id=" + sharedOAuthUtils.UrlEncode(sinceID);
 
                 if (targetID == "")
-                    json = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/timelines/" + timelineType, query, account, false);
+                    json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/timelines/" + timelineType, query, account, false);
                 else
-                    json = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/" + targetID + "/statuses", query, account, false);
+                    json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/" + targetID + "/statuses", query, account, false);
 
                 if (sinceID != null && !sinceID.Equals(""))
                 {
@@ -469,7 +465,7 @@ namespace Capella
         public dynamic getToot(Account account, String tootID)
         {
             String tootID2 = Uri.EscapeUriString(tootID);
-            String tootStr = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/statuses/"+tootID2, "", account, true);
+            String tootStr = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/"+tootID2, "", account, true);
 
             dynamic toot = JsonConvert.DeserializeObject(tootStr);
             return toot;
@@ -477,7 +473,7 @@ namespace Capella
 
         public dynamic searchUsers(Account account, String query, int count)
         {
-            String output = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/search", "q=" + Uri.EscapeUriString(query) + "&limit=" + count, account, true);
+            String output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/search", "q=" + Uri.EscapeUriString(query) + "&limit=" + count, account, true);
             Console.WriteLine(output);
             return JsonConvert.DeserializeObject(output);
         }
@@ -488,7 +484,7 @@ namespace Capella
 
             dynamic toot = getToot(account, tootID);
 
-            String contextStr = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/statuses/" + Uri.EscapeUriString(tootID) + "/context", "", account, true);
+            String contextStr = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/" + Uri.EscapeUriString(tootID) + "/context", "", account, true);
 
             dynamic context = JsonConvert.DeserializeObject(contextStr);
 
@@ -598,7 +594,7 @@ namespace Capella
             else
                 uploadText += "visibility=public&";
             uploadText += "status=" + tootText2;
-            String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses", uploadText, account, false);
+            String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses", uploadText, account, false);
             return output;
         }
 
@@ -615,20 +611,20 @@ namespace Capella
                 uploadText += "unlisted=true&";
             uploadText += "&media_ids[]=" + imageIds;
             Console.WriteLine(uploadText);
-            String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses", uploadText, account, false);
+            String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses", uploadText, account, false);
             return output;
         }
 
         public dynamic uploadMedia(Account account, String imagePath)
         {
-            String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/media", "", "file", imagePath, account);
+            String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/media", "", "file", imagePath, account);
             return JsonConvert.DeserializeObject(output);
         }
 
         public bool deleteToot(String tootID, Account account)
         {
             String tootID2 = Uri.EscapeUriString(tootID);
-            String tootStr = sharedOAuthUtils.DeleteData("https://" + endpoint + "/api/v1/statuses/" + tootID2, account);
+            String tootStr = sharedOAuthUtils.DeleteData("https://" + account.endpoint + "/api/v1/statuses/" + tootID2, account);
             dynamic toot = JsonConvert.DeserializeObject(tootStr);
             if (toot["id"] != null)
                 return false;
@@ -640,7 +636,7 @@ namespace Capella
             if (undoRetoot == false)
             {
                 String tootID2 = Uri.EscapeUriString(tootID);
-                String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses/" + tootID2 + "/reblog", "", account, false);
+                String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses/" + tootID2 + "/reblog", "", account, false);
                 dynamic toot = JsonConvert.DeserializeObject(output);
                 bool retooted = (bool)toot.reblog.reblogged;
                 return retooted;
@@ -648,7 +644,7 @@ namespace Capella
             else
             {
                 String tootID2 = Uri.EscapeUriString(tootID);
-                String output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses/" + tootID2 + "/unreblog", "", account, false);
+                String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses/" + tootID2 + "/unreblog", "", account, false);
                 dynamic toot = JsonConvert.DeserializeObject(output);
                 bool retooted = (bool)toot.reblogged;
                 return retooted;
@@ -658,7 +654,7 @@ namespace Capella
         public dynamic getRelationship(String userID, Account account)
         {
             String userID2 = Uri.EscapeUriString(userID);
-            String output = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/relationships", "id=" + userID2, account, false);
+            String output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/relationships", "id=" + userID2, account, false);
             return JsonConvert.DeserializeObject(output);
         }
 
@@ -668,10 +664,10 @@ namespace Capella
             String output;
             if (follow)
             {
-                output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/accounts/"+userID2+"/follow", "", account, false);
+                output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/accounts/"+userID2+"/follow", "", account, false);
             } else
             {
-                output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/accounts/" + userID2 + "/unfollow", "user_id=" + userID2, account, false);
+                output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/accounts/" + userID2 + "/unfollow", "user_id=" + userID2, account, false);
             }
             dynamic profile = JsonConvert.DeserializeObject(output);
             return (bool)profile["following"];
@@ -682,9 +678,9 @@ namespace Capella
             String tootID2 = Uri.EscapeUriString(tootID);
             String output;
             if (undoFavorite == true)
-                output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses/"+tootID+"/unfavourite", "", account, false);
+                output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses/"+tootID+"/unfavourite", "", account, false);
             else
-                output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/statuses/" + tootID + "/favourite", "", account, false);
+                output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses/" + tootID + "/favourite", "", account, false);
             dynamic toot = JsonConvert.DeserializeObject(output);
             bool favorited = (bool)toot.favourited;
             return favorited;
@@ -695,7 +691,7 @@ namespace Capella
             String output;
             if (userId == null || userId == "")
                 userId = account.accountID;
-            output = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/" + userId + "/followers", "", account, true);
+            output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/" + userId + "/followers", "", account, true);
             return JsonConvert.DeserializeObject(output);
         }
 
@@ -704,9 +700,9 @@ namespace Capella
             String userID2 = Uri.EscapeUriString(userID);
             String output;
             if (undoBlock == true)
-                output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/accounts/"+userID2+"/unblock", "", account, false);
+                output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/accounts/"+userID2+"/unblock", "", account, false);
             else
-                output = sharedOAuthUtils.PostData("https://" + endpoint + "/api/v1/accounts/" + userID2 + "/block", "", account, false);
+                output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/accounts/" + userID2 + "/block", "", account, false);
             dynamic user = JsonConvert.DeserializeObject(output);
             if (user["id_str"] != null)
             {
@@ -732,20 +728,20 @@ namespace Capella
             String output;
             if (userId == null || userId == "")
                 userId = account.accountID;
-            output = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/accounts/"+userId+"/following", "", account, true);
+            output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+userId+"/following", "", account, true);
             return JsonConvert.DeserializeObject(output);
         }
 
         public dynamic retootsList(Account account, String tootId, int count)
         {
-            String data = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/statuses/" + tootId+"/reblogged_by", "", account, true);
+            String data = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/" + tootId+"/reblogged_by", "", account, true);
             dynamic retootUsers = JsonConvert.DeserializeObject(data);
             return retootUsers;
         }
 
         public dynamic favoritesList(Account account, String tootId, int count)
         {
-            String data = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/statuses/" + tootId + "/favourited_by", "", account, true);
+            String data = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/" + tootId + "/favourited_by", "", account, true);
             dynamic retootUsers = JsonConvert.DeserializeObject(data);
             return retootUsers;
         }
@@ -888,10 +884,10 @@ namespace Capella
 
         public void setupStreaming(Account account, String streamName)
         {
-            String wsURL = "wss://" + endpoint + "/api/v1/streaming/?access_token="+account.accessToken+"&stream="+ streamName;
+            String wsURL = "wss://" + account.endpoint + "/api/v1/streaming/?access_token="+account.accessToken+"&stream="+ streamName;
 
             WebSocket socket = new WebSocket(wsURL);
-            socket.Origin = "https://" + endpoint;
+            socket.Origin = "https://" + account.endpoint;
             socket.SslConfiguration.EnabledSslProtocols = SslProtocols.Tls12;
             if (App.isDebugEnabled)
                 socket.Log.Level = LogLevel.Warn;
@@ -945,9 +941,5 @@ namespace Capella
                 getTimeline(account, "mentions", "", lastId);
             }
         }
-
-        public String consumerKey;
-        public String consumerSecret;
-        public static MastodonAPIWrapper sharedApiWrapper;
     }
 }
