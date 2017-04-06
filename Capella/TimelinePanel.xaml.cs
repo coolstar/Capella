@@ -373,7 +373,6 @@ namespace Capella
                     string hrefValue = link.GetAttributeValue("href", string.Empty);
                     String rawHTML = link.OuterHtml;
 
-                    Console.WriteLine("Found a link: " + hrefValue + "Raw: "+ link.OuterHtml);
                     if (hrefValue.StartsWith("https://") || hrefValue.StartsWith("http://"))
                     {
                         String rawUrl = hrefValue;

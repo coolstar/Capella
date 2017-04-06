@@ -714,6 +714,31 @@ namespace Capella
                     homeTimelineChanged(this, "insert", 0, account);
                 }
             }
+            else if (messageType.Equals("delete"))
+            {
+                string id = streamData["payload"];
+
+                int indexToDelete = account.mentionsTimelineIds.IndexOf(id);
+                if (indexToDelete >= 0)
+                {
+                    account.mentionsTimelineIds.RemoveAt(indexToDelete);
+                    account.mentionsTimeline.RemoveAt(indexToDelete);
+                    if (mentionsTimelineChanged != null)
+                        mentionsTimelineChanged(this, "delete", indexToDelete, account);
+                }
+
+                if (account.homeTimeline == null || account.homeTimelineIds == null)
+                    return;
+
+                indexToDelete = account.homeTimelineIds.IndexOf(id);
+                if (indexToDelete >= 0)
+                {
+                    account.homeTimelineIds.RemoveAt(indexToDelete);
+                    account.homeTimeline.RemoveAt(indexToDelete);
+                    if (homeTimelineChanged != null)
+                        homeTimelineChanged(this, "delete", indexToDelete, account);
+                }
+            }
         }
 
         public void startStreaming(Account account)
