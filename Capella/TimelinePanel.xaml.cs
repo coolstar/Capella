@@ -23,6 +23,7 @@ using TaskDialogInterop;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace Capella
 {
@@ -362,20 +363,20 @@ namespace Capella
 
             JArray urls = new JArray();
             String rawHtml = rawOrigToot["content"];
-            Regex regex = new Regex("href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|(?<1>\\S+))>.*</a>", RegexOptions.IgnoreCase);
-            Match match;
-            for (match = regex.Match(rawHtml); match.Success; match = match.NextMatch())
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(rawHtml);
+            HtmlNodeCollection collection = doc.DocumentNode.SelectNodes("//a[@href and @target=\"_blank\"]");
+            if (collection != null)
             {
-                Console.WriteLine("Found a href. Groups: ");
-
-                String rawHTML = "";
-
-                foreach (Group group in match.Groups)
+                foreach (HtmlNode link in collection)
                 {
-                    Console.WriteLine("Group value: {0}", group);
-                    if (group.ToString().StartsWith("https://") || group.ToString().StartsWith("http://"))
+                    string hrefValue = link.GetAttributeValue("href", string.Empty);
+                    String rawHTML = link.OuterHtml;
+
+                    Console.WriteLine("Found a link: " + hrefValue + "Raw: "+ link.OuterHtml);
+                    if (hrefValue.StartsWith("https://") || hrefValue.StartsWith("http://"))
                     {
-                        String rawUrl = group.ToString();
+                        String rawUrl = hrefValue;
                         String displayURL = rawUrl;
                         displayURL = displayURL.Replace("https://", "");
                         displayURL = displayURL.Replace("http://", "");
@@ -386,10 +387,10 @@ namespace Capella
                         url.Add("expanded_url", rawUrl);
                         JArray indices = new JArray();
 
-                        String displayText = rawHTML.Substring(rawHTML.IndexOf(rawUrl) + rawUrl.Length + 2);
-                        displayText = displayText.Substring(0, displayText.Length - 4);
+                        String displayText = hrefValue;
 
                         int idx = toot.rawText.IndexOf(displayText);
+                        Console.WriteLine("Idx: " + idx);
 
                         if (idx == -1)
                             continue;
@@ -413,9 +414,6 @@ namespace Capella
                             url.Add("indices", indices);
                             urls.Add(url);
                         }
-                    } else
-                    {
-                        rawHTML = group.ToString();
                     }
                 }
             }
