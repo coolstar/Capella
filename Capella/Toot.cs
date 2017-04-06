@@ -44,6 +44,10 @@ namespace Capella
         private Uri mediaUri2 = null;
         private Uri mediaUri3 = null;
         private Uri mediaUri4 = null;
+        private Uri fullMediaUri = null;
+        private Uri fullMediaUri2 = null;
+        private Uri fullMediaUri3 = null;
+        private Uri fullMediaUri4 = null;
 
         private int mediaCount;
 
@@ -479,6 +483,7 @@ namespace Capella
 
                     mediaFound = true;
                     mediaUri = new Uri((String)media["preview_url"]);
+                    fullMediaUri = new Uri((String)media["url"]);
 
                     if (media["type"] != null)
                         media.Remove("type");
@@ -503,19 +508,24 @@ namespace Capella
             foreach (dynamic picture in media.Children())
             {
                 Uri uri = new Uri((String)picture["preview_url"]);
+                Uri fullUri = new Uri((String)picture["url"]);
                 switch (idx)
                 {
                     case 0:
                         mediaUri = uri;
+                        fullMediaUri = fullUri;
                         break;
                     case 1:
                         mediaUri2 = uri;
+                        fullMediaUri2 = fullUri;
                         break;
                     case 2:
                         mediaUri3 = uri;
+                        fullMediaUri3 = fullUri;
                         break;
                     case 3:
                         mediaUri4 = uri;
+                        fullMediaUri4 = fullUri;
                         break;
                 }
                 idx++;
@@ -1211,59 +1221,67 @@ namespace Capella
                 Process.Start(rawMediaUri.OriginalString);
             }
             else {
-                ImageSource rawImage = this.mediaSource;
+                BitmapImage rawImage = new BitmapImage(fullMediaUri);
 
                 var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
                 var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-                PictureViewer viewer = new PictureViewer();
-                viewer.image.Source = rawImage;
-                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                viewer.Show();
+                rawImage.DownloadCompleted += (s, e) => {
+                    PictureViewer viewer = new PictureViewer();
+                    viewer.image.Source = rawImage;
+                    viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+                    viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+                    viewer.Show();
+                };
             }
         }
 
         public void mediaClick2()
         {
-            ImageSource rawImage = this.mediaSource2;
+            BitmapImage rawImage = new BitmapImage(fullMediaUri2);
 
             var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
             var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-            PictureViewer viewer = new PictureViewer();
-            viewer.image.Source = rawImage;
-            viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-            viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-            viewer.Show();
+            rawImage.DownloadCompleted += (s, e) => {
+                PictureViewer viewer = new PictureViewer();
+                viewer.image.Source = rawImage;
+                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+                viewer.Show();
+            };
         }
 
         public void mediaClick3()
         {
-            ImageSource rawImage = this.mediaSource3;
+            BitmapImage rawImage = new BitmapImage(fullMediaUri3);
 
             var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
             var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-            PictureViewer viewer = new PictureViewer();
-            viewer.image.Source = rawImage;
-            viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-            viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-            viewer.Show();
+            rawImage.DownloadCompleted += (s, e) => {
+                PictureViewer viewer = new PictureViewer();
+                viewer.image.Source = rawImage;
+                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+                viewer.Show();
+            };
         }
 
         public void mediaClick4()
         {
-            ImageSource rawImage = this.mediaSource4;
+            BitmapImage rawImage = new BitmapImage(fullMediaUri4);
 
             var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
             var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-            PictureViewer viewer = new PictureViewer();
-            viewer.image.Source = rawImage;
-            viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-            viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-            viewer.Show();
+            rawImage.DownloadCompleted += (s, e) => {
+                PictureViewer viewer = new PictureViewer();
+                viewer.image.Source = rawImage;
+                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+                viewer.Show();
+            };
         }
     }
 }

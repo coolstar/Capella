@@ -254,8 +254,100 @@ namespace Capella
             worker.RunWorkerAsync();
         }
 
+        public dynamic getNotifications(Account account, String maximumID)
+        {
+            bool cacheValid = false;
+            if (File.Exists(Path.GetTempPath() + "Capella\\notifications_" + account.accessToken + ".json"))
+            {
+                if (!NetworkInterface.GetIsNetworkAvailable())
+                    cacheValid = true;
+                DateTime lastModified = File.GetLastWriteTimeUtc(Path.GetTempPath() + "Capella\\notifications_" + account.accessToken + ".json");
+                TimeSpan ts = DateTime.UtcNow - lastModified;
+                if (ts.TotalSeconds < 30)
+                {
+                    cacheValid = true;
+                }
+            }
+            if (maximumID != null && maximumID != "")
+                cacheValid = false;
+            String json;
+            dynamic notifications = null;
+            if (cacheValid)
+            {
+                json = File.ReadAllText(Path.GetTempPath() + "Capella\\notifications_" + account.accessToken + ".json", UTF8Encoding.UTF8);
+                notifications = JsonConvert.DeserializeObject(json);
+            }
+            else
+            {
+                String queryStr = "limit=30";
+                if (maximumID != null && maximumID != "")
+                    queryStr += "&max_id=" + maximumID;
+                json = sharedOAuthUtils.GetData("https://" + endpoint + "/api/v1/notifications/", queryStr, account, false);
+
+                if (!Directory.Exists(Path.GetTempPath() + "Capella\\"))
+                    Directory.CreateDirectory(Path.GetTempPath() + "Capella\\");
+                notifications = JsonConvert.DeserializeObject(json);
+                String cachePath = Path.GetTempPath() + "Capella\\notifications_" + account.accessToken + ".json";
+                if (notifications != null && (maximumID == null || maximumID == ""))
+                {
+                    if (((Object)notifications).GetType() == typeof(JArray))
+                        File.WriteAllText(cachePath, json, UTF8Encoding.UTF8);
+                }
+            }
+            return notifications;
+        }
+
+        public dynamic getMentionsShim(Account account)
+        {
+            dynamic notifications = null;
+            String maxID = "";
+            JArray timeline = new JArray();
+            for (int i = 0; i < 3; i++)
+            {
+                notifications = getNotifications(account, maxID);
+                foreach (JObject rawNotification in notifications.Children())
+                {
+                    String notificationType = (String)rawNotification["type"];
+                    if (notificationType.Equals("mention"))
+                    {
+                        dynamic toot = rawNotification["status"];
+                        timeline.Add(toot);
+                    }
+                    maxID = (String)rawNotification["id"];
+                }
+
+                account.mentionsTimeline = timeline;
+                account.mentionsTimelineIds = new List<String>();
+                foreach (JObject rawToot in timeline.Children())
+                {
+                    JObject toot = rawToot;
+                    String tootID = (String)toot["id"];
+                    String text = (String)toot["content"];
+                    bool mute = false;
+                    foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
+                    {
+                        if (text.ToLower().Contains(keyword.ToLower()))
+                        {
+                            mute = true;
+                        }
+                    }
+                    if (!mute && !account.mentionsTimelineIds.Contains(tootID))
+                        account.mentionsTimelineIds.Add(tootID);
+                }
+                if (mentionsTimelineChanged != null)
+                    mentionsTimelineChanged(this, "refresh", 0, account);
+            }
+            return timeline;
+        }
+
         public dynamic getTimeline(Account account, String timelineType, String targetID, String sinceID)
         {
+            if (timelineType == "mentions")
+            {
+                if ((targetID != null && targetID != "") || (sinceID != null && sinceID != ""))
+                    throw new Exception("Mentions does not support target or since ID on Mastodon.");
+                return getMentionsShim(account);
+            }
             bool cacheValid = false;
             if (File.Exists(Path.GetTempPath() + "Capella\\" + timelineType + "_timeline"+targetID+"_" + account.accessToken + ".json"))
             {
@@ -678,7 +770,43 @@ namespace Capella
         {
             dynamic streamData = JsonConvert.DeserializeObject(rawData);
             String messageType = streamData["event"];
-            if (messageType.Equals("update"))
+            if (messageType.Equals("notification"))
+            {
+                dynamic notification = JsonConvert.DeserializeObject((String)streamData["payload"]);
+
+                MainWindow.sharedMainWindow.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    NotificationsHandler.sharedNotificationsHandler.pushNotification(notification);
+                }));
+
+                String notificationType = notification["type"];
+                if (notificationType.Equals("mention"))
+                {
+                    dynamic toot = notification["status"];
+
+                    String id = toot["id"];
+                    String text = (String)toot["content"];
+                    bool mute = false;
+                    foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
+                    {
+                        if (text.ToLower().Contains(keyword.ToLower()))
+                        {
+                            mute = true;
+                        }
+                    }
+                    if (mute)
+                        return;
+
+                    if (!account.mentionsTimelineIds.Contains(id))
+                    {
+                        account.mentionsTimelineIds.Insert(0, id);
+                        account.mentionsTimeline.Insert(0, toot);
+
+                        mentionsTimelineChanged(this, "insert", 0, account);
+                    }
+                }
+            }
+            else if (messageType.Equals("update"))
             {
                 dynamic toot = JsonConvert.DeserializeObject((String)streamData["payload"]);
 

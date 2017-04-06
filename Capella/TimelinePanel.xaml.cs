@@ -208,15 +208,14 @@ namespace Capella
             toot.user_screen_name = (String)rawUser["acct"];
             toot.tootURL = (String)rawOrigToot["url"];
             //toot.clientString = (String)rawOrigToot["source"];
-            toot.clientString = "web";
-            toot.clientLink = "https://mastodon.social/";
-            if (!toot.clientString.Equals("web"))
+            if (rawOrigToot["application"] != null && rawOrigToot["application"].Type == JTokenType.Object)
             {
-                toot.clientLink = toot.clientString.Substring(toot.clientString.IndexOf('"') + 1);
-                toot.clientLink = toot.clientLink.Substring(0, toot.clientLink.IndexOf('"'));
-
-                toot.clientString = toot.clientString.Substring(toot.clientString.IndexOf('>') + 1);
-                toot.clientString = toot.clientString.Substring(0,toot.clientString.LastIndexOf('<'));
+                toot.clientString = rawOrigToot["application"]["name"];
+                toot.clientLink = rawOrigToot["application"]["website"];
+            } else
+            {
+                toot.clientString = "web";
+                toot.clientLink = "https://mastodon.social";
             }
 
             if (twitterAccount.accountID.Equals(toot.userID))
