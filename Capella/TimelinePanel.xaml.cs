@@ -137,15 +137,16 @@ namespace Capella
                         Console.WriteLine("Loading Timeline...");
 
                     var watch = Stopwatch.StartNew();
-                    if (isConversation)
-                        rawTimeline = MastodonAPIWrapper.sharedApiWrapper.getConversation(twitterAccount, this.conversationStartToot);
-                    /*else if (isSearch)
+                    try
                     {
-                        rawTimeline = TwitterAPIWrapper.sharedApiWrapper.searchToots(twitterAccount, this.searchQuery);
-                        rawTimeline = rawTimeline["statuses"];
-                    }*/
-                    else
-                        rawTimeline = MastodonAPIWrapper.sharedApiWrapper.getTimeline(twitterAccount, this.timelineType, this.profileID, null);
+                        if (isConversation)
+                            rawTimeline = MastodonAPIWrapper.sharedApiWrapper.getConversation(twitterAccount, this.conversationStartToot);
+                        else
+                            rawTimeline = MastodonAPIWrapper.sharedApiWrapper.getTimeline(twitterAccount, this.timelineType, this.profileID, null);
+                    } catch (Exception e2)
+                    {
+                        Console.WriteLine(e2.StackTrace);
+                    }
                     watch.Stop();
                     if (isConversation)
                         Console.WriteLine("Conversation took " + watch.ElapsedMilliseconds + "ms to load.");
@@ -262,6 +263,12 @@ namespace Capella
                 toot.numRetoots = (int)rawOrigToot["reblogs_count"];
             if (rawOrigToot["favourites_count"] != null && rawOrigToot["favourites_count"].Type == JTokenType.Integer)
                 toot.numFavorites = (int)rawOrigToot["favourites_count"];
+
+            if (rawOrigToot["spoiler_text"] != null && rawOrigToot["spoiler_text"].Type == JTokenType.String)
+            {
+                toot.rawSpoilerText = (String)rawOrigToot["spoiler_text"];
+            }
+
             try
             {
                 const string format = "MM/dd/yyyy HH:mm:ss";
@@ -647,6 +654,17 @@ namespace Capella
             storyboard.Children.Add(marginAnimation);
             storyboard.SpeedRatio *= 3.5;
             storyboard.Begin();
+        }
+
+        private void spoilerBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Button senderElement = (Button)sender;
+            Toot boundData = (Toot)senderElement.DataContext;
+            StackPanel spoilerControls = (StackPanel)senderElement.Parent;
+            StackPanel tootContents = (StackPanel)spoilerControls.Parent;
+            CSTextBlock textBlock = (CSTextBlock)tootContents.Children[1];
+            textBlock.Visibility = textBlock.Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+            senderElement.Content = (string)senderElement.Content == "Show" ? "Hide" : "Show";
         }
 
         private void quote_Click(object sender, RoutedEventArgs e)

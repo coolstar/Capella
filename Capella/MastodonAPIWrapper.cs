@@ -581,7 +581,7 @@ namespace Capella
             Console.WriteLine("Added " + added + " and skipped " + skipped);
         }
 
-        public String postToot(String tootText, String tootInReplyTo, bool sensitive, bool isPrivate, Account account)
+        public String postToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
@@ -589,27 +589,51 @@ namespace Capella
                 uploadText += "in_reply_to_id=" + sharedOAuthUtils.UrlEncode(tootInReplyTo) + "&";
             if (sensitive)
                 uploadText += "sensitive=true&";
-            if (isPrivate)
-                uploadText += "visibility=private&";
-            else
-                uploadText += "visibility=public&";
+            switch (visibility)
+            {
+                case 0:
+                    uploadText += "visibility=public&";
+                    break;
+                case 1:
+                    uploadText += "visibility=unlisted&";
+                    break;
+                case 2:
+                    uploadText += "visibility=private&";
+                    break;
+                case 3:
+                    uploadText += "visibility=direct&";
+                    break;
+            }
             uploadText += "status=" + tootText2;
             String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses", uploadText, account, false);
             return output;
         }
 
-        public String postToot(String tootText, String tootInReplyTo, bool sensitive, bool unlisted, String imageIds, Account account)
+        public String postToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, String imageIds, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
             if (tootInReplyTo != "")
                 uploadText += "in_reply_to_id=" + sharedOAuthUtils.UrlEncode(tootInReplyTo) + "&";
-            uploadText += "status=" + tootText2;
             if (sensitive)
                 uploadText += "sensitive=true&";
-            if (unlisted)
-                uploadText += "unlisted=true&";
+            switch (visibility)
+            {
+                case 0:
+                    uploadText += "visibility=public&";
+                    break;
+                case 1:
+                    uploadText += "visibility=unlisted&";
+                    break;
+                case 2:
+                    uploadText += "visibility=private&";
+                    break;
+                case 3:
+                    uploadText += "visibility=direct&";
+                    break;
+            }
             uploadText += "&media_ids[]=" + imageIds;
+            uploadText += "&status=" + tootText2;
             Console.WriteLine(uploadText);
             String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses", uploadText, account, false);
             return output;

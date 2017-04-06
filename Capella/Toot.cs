@@ -39,6 +39,8 @@ namespace Capella
         public dynamic rawExtendedEntities = null;
         public JArray orderedEntities = null;
 
+        public String rawSpoilerText = "";
+
         private bool mediaFound = false;
         private Uri mediaUri = null;
         private Uri mediaUri2 = null;
@@ -530,6 +532,44 @@ namespace Capella
                 }
                 idx++;
                 mediaCount = idx;
+            }
+        }
+
+        public String spoilerText
+        {
+            get
+            {
+                return rawSpoilerText;
+            }
+        }
+
+        public Visibility spoilerVisibility
+        {
+            get
+            {
+                return (rawSpoilerText == null || rawSpoilerText == "") ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
+        public Visibility richTextVisibility
+        {
+            get
+            {
+                return (rawSpoilerText == null || rawSpoilerText == "") ? Visibility.Visible : Visibility.Hidden;
+            }
+        }
+
+        public Thickness richTextMargin
+        {
+            get
+            {
+                if (rawSpoilerText == null || rawSpoilerText == "")
+                {
+                    return new Thickness(0, 24, 0, 0);
+                } else
+                {
+                    return new Thickness(0);
+                }
             }
         }
 

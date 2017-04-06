@@ -46,7 +46,15 @@
                             </TextBlock>
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Vertical" Margin="68,0,0,0">
-                                    <Capella:CSTextBlock Foreground="{Binding textColor}" x:Name="tootText" InlineCollection="{Binding richText}" HorizontalAlignment="Left" Margin="0,24,0,0" Padding="0,0,0,10" VerticalAlignment="Top" Background="{x:Null}"  FontSize="10pt" IsHitTestVisible="True" TextWrapping="Wrap" MinHeight="45" />
+                                    <StackPanel Orientation="Horizontal" Margin="0,24,0,0" Visibility="{Binding spoilerVisibility}">
+                                        <TextBlock Foreground="{Binding textColor}" HorizontalAlignment="Left" Padding="0" VerticalAlignment="Top" Background="{x:Null}"  FontSize="10pt" IsHitTestVisible="True" TextWrapping="Wrap">
+                                            <TextBlock.Inlines>
+                                                <Run Text="{Binding spoilerText, Mode=OneTime}"></Run>
+                                            </TextBlock.Inlines>
+                                        </TextBlock>
+                                        <Button HorizontalAlignment="Right" Margin="10,0,0,0" Click="spoilerBtn_Click">Show</Button>
+                                    </StackPanel>
+                                    <Capella:CSTextBlock Foreground="{Binding textColor}" x:Name="tootText" InlineCollection="{Binding richText}" HorizontalAlignment="Left" Margin="{Binding richTextMargin}" Visibility="{Binding richTextVisibility}" Padding="0,0,0,10" VerticalAlignment="Top" Background="{x:Null}"  FontSize="10pt" IsHitTestVisible="True" TextWrapping="Wrap" MinHeight="45" />
                                     <StackPanel Orientation="Horizontal">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="{Binding imageWidth}">
                                             <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
