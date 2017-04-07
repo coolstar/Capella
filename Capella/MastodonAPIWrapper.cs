@@ -3,10 +3,8 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -474,7 +472,6 @@ namespace Capella
         public dynamic searchUsers(Account account, String query, int count)
         {
             String output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/search", "q=" + Uri.EscapeUriString(query) + "&limit=" + count, account, true);
-            Console.WriteLine(output);
             return JsonConvert.DeserializeObject(output);
         }
 
@@ -634,7 +631,6 @@ namespace Capella
             }
             uploadText += "&media_ids[]=" + imageIds;
             uploadText += "&status=" + tootText2;
-            Console.WriteLine(uploadText);
             String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses", uploadText, account, false);
             return output;
         }
@@ -926,8 +922,6 @@ namespace Capella
 
             socket.OnMessage += (sender, e) =>
             {
-                if (streamName == "public")
-                    Console.WriteLine("Streamed Data" + e.Data);
                 handleStreamInput(e.Data, account, streamName);
             };
 
@@ -938,7 +932,6 @@ namespace Capella
             };
             
             socket.Connect();
-            Console.WriteLine("Is secure? " + socket.IsSecure);
             Console.WriteLine("Connected");
         }
 
