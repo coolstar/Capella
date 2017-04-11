@@ -12,6 +12,7 @@ using System.Windows.Media.Animation;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using System.Web;
 
 namespace Capella
 {
@@ -173,6 +174,16 @@ namespace Capella
             worker.RunWorkerAsync();
         }
 
+        private bool checkEntityOutOfBounds(int firstidx, String tagName, Toot toot)
+        {
+            if (firstidx == -1)
+                return false; //Just give up already
+            if (firstidx + tagName.Length + 1 == toot.rawText.Length)
+                return false;
+            char separatorChar = toot.rawText[firstidx + tagName.Length + 1];
+            return Char.IsLetterOrDigit(separatorChar);
+        }
+
         private Toot renderToot(dynamic rawToot, int index, bool quoted)
         {
             Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
@@ -227,6 +238,7 @@ namespace Capella
             toot.rawText = toot.rawText.Replace("<br />", "\n");
             toot.rawText = toot.rawText.Replace("</p><p>", "\n\n");
             toot.rawText = Regex.Replace(toot.rawText, "<.*?>", String.Empty);
+            toot.rawText = HttpUtility.HtmlDecode(toot.rawText);
 
             foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
             {
@@ -299,6 +311,15 @@ namespace Capella
                     acct = acct.Substring(0, acct.LastIndexOf("@"));
 
                 int firstidx = toot.rawText.IndexOf("@" + acct);
+                foreach (JObject refMention in userMentions)
+                {
+                    JArray indeces = (JArray)refMention["indices"];
+                    int index0 = (int)indeces[0];
+                    if (firstidx == index0)
+                    {
+                        firstidx = toot.rawText.IndexOf("@" + acct, firstidx+1);
+                    }
+                }
                 if (firstidx == -1)
                     continue;
                 indices.Add(firstidx);
@@ -346,12 +367,25 @@ namespace Capella
             {
                 JObject hashtag = new JObject();
                 hashtag.Add("name", tag["name"]);
-
+                    
                 JArray indices = new JArray();
 
                 String tagName = tag["name"];
 
                 int firstidx = toot.rawText.IndexOf("#" + tagName);
+                while (checkEntityOutOfBounds(firstidx, tagName, toot))
+                {
+                    firstidx = toot.rawText.IndexOf("#" + tagName, firstidx + 1);
+                }
+                foreach (JObject refHashtag in hashtags)
+                {
+                    JArray indeces = (JArray)refHashtag["indices"];
+                    int index0 = (int)indeces[0];
+                    if (firstidx == index0)
+                    {
+                        firstidx = toot.rawText.IndexOf("#" + tagName, firstidx + 1);
+                    }
+                }
                 if (firstidx == -1)
                     continue;
                 indices.Add(firstidx);
