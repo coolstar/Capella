@@ -482,7 +482,10 @@ namespace Capella
                     }
 
                     mediaFound = true;
-                    mediaUri = new Uri((String)media["preview_url"]);
+                    if (!isStartToot)
+                        mediaUri = new Uri((String)media["preview_url"]);
+                    else
+                        mediaUri = new Uri((String)media["url"]);
                     fullMediaUri = new Uri((String)media["url"]);
 
                     if (media["type"] != null)
@@ -507,7 +510,11 @@ namespace Capella
             dynamic media = rawExtendedEntities["media"];
             foreach (dynamic picture in media.Children())
             {
-                Uri uri = new Uri((String)picture["preview_url"]);
+                Uri uri = null;
+                if (!isStartToot)
+                    uri = new Uri((String)picture["preview_url"]);
+                else
+                    uri = new Uri((String)picture["url"]);
                 Uri fullUri = new Uri((String)picture["url"]);
                 switch (idx)
                 {

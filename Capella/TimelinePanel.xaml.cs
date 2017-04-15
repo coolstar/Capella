@@ -344,16 +344,25 @@ namespace Capella
                     JArray indices = new JArray();
 
                     String mediaDisplay = (String)rawMedia["text_url"];
-                    image.Add("display_url", mediaDisplay);
 
                     if (mediaDisplay == null || mediaDisplay.Length == 0)
-                        continue;
+                        mediaDisplay = "";
 
                     int firstidx = toot.rawText.IndexOf(mediaDisplay);
                     if (firstidx == -1)
-                        continue;
-                    indices.Add(firstidx);
-                    indices.Add(firstidx + mediaDisplay.Length);
+                    {
+
+                        mediaDisplay = "";
+                        firstidx = toot.rawText.Length;
+                        indices.Add(firstidx);
+                        indices.Add(firstidx);
+                    } else
+                    {
+                        indices.Add(firstidx);
+                        indices.Add(firstidx + mediaDisplay.Length);
+                    }
+
+                    image.Add("display_url", mediaDisplay);
 
                     image.Add("indices", indices);
                     media.Add(image);
