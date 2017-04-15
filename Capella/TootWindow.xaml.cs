@@ -298,7 +298,15 @@ namespace Capella
             ContextMenu accountMenu = new ContextMenu();
             foreach (Account account in MastodonAPIWrapper.sharedApiWrapper.accounts) {
                 MenuItem accountItem = new MenuItem();
-                accountItem.Header = account.myHandle;
+
+                String endpointDomain = account.endpoint;
+                if (endpointDomain.IndexOf("/") != -1)
+                {
+                    endpointDomain = endpointDomain.Substring(0, endpointDomain.IndexOf("/"));
+                }
+
+                String fullHandle = account.myHandle + "@" + endpointDomain;
+                accountItem.Header = fullHandle;
                 accountItem.Click += AccountItem_Click;
                 accountMenu.Items.Add(accountItem);
             }
