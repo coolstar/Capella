@@ -22,6 +22,7 @@ namespace Capella
         public event TimelineChanged publicTimelineChanged;
         public event TimelineChanged homeTimelineChanged;
         public event TimelineChanged mentionsTimelineChanged;
+        public event TimelineChanged userTimelineChanged;
 
         public OAuthUtils sharedOAuthUtils;
         public List<Account> accounts;
@@ -457,6 +458,33 @@ namespace Capella
                 if (mentionsTimelineChanged != null)
                     mentionsTimelineChanged(this, "refresh", 0, account);
             }
+            if (timelineType == "user" && (targetID.Equals(account.accountID) && targetID != null))
+            {
+                account.userTimeline = timeline;
+                account.userTimelineIds = new List<String>();
+                foreach (JObject rawToot in timeline.Children())
+                {
+                    JObject toot = rawToot;
+                    if (toot["reblog"] != null && toot["reblog"].Type == JTokenType.Object)
+                    {
+                        toot = (JObject)toot["reblog"];
+                    }
+                    String tootID = (String)toot["id"];
+                    String text = (String)toot["content"];
+                    bool mute = false;
+                    foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
+                    {
+                        if (text.ToLower().Contains(keyword.ToLower()))
+                        {
+                            mute = true;
+                        }
+                    }
+                    if (!mute && !account.userTimelineIds.Contains(tootID))
+                        account.userTimelineIds.Add(tootID);
+                }
+                if (userTimelineChanged != null)
+                    userTimelineChanged(this, "refresh", 0, account);
+            }
             return timeline;
         }
 
@@ -838,25 +866,44 @@ namespace Capella
                     timelineIds = account.publicTimelineIds;
                 }
 
-                if (timeline == null || timelineIds == null)
-                    return;
-
                 if (!timelineIds.Contains(id))
                 {
-                    timelineIds.Insert(0, id);
-                    timeline.Insert(0, toot);
+                    if (timeline != null && timelineIds != null)
+                    {
+                        timelineIds.Insert(0, id);
+                        timeline.Insert(0, toot);
+                    }
 
                     if (streamName == "user")
                     {
-                        account.homeTimeline = timeline;
-                        account.homeTimelineIds = timelineIds;
-                        homeTimelineChanged(this, "insert", 0, account);
+                        if (timeline != null && timelineIds != null)
+                        {
+                            account.homeTimeline = timeline;
+                            account.homeTimelineIds = timelineIds;
+                            homeTimelineChanged(this, "insert", 0, account);
+                        }
+
+                        dynamic tootAccount = toot["account"];
+                        if (account.accountID.Equals((String)tootAccount["id"]))
+                        {
+                            if (account.userTimeline != null && account.userTimelineIds != null)
+                            {
+                                account.userTimelineIds.Insert(0, id);
+                                account.userTimeline.Insert(0, toot);
+                            }
+
+                            userTimelineChanged(this, "insert", 0, account);
+                            Console.WriteLine("Got Current User's Toot");
+                        }
                     }
                     else if (streamName == "public")
                     {
-                        account.publicTimeline = timeline;
-                        account.publicTimelineIds = timelineIds;
-                        publicTimelineChanged(this, "insert", 0, account);
+                        if (timeline != null && timelineIds != null)
+                        {
+                            account.publicTimeline = timeline;
+                            account.publicTimelineIds = timelineIds;
+                            publicTimelineChanged(this, "insert", 0, account);
+                        }
                     }
                 }
             }
@@ -882,9 +929,6 @@ namespace Capella
                         mentionsTimelineChanged(this, "delete", indexToDelete, account);
                 }
 
-                if (account.homeTimeline == null || account.homeTimelineIds == null)
-                    return;
-
                 indexToDelete = account.homeTimelineIds.IndexOf(id);
                 if (indexToDelete >= 0)
                 {
@@ -892,6 +936,15 @@ namespace Capella
                     account.homeTimeline.RemoveAt(indexToDelete);
                     if (homeTimelineChanged != null)
                         homeTimelineChanged(this, "delete", indexToDelete, account);
+                }
+
+                indexToDelete = account.userTimelineIds.IndexOf(id);
+                if (indexToDelete >= 0)
+                {
+                    account.userTimelineIds.RemoveAt(indexToDelete);
+                    account.userTimeline.RemoveAt(indexToDelete);
+                    if (userTimelineChanged != null)
+                        userTimelineChanged(this, "delete", indexToDelete, account);
                 }
             }
         }

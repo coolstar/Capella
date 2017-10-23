@@ -152,6 +152,7 @@ namespace Capella
                     if (timelineType != "home" && timelineType != "mentions")
                         this.renderTimeline(rawTimeline, twitterAccount);
                 };
+            Account mastodonAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
             if (!subscribedToStream && timelineType == "public")
             {
                 MastodonAPIWrapper.sharedApiWrapper.publicTimelineChanged += this.renderTimelineFromStream;
@@ -165,6 +166,11 @@ namespace Capella
             if (!subscribedToStream && timelineType == "mentions")
             {
                 MastodonAPIWrapper.sharedApiWrapper.mentionsTimelineChanged += this.renderTimelineFromStream;
+                subscribedToStream = true;
+            }
+            if (!subscribedToStream && timelineType == "user" && profileID.Equals(mastodonAccount.accountID))
+            {
+                MastodonAPIWrapper.sharedApiWrapper.userTimelineChanged += this.renderTimelineFromStream;
                 subscribedToStream = true;
             }
             if (subscribedToStream || isConversation || isSearch)
@@ -490,6 +496,10 @@ namespace Capella
                     rawTimeline = account.homeTimeline;
                 if (this.timelineType == "mentions")
                     rawTimeline = account.mentionsTimeline;
+                if (this.timelineType == "user" && account.accountID.Equals(profileID))
+                {
+                    rawTimeline = account.userTimeline;
+                }
                 renderTimeline(rawTimeline, account);
             }
             if (action == "insert")
@@ -500,6 +510,10 @@ namespace Capella
                     this.renderToot(account.homeTimeline[0], 0, false);
                 if (this.timelineType == "mentions")
                     this.renderToot(account.mentionsTimeline[0], 0, false);
+                if (this.timelineType == "user" && account.accountID.Equals(profileID))
+                {
+                    this.renderToot(account.userTimeline[0], 0, false);
+                }
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     timelineBox.ItemsSource = null;

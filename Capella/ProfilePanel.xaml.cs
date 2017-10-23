@@ -175,7 +175,7 @@ namespace Capella
             tootsPanel.twitterAccountToken = twitterAccountToken;
             tootsPanel.navController = navController;
             tootsPanel.timelineType = "user";
-            tootsPanel.profileID = " "+(String)profile.id;
+            tootsPanel.profileID = ""+(String)profile.id;
             tootsPanel.Height = contents.Height;
             tootsPanel.hideTopBar();
             tootsPanel.refreshTimeline();
