@@ -1,5 +1,7 @@
 # Capella
 
+[![Build Status](https://ci.appveyor.com/project/cybercatgurrl/capella/)](https://ci.appveyor.com/api/projects/status/32r7s2skrgm9ubva?svg=true)
+
 Capella, a social media client for Mastodon
 
 https://coolstar.org/capella

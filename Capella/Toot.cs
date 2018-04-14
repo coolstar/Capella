@@ -55,6 +55,7 @@ namespace Capella
         private Uri rawMediaUri = null;
 
         public bool isRetooted, isFavorited = false;
+        public bool isSensitive = false;
         public bool hasQuotedToot = false;
         public Toot quotedToot;
         public bool hasLocation;
@@ -564,6 +565,16 @@ namespace Capella
             }
         }
 
+        public Visibility mediaVisibility
+        {
+            get
+            {
+                if (mediaFound && !isSensitive)
+                    return Visibility.Visible;
+                return Visibility.Hidden;
+            }
+        }
+
         public Thickness richTextMargin
         {
             get
@@ -865,16 +876,6 @@ namespace Capella
                 if (mediaCount > 3)
                     return new BitmapImage(mediaUri4);
                 return null;
-            }
-        }
-
-        public Visibility mediaVisibility
-        {
-            get
-            {
-                if (mediaFound)
-                    return Visibility.Visible;
-                return Visibility.Collapsed;
             }
         }
 

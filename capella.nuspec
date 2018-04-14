@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>capella</id>
+    <version>0.0.0</version>
+    <title>Capella</title>
+    <authors>Chloe Stars</authors>
+    <owners>Chloe Stars</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A Mastodon client.</description>
+  </metadata>
+  <files>
+    <file src="lib\net45\da\CrashReporter.NET.resources.dll" target="lib\net45\da\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\de\CrashReporter.NET.resources.dll" target="lib\net45\de\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\es\CrashReporter.NET.resources.dll" target="lib\net45\es\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\fr\CrashReporter.NET.resources.dll" target="lib\net45\fr\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\it\CrashReporter.NET.resources.dll" target="lib\net45\it\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\ko\CrashReporter.NET.resources.dll" target="lib\net45\ko\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\nl\CrashReporter.NET.resources.dll" target="lib\net45\nl\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\pl\CrashReporter.NET.resources.dll" target="lib\net45\pl\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\ru\CrashReporter.NET.resources.dll" target="lib\net45\ru\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\sv\CrashReporter.NET.resources.dll" target="lib\net45\sv\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\tr\CrashReporter.NET.resources.dll" target="lib\net45\tr\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\Capella.exe" target="lib\net45\Capella.exe" />
+    <file src="lib\net45\ControlzEx.dll" target="lib\net45\ControlzEx.dll" />
+    <file src="lib\net45\CrashReporter.NET.dll" target="lib\net45\CrashReporter.NET.dll" />
+    <file src="lib\net45\DeltaCompressionDotNet.dll" target="lib\net45\DeltaCompressionDotNet.dll" />
+    <file src="lib\net45\DeltaCompressionDotNet.MsDelta.dll" target="lib\net45\DeltaCompressionDotNet.MsDelta.dll" />
+    <file src="lib\net45\DeltaCompressionDotNet.PatchApi.dll" target="lib\net45\DeltaCompressionDotNet.PatchApi.dll" />
+    <file src="lib\net45\HtmlAgilityPack.dll" target="lib\net45\HtmlAgilityPack.dll" />
+    <file src="lib\net45\MahApps.Metro.dll" target="lib\net45\MahApps.Metro.dll" />
+    <file src="lib\net45\Microsoft.Toolkit.Uwp.Notifications.dll" target="lib\net45\Microsoft.Toolkit.Uwp.Notifications.dll" />
+    <file src="lib\net45\Mono.Cecil.dll" target="lib\net45\Mono.Cecil.dll" />
+    <file src="lib\net45\Mono.Cecil.Mdb.dll" target="lib\net45\Mono.Cecil.Mdb.dll" />
+    <file src="lib\net45\Mono.Cecil.Pdb.dll" target="lib\net45\Mono.Cecil.Pdb.dll" />
+    <file src="lib\net45\Mono.Cecil.Rocks.dll" target="lib\net45\Mono.Cecil.Rocks.dll" />
+    <file src="lib\net45\Newtonsoft.Json.dll" target="lib\net45\Newtonsoft.Json.dll" />
+    <file src="lib\net45\NuGet.Squirrel.dll" target="lib\net45\NuGet.Squirrel.dll" />
+    <file src="lib\net45\OsInfo.dll" target="lib\net45\OsInfo.dll" />
+    <file src="lib\net45\SharpCompress.dll" target="lib\net45\SharpCompress.dll" />
+    <file src="lib\net45\Splat.dll" target="lib\net45\Splat.dll" />
+    <file src="lib\net45\Squirrel.dll" target="lib\net45\Squirrel.dll" />
+    <file src="lib\net45\System.Drawing.Primitives.dll" target="lib\net45\System.Drawing.Primitives.dll" />
+    <file src="lib\net45\System.Windows.Interactivity.dll" target="lib\net45\System.Windows.Interactivity.dll" />
+    <file src="lib\net45\TaskDialog.dll" target="lib\net45\TaskDialog.dll" />
+    <file src="lib\net45\websocket-sharp.dll" target="lib\net45\websocket-sharp.dll" />
+  </files>
+</package>

@@ -55,7 +55,7 @@
                                         <Button HorizontalAlignment="Right" Margin="10,0,0,0" Click="spoilerBtn_Click">Show</Button>
                                     </StackPanel>
                                     <Capella:CSTextBlock Foreground="{Binding textColor}" x:Name="tootText" InlineCollection="{Binding richText}" HorizontalAlignment="Left" Margin="{Binding richTextMargin}" Visibility="{Binding richTextVisibility}" Padding="0,0,0,10" VerticalAlignment="Top" Background="{x:Null}"  FontSize="10pt" IsHitTestVisible="True" TextWrapping="Wrap" MinHeight="45" />
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding mediaVisibility}">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="{Binding imageWidth}">
                                             <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
                                             <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Bottom" Source="{Binding mediaSource2}" MouseLeftButtonUp="Image2_MouseLeftButtonUp" Margin="0,2,0,0"></Image>

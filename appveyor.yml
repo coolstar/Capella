@@ -1,0 +1,59 @@
+version: 0.8.{build}
+image: Visual Studio 2017
+
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+
+platform:
+  - Any CPU
+
+configuration:
+  - Release
+
+build:
+  parallel: true
+  project: Capella.sln
+  
+before_build:
+  - nuget restore
+  
+artifacts:
+  - path: Releases\Setup.exe
+    name: setup
+  - path: Releases\capella-%APPVEYOR_BUILD_VERSION%-full.nupkg
+    name: full nupkg
+  - path: Releases\RELEASES
+    name: releases
+    
+after_build:
+  - 7z a capella.zip %APPVEYOR_BUILD_FOLDER%\Capella\bin\%CONFIGURATION%\*.*
+  - mkdir lib\net45
+  - xcopy %APPVEYOR_BUILD_FOLDER%\Capella\bin\%CONFIGURATION% lib\net45 /s /e /h
+  - nuget pack capella.nuspec -Version %APPVEYOR_BUILD_VERSION% -Properties Configuration=Release
+  - .\packages\squirrel.windows.1.7.9\tools\squirrel --releasify capella.%APPVEYOR_BUILD_VERSION%.nupkg
+
+deploy:
+  - release: "v$(appveyor_build_version) release"
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    force_update: true
+    description: |
+      # New features:
+      * Windows 10 Toast Notifications
+      # Known issues
+      * Windows 7 compatibility broken
+    provider: GitHub
+    auth_token:
+      secure: FsKnR43Zii08An/ZRYLWntg4qBSiLEqamIul0nAT4Qs3zdt3PwIAlKZhA/uFo2m6
+    artifact: Releases\capella-$(appveyor_build_version)-full.nupkg, Releases\Setup.exe, Releases\RELEASES
+    draft: false
+    prerelease: false
+    on:
+      branch: master
+      appveyor_repo_tag: true
+    
+cache:
+  - Releases
