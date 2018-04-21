@@ -207,7 +207,7 @@ namespace Capella
                 rawOrigToot = rawToot["reblog"];
                 rawUser = rawOrigToot["account"];
             }
-            if (""+rawOrigToot["id"] == conversationStartToot && quoted == false)
+            if ("" + rawOrigToot["id"] == conversationStartToot && quoted == false)
                 toot.isStartToot = true;
             toot.userID = "" + rawUser["id"];
             toot.tootID = (String)rawOrigToot["id"];
@@ -269,6 +269,8 @@ namespace Capella
                 toot.numRetoots = (int)rawOrigToot["reblogs_count"];
             if (rawOrigToot["favourites_count"] != null && rawOrigToot["favourites_count"].Type == JTokenType.Integer)
                 toot.numFavorites = (int)rawOrigToot["favourites_count"];
+            if (rawOrigToot["sensitive"] != null && rawOrigToot["sensitive"].Type == JTokenType.Boolean)
+                toot.isSensitive = (bool)rawOrigToot["sensitive"];
 
             if (rawOrigToot["spoiler_text"] != null && rawOrigToot["spoiler_text"].Type == JTokenType.String)
             {
@@ -708,7 +710,10 @@ namespace Capella
             StackPanel spoilerControls = (StackPanel)senderElement.Parent;
             StackPanel tootContents = (StackPanel)spoilerControls.Parent;
             CSTextBlock textBlock = (CSTextBlock)tootContents.Children[1];
+            StackPanel mediaContents = (StackPanel)tootContents.Children[2];
             textBlock.Visibility = textBlock.Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+            mediaContents.Visibility = mediaContents.Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+
             senderElement.Content = (string)senderElement.Content == "Show" ? "Hide" : "Show";
         }
 

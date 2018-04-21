@@ -3,8 +3,30 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using WPFGrowlNotification;
 
+using Windows.UI.Notifications;
+using Windows.Data.Xml.Dom;
+using System.Net;
+using Microsoft.Toolkit.Uwp.Notifications;
+using System.Runtime.InteropServices;
+using DesktopNotifications;
+using System.IO;
+using OsInfo;
+using OsInfo.Extensions;
+
 namespace Capella
 {
+    // The GUID CLSID must be unique to your app. Create a new GUID if copying this code.
+    [ClassInterface(ClassInterfaceType.None)]
+    [ComSourceInterfaces(typeof(INotificationActivationCallback))]
+    [Guid("85445821-9de4-4775-808f-13305a45e9a7"), ComVisible(true)]
+    public class NotificationsActivator : NotificationActivator
+    {
+        public override void OnActivated(string invokedArgs, NotificationUserInput userInput, string appUserModelId)
+        {
+            // TODO: Handle activation
+        }
+    }
+
     public class NotificationsHandler
     {
         //List<MentionsNotification> notifications = new List<MentionsNotification>();
@@ -12,6 +34,9 @@ namespace Capella
         GrowlNotifiactions growlNotifications = new GrowlNotifiactions();
         private const double topOffset = 20;
         private const double leftOffset = 380;
+        private const String APP_ID = "com.squirrel.capella.Capella";
+        OperatingSystem currentOS = Environment.OSVersion;
+
         public NotificationsHandler()
         {
             sharedNotificationsHandler = this;
@@ -53,12 +78,79 @@ namespace Capella
             String content = toot["content"];
             content = Regex.Replace(content, "<.*?>", String.Empty);
 
-            Notification notification = new Notification {
-                Title = (String)user["display_name"] + " (" + "@" + (String)user["acct"] + ") " + typeStr,
-                ImageUrl = ((String)user["avatar"]),
-                Message = content
-            };
-            growlNotifications.AddNotification(notification);
+            if (currentOS.IsEqualTo(OsVersion.Win7))
+            {
+                WPFGrowlNotification.Notification notification = new WPFGrowlNotification.Notification
+                {
+                    Title = (String)user["display_name"] + " (" + "@" + (String)user["acct"] + ") " + typeStr,
+                    ImageUrl = ((String)user["avatar"]),
+                    Message = content
+                };
+                growlNotifications.AddNotification(notification);
+            }
+            else
+            {
+                // Construct notification
+                WebClient webClient = new WebClient();
+                String tempFile = Path.GetTempFileName();
+                webClient.DownloadFileCompleted += (sender, e) =>
+                {
+                    ToastVisual visual = new ToastVisual()
+                    {
+                        BindingGeneric = new ToastBindingGeneric()
+                        {
+                            Children =
+                        {
+                        new AdaptiveText()
+                        {
+                            Text = (String)user["display_name"] + " " + typeStr,
+                            HintMaxLines = 3
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = WebUtility.HtmlDecode(content)
+                        }
+                        },
+
+                        /*Attribution = new ToastGenericAttributionText()
+                        {
+                            Text = $"Via {(String)toot["application"]["name"]}"
+                        },*/
+
+                            AppLogoOverride = new ToastGenericAppLogo()
+                            {
+                                Source = tempFile,
+                                HintCrop = ToastGenericAppLogoCrop.Circle
+                            }
+                        }
+
+                    };
+
+                // Now we can construct the final toast content
+                ToastContent toastContent = new ToastContent()
+                    {
+                        Visual = visual,
+                    //Actions = actions,
+
+                    // Arguments when the user taps body of toast
+                    /*Launch = new QueryString()
+                    {
+                        { "action", "viewConversation" },
+                        { "conversationId", conversationId.ToString() }
+
+                    }.ToString()*/
+                    };
+                // And create the toast notification
+                XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(toastContent.GetContent());
+                    var toast = new ToastNotification(xmlDoc);
+                    ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
+                    webClient.Dispose();
+                };
+                webClient.DownloadFileAsync(new Uri((String)user["avatar"]), tempFile);
+            }
+
             /*MentionsNotification notification = new MentionsNotification();
             notification.tootCell.tootID = tootNotification["id_str"];
             notification.tootCell.entities = tootNotification["entities"];
