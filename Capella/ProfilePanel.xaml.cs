@@ -542,7 +542,14 @@ namespace Capella
                         }
                         else
                         {
-                            profileActionBtn.Content = "Follow";
+                            if ((bool)profile["locked"] == true)
+                            {
+                                profileActionBtn.Content = "Request Follow";
+                            }
+                            else
+                            {
+                                profileActionBtn.Content = "Follow";
+                            }
                         }
                     }
                     profileActionBtn.IsEnabled = true;
