@@ -160,13 +160,29 @@ namespace Capella
             } else
             {
                 bool isFollowing = (bool)relationship["following"];
+                bool requested = (bool)relationship["requested"];
                 if (isFollowing)
                 {
                     profileActionBtn.Content = "Unfollow";
                     actionBtnType = 1;
                 } else
                 {
-                    profileActionBtn.Content = "Follow";
+                    if (requested)
+                    {
+                        profileActionBtn.Content = "Follow Requested";
+                    }
+                    else
+                    {
+                        if ((bool)profile["locked"] == true)
+                        {
+                            profileActionBtn.Content = "Request Follow";
+                        }
+                        else
+                        {
+                            profileActionBtn.Content = "Follow";
+                        }
+                    }
+                    
                     actionBtnType = 2;
                 }
             }
@@ -479,12 +495,23 @@ namespace Capella
             } else if (actionBtnType == 1 || actionBtnType == 2)
             {
                 Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
+                dynamic profile = null;
+                dynamic relationship = null;
                 bool isFollowing = false;
                 BackgroundWorker followAction = new BackgroundWorker();
                 profileActionBtn.IsEnabled = false;
                 followAction.DoWork += (sender2, e2) =>
                 {
                     MastodonAPIWrapper.sharedApiWrapper.followAccount(profileUserID, twitterAccount, actionBtnType == 1 ? false : true);
+
+                    if (this.profileUserID == null || this.profileUserID == "")
+                        this.profileUserID = twitterAccount.accountID;
+                    profile = MastodonAPIWrapper.sharedApiWrapper.getProfile(this.profileUserID, twitterAccount);
+                    relationship = MastodonAPIWrapper.sharedApiWrapper.getRelationship(this.profileUserID, twitterAccount);
+
+                    if (relationship != null)
+                        relationship = relationship[0];
+
                     isFollowing = MastodonAPIWrapper.sharedApiWrapper.followAccount(profileUserID, twitterAccount, actionBtnType == 1 ? false : true);
                     if (isFollowing)
                         actionBtnType = 1;
@@ -494,15 +521,32 @@ namespace Capella
                 };
                 followAction.RunWorkerCompleted += (sender2, e2) =>
                 {
+                    bool requested = (bool)relationship["requested"];
                     if (actionBtnType == 1)
                     {
-                        profileActionBtn.Content = "Unfollow";
+                        // these may be reversed
+                        if ((bool)profile["locked"] == true)
+                        {
+                            profileActionBtn.Content = "Request Follow";
+                        }
+                        else
+                        {
+                            profileActionBtn.Content = "Unfollow";
+                        }
                     }
                     else if (actionBtnType == 2)
                     {
-                        profileActionBtn.Content = "Follow";
+                        if (requested)
+                        {
+                            profileActionBtn.Content = "Follow Requested";
+                        }
+                        else
+                        {
+                            profileActionBtn.Content = "Follow";
+                        }
                     }
                     profileActionBtn.IsEnabled = true;
+
                 };
                 followAction.RunWorkerAsync();
             }
