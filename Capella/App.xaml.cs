@@ -104,7 +104,7 @@ namespace Capella
         }
         async static void update()
         {
-            using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/cybercatgurrl/Capella"))
+            using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/coolstar/Capella"))
             {
                 try
                 {

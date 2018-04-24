@@ -34,7 +34,7 @@ after_build:
   - mkdir lib\net45
   - xcopy %APPVEYOR_BUILD_FOLDER%\Capella\bin\%CONFIGURATION% lib\net45 /s /e /h
   - nuget pack capella.nuspec -Version %APPVEYOR_BUILD_VERSION% -Properties Configuration=Release
-  - .\packages\squirrel.windows.1.7.9\tools\squirrel --releasify capella.%APPVEYOR_BUILD_VERSION%.nupkg
+  - .\packages\squirrel.windows.1.8.0\tools\squirrel --releasify capella.%APPVEYOR_BUILD_VERSION%.nupkg
 
 deploy:
   - release: "v$(appveyor_build_version) release"
@@ -43,8 +43,10 @@ deploy:
     description: |
       # New features:
       * Windows 10 Toast Notifications
+      * Follow Request status support
+      * NSFW hiding support
       # Known issues
-      * Windows 7 compatibility broken
+      * Windows 7 compatibility may be broken
     provider: GitHub
     auth_token:
       secure: FsKnR43Zii08An/ZRYLWntg4qBSiLEqamIul0nAT4Qs3zdt3PwIAlKZhA/uFo2m6

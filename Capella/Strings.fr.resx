@@ -124,10 +124,10 @@
     <value>Bloquer</value>
   </data>
   <data name="Boosted" xml:space="preserve">
-    <value>boosted you</value>
+    <value>a partagé votre statut :</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annuler</value>
   </data>
   <data name="CopyLinktoPost" xml:space="preserve">
     <value>Copy Link to Post</value>
@@ -139,7 +139,7 @@
     <value>Direct</value>
   </data>
   <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
+    <value>Modifier</value>
   </data>
   <data name="Email" xml:space="preserve">
     <value>Email:</value>
@@ -148,10 +148,10 @@
     <value>Endpoint</value>
   </data>
   <data name="Favorited" xml:space="preserve">
-    <value>a ajouté à ses favoris</value>
+    <value>a ajouté à ses favoris :</value>
   </data>
   <data name="Follow" xml:space="preserve">
-    <value>Follow</value>
+    <value>Suivre</value>
   </data>
   <data name="Following" xml:space="preserve">
     <value>Following</value>
@@ -161,7 +161,7 @@
     <value>Mark Sensitive</value>
   </data>
   <data name="Mentioned" xml:space="preserve">
-    <value>vous a mentionné⋅e</value>
+    <value>vous a mentionné⋅e :</value>
   </data>
   <data name="Mentions" xml:space="preserve">
     <value>Mentions</value>
@@ -195,7 +195,7 @@
     <value>Public</value>
   </data>
   <data name="RequestFollow" xml:space="preserve">
-    <value>RequestFollow</value>
+    <value>Request Follow</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
@@ -216,7 +216,7 @@
     <value>Unfollow</value>
   </data>
   <data name="Unlisted" xml:space="preserve">
-    <value>Unlisted</value>
+    <value>Non-listé</value>
   </data>
   <data name="Visibility" xml:space="preserve">
     <value>Visibility</value>
