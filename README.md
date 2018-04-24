@@ -1,6 +1,6 @@
 # Capella
 
-[![Build Status](https://ci.appveyor.com/project/cybercatgurrl/capella/)](https://ci.appveyor.com/api/projects/status/32r7s2skrgm9ubva?svg=true)
+[![Build Status](https://ci.appveyor.com/api/projects/status/971u5l7kgrtfmln0/branch/master?svg=true)](https://ci.appveyor.com/project/cybercatgurrl/capella-kqm0m/branch/master)
 
 Capella, a social media client for Mastodon
 
