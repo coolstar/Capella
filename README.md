@@ -1,5 +1,6 @@
 # Capella
 
+[![Releases](https://img.shields.io/github/release/coolstar/Capella.svg)](https://github.com/coolstar/Capella/releases)
 [![Build Status](https://ci.appveyor.com/api/projects/status/971u5l7kgrtfmln0/branch/master?svg=true)](https://ci.appveyor.com/project/cybercatgurrl/capella-kqm0m/branch/master)
 
 Capella, a social media client for Mastodon

@@ -88,6 +88,15 @@ namespace Capella {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Boosted By.
+        /// </summary>
+        internal static string BoostedBy {
+            get {
+                return ResourceManager.GetString("BoostedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string Cancel {

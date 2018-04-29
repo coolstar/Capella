@@ -259,7 +259,7 @@ namespace Capella
 
                 timelinePanel = new TimelinePanel();
                 timelinePanel.twitterAccountToken = twitterAccount.accessToken;
-                timelinePanel.setTitle("Mentions");
+                timelinePanel.setTitle(Strings.Mentions);
                 timelinePanel.timelineType = "mentions";
                 //timelinePanel.refreshTimeline();
 
@@ -299,7 +299,7 @@ namespace Capella
 
                 timelinePanel = new TimelinePanel();
                 timelinePanel.twitterAccountToken = twitterAccount.accessToken;
-                timelinePanel.setTitle("Public");
+                timelinePanel.setTitle(Strings.PublicTimeline);
                 timelinePanel.timelineType = "public";
                 //timelinePanel.refreshTimeline();
                 navController = new NavController(timelinePanel);

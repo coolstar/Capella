@@ -126,6 +126,9 @@
   <data name="Boosted" xml:space="preserve">
     <value>boosted you</value>
   </data>
+  <data name="BoostedBy" xml:space="preserve">
+    <value>Boosted By</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>

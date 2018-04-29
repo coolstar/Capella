@@ -198,7 +198,7 @@
     <value>Request Follow</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Chercher</value>
   </data>
   <data name="SearchFull" xml:space="preserve">
     <value>Search Mastodon…</value>

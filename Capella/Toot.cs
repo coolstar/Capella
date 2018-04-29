@@ -553,7 +553,7 @@ namespace Capella
         {
             get
             {
-                return (rawSpoilerText == null || rawSpoilerText == "") ? Visibility.Collapsed : Visibility.Visible;
+                return (!isSensitive) ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
@@ -561,7 +561,7 @@ namespace Capella
         {
             get
             {
-                return (rawSpoilerText == null || rawSpoilerText == "") ? Visibility.Visible : Visibility.Hidden;
+                return (!isSensitive) ? Visibility.Visible : Visibility.Hidden;
             }
         }
 
