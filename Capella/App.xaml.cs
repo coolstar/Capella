@@ -34,7 +34,7 @@ namespace Capella
 
             Console.WriteLine("Initializing Capella...");
 
-            if (accountExists())
+            if (false)
                 this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
             else
                 this.StartupUri = new Uri("WelcomeWindow.xaml", UriKind.Relative);
