@@ -45,7 +45,17 @@ namespace Capella
             // Register COM server and activator type
             DesktopNotificationManagerCompat.RegisterActivator<NotificationsActivator>();
 
-            update();
+            Task.Run(async () =>
+            {
+                using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/cybercatgurrl/Capella"))
+                {
+                    await mgr.Result.UpdateApp();
+                }
+            });
+
+            // Set the current user interface culture to the specific culture French
+            System.Threading.Thread.CurrentThread.CurrentUICulture =
+                        new System.Globalization.CultureInfo("fr");
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -101,20 +111,6 @@ namespace Capella
             if (MastodonAPIWrapper.sharedApiWrapper.accounts.Count > 0)
                 return true;
             return false;
-        }
-        async static void update()
-        {
-            using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/coolstar/Capella"))
-            {
-                try
-                {
-                    await mgr.Result.UpdateApp();
-                }
-                catch
-                {
-                    Console.WriteLine("couldn't find update channel");
-                }
-            }
         }
     }
 }
