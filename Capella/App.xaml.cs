@@ -34,7 +34,7 @@ namespace Capella
 
             Console.WriteLine("Initializing Capella...");
 
-            if (false)
+            if (accountExists())
                 this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
             else
                 this.StartupUri = new Uri("WelcomeWindow.xaml", UriKind.Relative);
@@ -45,13 +45,7 @@ namespace Capella
             // Register COM server and activator type
             DesktopNotificationManagerCompat.RegisterActivator<NotificationsActivator>();
 
-            Task.Run(async () =>
-            {
-                using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/cybercatgurrl/Capella"))
-                {
-                    await mgr.Result.UpdateApp();
-                }
-            });
+            update(); 
 
             // Set the current user interface culture to the specific culture French
             System.Threading.Thread.CurrentThread.CurrentUICulture =
@@ -111,6 +105,13 @@ namespace Capella
             if (MastodonAPIWrapper.sharedApiWrapper.accounts.Count > 0)
                 return true;
             return false;
+        }
+        async static void update()
+        {
+            using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/cybercatgurrl/Capella"))
+            {
+                await mgr.Result.UpdateApp();
+            }
         }
     }
 }
