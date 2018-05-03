@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json.Linq;
 
-namespace Capella
+namespace Capella.Models
 {
     public class Toot
     {
