@@ -4,6 +4,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Capella.Models
 {
+    /// <summary>
+    /// Logged in User account.
+    /// </summary>
     public class Account
     {
         public String accessToken;

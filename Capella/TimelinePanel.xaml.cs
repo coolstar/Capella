@@ -240,13 +240,7 @@ namespace Capella
             {
                 //no profile pic ;-;
             }
-            toot.rawText = (String)rawOrigToot["content"];
-            toot.rawText = toot.rawText.Replace("<br>", "\n");
-            toot.rawText = toot.rawText.Replace("<br/>", "\n");
-            toot.rawText = toot.rawText.Replace("<br />", "\n");
-            toot.rawText = toot.rawText.Replace("</p><p>", "\n\n");
-            toot.rawText = Regex.Replace(toot.rawText, "<.*?>", String.Empty);
-            toot.rawText = HttpUtility.HtmlDecode(toot.rawText);
+            toot.content = (String)rawOrigToot["content"];
 
             foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
             {

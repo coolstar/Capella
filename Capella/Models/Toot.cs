@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace Capella.Models
 {
@@ -20,9 +22,29 @@ namespace Capella.Models
         public String twitterAccountToken;
 
         public NavController displayNavController;
-        public String tootID = "";
-        public String tootURL = "";
-        public String rawText = "";
+
+        [JsonProperty("id")]
+        public String tootID;
+        [JsonProperty("uri")]
+        public String tootURL;
+        [JsonProperty("content")]
+        public string content;
+
+        public String rawText
+        {
+            get
+            {
+                var text = content;
+                text = text.Replace("<br>", "\n");
+                text = text.Replace("<br/>", "\n");
+                text = text.Replace("<br />", "\n");
+                text = text.Replace("</p><p>", "\n\n");
+                text = Regex.Replace(text, "<.*?>", String.Empty);
+                text = HttpUtility.HtmlDecode(text);
+                return text;
+            }
+        }
+
         public String origuser_screen_name = "";
         public String origuser_name = "";
         public String userID = "";
@@ -1003,7 +1025,7 @@ namespace Capella.Models
 
             String usersToReplyTo = this.user_display_screen_name;
 
-            if (this.isRetootedStatus)
+            if (isRetootedStatus)
             {
                 usersToReplyTo += " @" + origuser_screen_name;
             }
