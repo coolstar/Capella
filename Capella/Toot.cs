@@ -63,22 +63,6 @@ namespace Capella
 
         public int numRetoots = 0, numFavorites = 0;
 
-        ~Toot()
-        {
-            displayNavController = null;
-            tootID = null;
-            rawText = null;
-            origuser_screen_name = null;
-            origuser_name = null;
-            userID = null;
-            kuser_screen_name = null;
-            kuser_name = null;
-            user_profilepicurl = null;
-            rawEntities = null;
-            orderedEntities = null;
-            mediaUri = null;
-        }
-
         public Color firstBackgroundColor
         {
             get
