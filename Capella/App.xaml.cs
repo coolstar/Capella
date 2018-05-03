@@ -8,6 +8,7 @@ using CrashReporterDotNET;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Text;
+using System.IO;
 
 namespace Capella
 {
@@ -45,7 +46,12 @@ namespace Capella
             // Register COM server and activator type
             DesktopNotificationManagerCompat.RegisterActivator<NotificationsActivator>();
 
-            update(); 
+            string updateExeLocation = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(typeof(App).Assembly.Location)));
+            if (File.Exists(updateExeLocation))
+            {
+                // Don't try to update with Squirrel if we weren't deployed by Squirrel.
+                update(); 
+            }
 
             // Set the current user interface culture to the specific culture French
             System.Threading.Thread.CurrentThread.CurrentUICulture =
