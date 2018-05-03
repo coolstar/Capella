@@ -112,8 +112,8 @@ namespace Capella
                             mediaIds.Add((String)mediaInfo["id"]);
                             mediaURLs.Add((String)mediaInfo["text_url"]);
                         }
-                        String mediaIdsStr = string.Join("&media_ids[]=", ((String[])mediaIds.ToArray(Type.GetType("System.String"))));
-                        String mediaUrlsStr = string.Join("\n", ((String[])mediaURLs.ToArray(Type.GetType("System.String"))));
+                        String mediaIdsStr = string.Join("&media_ids[]=", ((String[])mediaIds.ToArray(typeof(string))));
+                        String mediaUrlsStr = string.Join("\n", ((String[])mediaURLs.ToArray(typeof(string))));
                         text += "\n" + mediaUrlsStr;
                         MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, isSensitive, visibility, mediaIdsStr, twitterAccount);
                     }
