@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Capella.Models;
 
 namespace Capella
 {
@@ -669,12 +670,12 @@ namespace Capella
             }*/
 
             this.OnContentRendered(sender, e);
-            foreach (Account twitterAccount in MastodonAPIWrapper.sharedApiWrapper.accounts) {
-                Console.WriteLine("Start Streaming Thread for {0}...", twitterAccount.accessToken);
+            foreach (Account mastodonAccount in MastodonAPIWrapper.sharedApiWrapper.accounts) {
+                Console.WriteLine("Start Streaming Thread for {0}...", mastodonAccount.accessToken);
                 BackgroundWorker worker = new BackgroundWorker();
                 worker.DoWork += (sender2, e2) =>
                 {
-                    Console.WriteLine("Start Streaming for {0}...", twitterAccount.accessToken);
+                    Console.WriteLine("Start Streaming for {0}...", mastodonAccount.accessToken);
                     /*OAuthUtils utils = new OAuthUtils();
 
                     MastodonAPIWrapper.sharedApiWrapper.getTimeline(twitterAccount, "mentions", "", "");
@@ -689,7 +690,7 @@ namespace Capella
                         Thread.Sleep(10 * 1000);
                     }*/
 
-                    MastodonAPIWrapper.sharedApiWrapper.startStreaming(twitterAccount);
+                    MastodonAPIWrapper.sharedApiWrapper.startStreaming(mastodonAccount);
                     //utils.StreamGet("https://userstream.twitter.com/1.1/user.json", "stringify_friend_ids=true", TwitterAPIWrapper.sharedApiWrapper.handleStreamInput, twitterAccount);
                 };
                 worker.RunWorkerAsync();

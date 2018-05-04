@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using System.Security.Authentication;
+using Capella.Models;
 
 namespace Capella
 {

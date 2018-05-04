@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capella.Models;
+using System;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;

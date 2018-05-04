@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
+using Capella.Models;
 
 namespace Capella
 {
@@ -37,10 +38,12 @@ namespace Capella
 
         public ProfilePanel createCopy()
         {
-            ProfilePanel panelCopy = new ProfilePanel();
-            panelCopy.twitterAccountToken = this.twitterAccountToken;
-            panelCopy.profileScreenName = this.profileScreenName;
-            panelCopy.profileUserID = this.profileUserID;
+            ProfilePanel panelCopy = new ProfilePanel
+            {
+                twitterAccountToken = this.twitterAccountToken,
+                profileScreenName = this.profileScreenName,
+                profileUserID = this.profileUserID
+            };
             return panelCopy;
         }
 

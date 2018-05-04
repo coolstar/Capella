@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capella.Models;
+using System;
 using System.Windows.Controls;
 
 namespace Capella

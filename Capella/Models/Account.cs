@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace Capella
+namespace Capella.Models
 {
     public class Account
     {

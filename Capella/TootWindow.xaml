@@ -45,7 +45,7 @@
             </Grid>
         </Button>
         <Label x:Name="characterCount" Content="500" HorizontalAlignment="Left" Margin="35,0,0,0" VerticalAlignment="Bottom" FontSize="16" Opacity="0.6"/>
-        <Label Content="0 Drafts" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Bottom" FontSize="16" Opacity="0.6" />
+        <Label Content="0 Drafts" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Bottom" FontSize="16" Opacity="0.6" Visibility="Hidden" />
         <Grid x:Name="replyTootContainer" VerticalAlignment="Top" Margin="0,134,0,0" Visibility="Collapsed"></Grid>
         <Grid x:Name="tootImages" Height="200" VerticalAlignment="Top" Margin="0,134,0,0" Visibility="Collapsed"></Grid>
 
