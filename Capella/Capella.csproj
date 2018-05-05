@@ -320,7 +320,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Account.cs" />
+    <Compile Include="Models\Account.cs" />
     <Compile Include="AccountUIHandler.cs" />
     <Compile Include="CSTextBlock.cs" />
     <Compile Include="DesktopNotificationManagerCompat.cs" />
@@ -376,7 +376,7 @@
       <DependentUpon>TimelinePanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Message.cs" />
-    <Compile Include="Toot.cs" />
+    <Compile Include="Models\Toot.cs" />
     <Compile Include="TootCell.xaml.cs">
       <DependentUpon>TootCell.xaml</DependentUpon>
     </Compile>

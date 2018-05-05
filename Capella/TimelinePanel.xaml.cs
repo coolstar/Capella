@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using System.Web;
+using Capella.Models;
 
 namespace Capella
 {
