@@ -61,6 +61,7 @@ namespace Capella.Models
         public Toot quotedToot;
         public bool hasLocation;
         public String rawLocation;
+        public String visibility;
 
         public int numRetoots = 0, numFavorites = 0;
 
@@ -900,6 +901,14 @@ namespace Capella.Models
             }
         }
 
+        public bool retootEnabled
+        {
+            get
+            {
+                return (visibility == "public" || visibility == "unlisted");
+            }
+        }
+
         public BitmapImage retootStatusDisplay
         {
             get
@@ -910,10 +919,17 @@ namespace Capella.Models
                 }
                 else
                 {
-                    if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
-                        return new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
+                    if (retootEnabled)
+                    {
+                        if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
+                            return new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
+                        else
+                            return new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
+                    }
                     else
-                        return new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
+                    {
+                        return new BitmapImage(new Uri("Resources/protected_dark.png", UriKind.Relative));
+                    }
                 }
             }
         }

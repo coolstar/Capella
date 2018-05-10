@@ -116,7 +116,7 @@
                                     <Button Margin="10,1,221,1" Height="26" Width="47" Click="replyBtn_Click" Style="{DynamicResource FlatButton}">
                                         <Image Height="12" Width="19" Source="{Binding replyBtnImage}"/>
                                     </Button>
-                                    <Button Margin="81,1,150,1" Height="26" Width="47" Click="retootBtn_Click" Style="{DynamicResource FlatButton}">
+                                    <Button Margin="81,1,150,1" Height="26" Width="47" Click="retootBtn_Click" Style="{DynamicResource FlatButton}" IsEnabled="{Binding retootEnabled}">
                                         <Image Height="14" Width="23" Source="{Binding retootStatusDisplay}"/>
                                     </Button>
                                     <Button Margin="152,0,79,1" Height="24" Width="47" Click="favoriteBtn_Click" Style="{DynamicResource FlatButton}">

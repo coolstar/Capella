@@ -214,6 +214,7 @@ namespace Capella
             toot.tootID = (String)rawOrigToot["id"];
             toot.user_screen_name = (String)rawUser["acct"];
             toot.tootURL = (String)rawOrigToot["url"];
+            toot.visibility = (String)rawOrigToot["visibility"];
             //toot.clientString = (String)rawOrigToot["source"];
             if (rawOrigToot["application"] != null && rawOrigToot["application"].Type != JTokenType.Null)
             {
