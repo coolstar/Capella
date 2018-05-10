@@ -343,6 +343,15 @@ namespace Capella
             JArray media = new JArray();
             foreach (JToken rawMedia in rawOrigToot["media_attachments"].Children())
             {
+                /*if (((String)rawMedia["type"]).Equals("gifv"))
+                {
+                    // do something
+                    JObject video = new JObject();
+                    video.Add("id", rawMedia["id"]);
+                    video.Add("url", rawMedia["url"]);
+
+                    media.Add(video);
+                }*/
                 if (((String)rawMedia["type"]).Equals("image"))
                 {
                     JObject image = new JObject();

@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json.Linq;
 
@@ -245,7 +246,7 @@ namespace Capella.Models
         {
             get
             {
-                return "@"+kuser_screen_name;
+                return "@" + kuser_screen_name;
             }
         }
 
@@ -637,7 +638,7 @@ namespace Capella.Models
                         {
                             TimelinePanel panel = new TimelinePanel();
                             panel.twitterAccountToken = twitterAccountToken;
-                            panel.timelineType = "tag/"+sub.Substring(1);
+                            panel.timelineType = "tag/" + sub.Substring(1);
                             panel.isSearch = true;
                             panel.setTitle("\"" + sub + "\"");
                             panel.searchQuery = WebUtility.HtmlDecode(sub);
@@ -783,6 +784,7 @@ namespace Capella.Models
                         link.RequestNavigate += (sender, e) =>
                         {
                             PictureViewer viewer = new PictureViewer();
+                            Console.WriteLine($"loading {mediaUri}");
                             viewer.image.Source = new BitmapImage(mediaUri);
                             viewer.Show();
                         };
@@ -820,6 +822,30 @@ namespace Capella.Models
                 if (isRetootedStatus)
                     Height = 0;
                 return new Thickness(0, Height, 0, 0);
+            }
+        }
+
+        public RepeatBehavior videoBehavior {
+            get {
+                // if mediatype is gifv repeat
+                return RepeatBehavior.Forever;
+            }
+        }
+
+        public Uri videoSource
+        {
+            get
+            {
+                return new Uri("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
+                //if (mediaFound && me
+
+                //return new Uri("https://assets.octodon.social/media_attachments/files/001/627/769/original/63ec188b3c29c9bd.mp4");
+                JObject media = rawEntities["media"];
+                //Console.WriteLine((String)media);
+                if (((String)media["type"]).Equals("gifv")) {
+                    return new Uri((String)media["url"]);
+                }
+                return new Uri("");
             }
         }
 

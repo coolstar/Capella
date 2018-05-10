@@ -871,9 +871,6 @@ namespace Capella
         {
             SettingsWindow settingsWindow = new SettingsWindow();
             settingsWindow.ShowDialog();
-
-            //WelcomeWindow welcomeWindow = new WelcomeWindow();
-            //welcomeWindow.Show();
         }
     }
 }
