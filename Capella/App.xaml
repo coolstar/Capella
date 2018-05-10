@@ -5,6 +5,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources\ButtonStyle.xaml"/>
+                <ResourceDictionary Source="TrayIconResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
      </Application.Resources>

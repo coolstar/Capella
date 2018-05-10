@@ -11,6 +11,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Capella.Models;
+using Capella.Properties;
 
 namespace Capella
 {
@@ -125,6 +126,12 @@ namespace Capella
         public MainWindow()
         {
             InitializeComponent();
+
+            // controlled by settings :)
+            if (Settings.Default.startMinimized)
+            {
+                Application.Current.MainWindow.WindowState = WindowState.Minimized;
+            }
 
             if (Environment.OSVersion.Version.Minor == 0 || Environment.OSVersion.Version.Minor == 1) //Vista and Win7
             {
@@ -755,6 +762,31 @@ namespace Capella
             SendMessage(hwndSource.Handle, 0x112, (IntPtr)61448, IntPtr.Zero);
         }
 
+        /*protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == System.Windows.WindowState.Minimized)
+                this.Hide();
+
+            base.OnStateChanged(e);
+        }*/
+
+        // minimize to system tray when applicaiton is closed
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            // setting cancel to true will cancel the close request
+            // so the application is not closed
+            if (Settings.Default.minimizeToTray)
+            {
+                e.Cancel = true;
+
+                this.Hide();
+
+                Application.Current.MainWindow.WindowState = WindowState.Minimized;
+            }
+
+            base.OnClosing(e);
+        }
+
         private void OnActivated(object sender, EventArgs e)
         {
             if (WindowStyle != WindowStyle.None)
@@ -837,11 +869,11 @@ namespace Capella
 
         private void settings_Click(object sender, RoutedEventArgs e)
         {
-            //SettingsWindow settingsWindow = new SettingsWindow();
-            //settingsWindow.ShowDialog();
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.ShowDialog();
 
-            WelcomeWindow welcomeWindow = new WelcomeWindow();
-            welcomeWindow.Show();
+            //WelcomeWindow welcomeWindow = new WelcomeWindow();
+            //welcomeWindow.Show();
         }
     }
 }

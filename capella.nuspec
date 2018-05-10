@@ -45,5 +45,6 @@
     <file src="lib\net45\System.Windows.Interactivity.dll" target="lib\net45\System.Windows.Interactivity.dll" />
     <file src="lib\net45\TaskDialog.dll" target="lib\net45\TaskDialog.dll" />
     <file src="lib\net45\websocket-sharp.dll" target="lib\net45\websocket-sharp.dll" />
+    <file src="lib\net45\Hardcodet.Wpf.TaskbarNotification.dll" target="lib\net45\Hardcodet.Wpf.TaskbarNotification.dll" />
   </files>
 </package>
