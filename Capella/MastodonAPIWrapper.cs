@@ -32,10 +32,6 @@ namespace Capella
         public List<String> keywords = new List<String>();
         public Dictionary<String, Image> accountImages;
 
-        //public String consumerKey;
-        //public String consumerSecret;
-
-
         public static MastodonAPIWrapper sharedApiWrapper;
 
         public MastodonAPIWrapper()

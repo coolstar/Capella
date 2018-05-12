@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using Newtonsoft.Json.Linq;
 using Capella.Models;
 
-namespace Capella
+namespace Capella.Models
 {
     public class Message
     {
