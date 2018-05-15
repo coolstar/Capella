@@ -36,7 +36,7 @@ namespace Capella.Models
         [JsonProperty("avatar")]
         public Uri Avatar = null;
 
-        public BitmapImage profilePic
+        public BitmapImage ProfilePic
         {
             get
             {
@@ -44,7 +44,7 @@ namespace Capella.Models
             }
         }
 
-        public Color firstBackgroundColor
+        public Color FirstBackgroundColor
         {
             get
             {
@@ -59,7 +59,7 @@ namespace Capella.Models
             }
         }
 
-        public Color secondBackgroundColor
+        public Color SecondBackgroundColor
         {
             get
             {
@@ -74,7 +74,7 @@ namespace Capella.Models
             }
         }
 
-        public Brush textColor
+        public Brush TextColor
         {
             get
             {
