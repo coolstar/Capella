@@ -47,8 +47,8 @@
                                 </Image.Clip>
                             </Image>
                         </Border>
-                        <Label x:Name="nameLabel" Foreground="{Binding textColor}" Content="{Binding name}" HorizontalAlignment="Left" Margin="65,0,0,0" VerticalAlignment="Top" FontWeight="SemiBold" FontSize="15"/>
-                        <Label x:Name="handleLabel" Foreground="{Binding textColor}" Content="{Binding handle}" HorizontalAlignment="Left" Margin="65,30,0,0" VerticalAlignment="Top"/>
+                        <Label x:Name="nameLabel" Foreground="{Binding textColor}" Content="{Binding DisplayName}" HorizontalAlignment="Left" Margin="65,0,0,0" VerticalAlignment="Top" FontWeight="SemiBold" FontSize="15"/>
+                        <Label x:Name="handleLabel" Foreground="{Binding textColor}" Content="{Binding Handle}" HorizontalAlignment="Left" Margin="65,30,0,0" VerticalAlignment="Top"/>
                         <Image HorizontalAlignment="Right" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Width="12" Source="Resources/disclose.png"/>
                     </Grid>
                 </DataTemplate>

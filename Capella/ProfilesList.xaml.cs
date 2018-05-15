@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using TaskDialogInterop;
 using Capella.Models;
+using Newtonsoft.Json;
 
 namespace Capella
 {
@@ -61,11 +62,8 @@ namespace Capella
         {
             foreach (dynamic rawUser in list.Children())
             {
-                Profile profileItem = new Profile();
-                profileItem.name = (String)rawUser["display_name"];
-                profileItem.handle = "@" + (String)rawUser["acct"];
-                profileItem.profilePicUri = (Uri)rawUser["avatar"];
-                profileItem.accountID = rawUser["id"];
+
+                Profile profileItem = rawUser.ToObject<Profile>();
                 profiles.Add(profileItem);
 
                 
@@ -146,10 +144,12 @@ namespace Capella
         {
             Grid ctrl = (Grid)sender;
             Profile profile = (Profile)ctrl.DataContext;
-            ProfilePanel panel = new ProfilePanel();
-            panel.profileScreenName = profile.handle;
-            panel.profileUserID = profile.accountID;
-            panel.twitterAccountToken = twitterAccountToken;
+            ProfilePanel panel = new ProfilePanel
+            {
+                profileScreenName = profile.Handle,
+                profileUserID = profile.accountID,
+                twitterAccountToken = twitterAccountToken
+            };
             panel.refreshProfile();
             navController.pushControl(panel);
         }

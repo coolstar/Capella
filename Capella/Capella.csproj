@@ -220,7 +220,6 @@
     </Compile>
     <Compile Include="LineReader.cs" />
     <Compile Include="Models\TrayIconViewModel.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavController.xaml.cs">
       <DependentUpon>NavController.xaml</DependentUpon>

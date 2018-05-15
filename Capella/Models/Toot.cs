@@ -24,13 +24,13 @@ namespace Capella.Models
         public NavController displayNavController;
 
         [JsonProperty("id")]
-        public String tootID;
+        public string tootID;
         [JsonProperty("uri")]
-        public String tootURL;
+        public string tootURL;
         [JsonProperty("content")]
         public string content;
 
-        public String rawText
+        public string rawText
         {
             get
             {
