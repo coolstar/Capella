@@ -574,8 +574,7 @@ namespace Capella
             {
                 Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
                 dynamic followers = MastodonAPIWrapper.sharedApiWrapper.followersList(twitterAccount, profileUserID, 200);
-                profilesList.list = followers;
-                profilesList.convertList();
+                profilesList.profiles = followers;
             };
             worker.RunWorkerCompleted += (sender2, e2) =>
             {
@@ -596,8 +595,7 @@ namespace Capella
             {
                 Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
                 dynamic followers = MastodonAPIWrapper.sharedApiWrapper.followingList(twitterAccount, profileUserID, 200);
-                profilesList.list = followers;
-                profilesList.convertList();
+                profilesList.profiles = followers;
             };
             worker.RunWorkerCompleted += (sender2, e2) =>
             {

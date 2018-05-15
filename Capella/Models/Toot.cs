@@ -1137,9 +1137,7 @@ namespace Capella.Models
             BackgroundWorker backgroundWorker = new BackgroundWorker();
             backgroundWorker.DoWork += (sender2, e2) =>
             {
-                dynamic retootsList = MastodonAPIWrapper.sharedApiWrapper.retootsList(twitterAccount, tootID, 100);
-                profilesList.list = retootsList;
-                profilesList.convertList();
+                profilesList.profiles = Capella.MastodonAPIWrapper.sharedApiWrapper.retootsList(twitterAccount, tootID, 100);
             };
             backgroundWorker.RunWorkerCompleted += (sender2, e2) =>
             {
@@ -1161,8 +1159,7 @@ namespace Capella.Models
             backgroundWorker.DoWork += (sender2, e2) =>
             {
                 dynamic favoritesList = MastodonAPIWrapper.sharedApiWrapper.favoritesList(twitterAccount, tootID, 100);
-                profilesList.list = favoritesList;
-                profilesList.convertList();
+                profilesList.profiles = favoritesList;
             };
             backgroundWorker.RunWorkerCompleted += (sender2, e2) =>
             {

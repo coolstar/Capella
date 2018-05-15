@@ -48,9 +48,7 @@ namespace Capella
                 worker.DoWork += (sender2, e2) =>
                 {
                     Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
-                    dynamic search = MastodonAPIWrapper.sharedApiWrapper.searchUsers(twitterAccount, query, 200);
-                    profilesList.list = search;
-                    profilesList.convertList();
+                    profilesList.profiles = MastodonAPIWrapper.sharedApiWrapper.searchUsers(twitterAccount, query, 200);
                 };
                 worker.RunWorkerCompleted += (sender2, e2) =>
                 {

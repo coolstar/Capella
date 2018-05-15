@@ -18,8 +18,7 @@ namespace Capella
     public partial class ProfilesList : UserControl
     {
         public NavController navController;
-        public dynamic list = null;
-        public List<Profile> profiles = new List<Profile>();
+        public Profile[] profiles;
         public String twitterAccountToken;
         public ProfilesList()
         {
@@ -58,50 +57,31 @@ namespace Capella
             title.FontSize = fontSize;
         }
 
-        public void convertList()
-        {
-            foreach (dynamic rawUser in list.Children())
-            {
-
-                Profile profileItem = rawUser.ToObject<Profile>();
-                profiles.Add(profileItem);
-
-                
-                /*listItem.MouseLeftButtonUp += (sender, e) =>
-                {
-                    ProfilePanel panel = new ProfilePanel();
-                    panel.profileScreenName = rawUser.screen_name;
-                    panel.refreshProfile();
-                    navController.pushControl(panel);
-                };
-                listItem.Width = profilesList.Width;*/
-            }
-        }
-
         public void renderList()
         {
-            try
-            {
-                if (list == null)
-                {
-                    dynamic error = list.errors[0];
+            // Katelyn: This code never worked, even before I deleted `list`.
+            //try
+            //{
+            //    if (list == null)
+            //    {
+            //        dynamic error = list.errors[0]; // Like seriously, this would have thrown a NullReferenceException 100% of the time.
 
-                    TaskDialogOptions config = new TaskDialogOptions();
-                    config.Owner = MainWindow.sharedMainWindow;
-                    config.Title = "Error Loading Timeline";
-                    config.MainInstruction = "Please try again at a later time.";
-                    config.Content = "The Twitter API returned \"" + "Error " + error.code + ": " + error.message + "\".";
-                    config.ExpandedInfo = "You may try logging out and back in to twitter and see if that fixes it. If not, please wait at least 5 minutes for Twitter's (horrible) API.";
-                    config.MainIcon = VistaTaskDialogIcon.Error;
-                    config.ExpandToFooter = false;
-                    TaskDialog.Show(config);
-                    return;
-                }
-                profilesList.ItemsSource = profiles;
-            }
-            catch (Exception)
-            {
-            }
+            //        TaskDialogOptions config = new TaskDialogOptions();
+            //        config.Owner = MainWindow.sharedMainWindow;
+            //        config.Title = "Error Loading Timeline";
+            //        config.MainInstruction = "Please try again at a later time.";
+            //        config.Content = "The Twitter API returned \"" + "Error " + error.code + ": " + error.message + "\".";
+            //        config.ExpandedInfo = "You may try logging out and back in to twitter and see if that fixes it. If not, please wait at least 5 minutes for Twitter's (horrible) API.";
+            //        config.MainIcon = VistaTaskDialogIcon.Error;
+            //        config.ExpandToFooter = false;
+            //        TaskDialog.Show(config);
+            //        return;
+            //    }
+            //    profilesList.ItemsSource = profiles;
+            //}
+            //catch (Exception)
+            //{
+            //}
         }
 
         private void backBtn_Click(object sender, RoutedEventArgs e)
