@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -1286,6 +1287,42 @@ namespace Capella.Models
             }
         }
 
+        public async void AsyncImageLoad(Uri uri)
+        {
+            PictureViewer viewer = new PictureViewer();
+            viewer.Show();
+
+            WebClient client = new WebClient();
+            client.DownloadProgressChanged +=
+                delegate (object sender, DownloadProgressChangedEventArgs e)
+                {
+                    double bytesIn = e.BytesReceived;
+                    double totalBytes = e.TotalBytesToReceive;
+                    double percentage = bytesIn / totalBytes * 100;
+                    viewer.DownloadProgressBar.Value = percentage;
+                };
+
+            client.DownloadDataCompleted +=
+                delegate (object sender, DownloadDataCompletedEventArgs e)
+                {
+                    viewer.DownloadProgressBar.Visibility = Visibility.Hidden;
+                };
+            var bytes = await client.DownloadDataTaskAsync(uri);
+            BitmapImage rawImage = new BitmapImage();
+            rawImage.BeginInit();
+            rawImage.CacheOption = BitmapCacheOption.OnLoad;
+            rawImage.StreamSource = new MemoryStream(bytes);
+            rawImage.EndInit();
+
+            var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+            var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
+
+
+            viewer.image.Source = rawImage;
+            viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+            viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+        }
+
         public void mediaClick()
         {
             if (mediaIsNotImage)
@@ -1293,67 +1330,24 @@ namespace Capella.Models
                 Process.Start(rawMediaUri.OriginalString);
             }
             else {
-                BitmapImage rawImage = new BitmapImage(fullMediaUri);
 
-                var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
-
-                rawImage.DownloadCompleted += (s, e) => {
-                    PictureViewer viewer = new PictureViewer();
-                    viewer.image.Source = rawImage;
-                    viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                    viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                    viewer.Show();
-                };
+                AsyncImageLoad(fullMediaUri);
             }
         }
 
         public void mediaClick2()
         {
-            BitmapImage rawImage = new BitmapImage(fullMediaUri2);
-
-            var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-            var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
-
-            rawImage.DownloadCompleted += (s, e) => {
-                PictureViewer viewer = new PictureViewer();
-                viewer.image.Source = rawImage;
-                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                viewer.Show();
-            };
+            AsyncImageLoad(fullMediaUri2);
         }
 
         public void mediaClick3()
         {
-            BitmapImage rawImage = new BitmapImage(fullMediaUri3);
-
-            var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-            var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
-
-            rawImage.DownloadCompleted += (s, e) => {
-                PictureViewer viewer = new PictureViewer();
-                viewer.image.Source = rawImage;
-                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                viewer.Show();
-            };
+            AsyncImageLoad(fullMediaUri3);
         }
 
         public void mediaClick4()
         {
-            BitmapImage rawImage = new BitmapImage(fullMediaUri4);
-
-            var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-            var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
-
-            rawImage.DownloadCompleted += (s, e) => {
-                PictureViewer viewer = new PictureViewer();
-                viewer.image.Source = rawImage;
-                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                viewer.Show();
-            };
+            AsyncImageLoad(fullMediaUri4);
         }
     }
 }

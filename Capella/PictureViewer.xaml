@@ -5,5 +5,6 @@
     <Grid>
         <Image Name="image"/>
         <Grid Height="100" VerticalAlignment="Bottom"></Grid>
+        <ProgressBar x:Name="DownloadProgressBar" HorizontalAlignment="Center" Height="10" VerticalAlignment="Center" Width="272"/>
     </Grid>
 </Window>
