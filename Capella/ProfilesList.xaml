@@ -32,8 +32,8 @@
                     <Grid MouseUp="Profile_Click">
                         <Grid.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="{Binding firstBackgroundColor}" Offset="0"/>
-                                <GradientStop Color="{Binding secondBackgroundColor}" Offset="1"/>
+                                <GradientStop Color="{Binding FirstBackgroundColor}" Offset="0"/>
+                                <GradientStop Color="{Binding SecondBackgroundColor}" Offset="1"/>
                             </LinearGradientBrush>
                         </Grid.Background>
                         <Grid.RowDefinitions>
@@ -41,14 +41,14 @@
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Border x:Name="profilePicFrame" CornerRadius="4" ClipToBounds="False" HorizontalAlignment="Left" Height="50" VerticalAlignment="Center" Width="50" Margin="10,0,0,0">
-                            <Image x:Name="profilePic" Stretch="UniformToFill" Source="{Binding profilePic}">
+                            <Image x:Name="profilePic" Stretch="UniformToFill" Source="{Binding ProfilePic}">
                                 <Image.Clip>
                                     <RectangleGeometry Rect="0,0,50,50" RadiusX="4" RadiusY="4" />
                                 </Image.Clip>
                             </Image>
                         </Border>
-                        <Label x:Name="nameLabel" Foreground="{Binding textColor}" Content="{Binding name}" HorizontalAlignment="Left" Margin="65,0,0,0" VerticalAlignment="Top" FontWeight="SemiBold" FontSize="15"/>
-                        <Label x:Name="handleLabel" Foreground="{Binding textColor}" Content="{Binding handle}" HorizontalAlignment="Left" Margin="65,30,0,0" VerticalAlignment="Top"/>
+                        <Label x:Name="nameLabel" Foreground="{Binding TextColor}" Content="{Binding DisplayName}" HorizontalAlignment="Left" Margin="65,0,0,0" VerticalAlignment="Top" FontWeight="SemiBold" FontSize="15"/>
+                        <Label x:Name="handleLabel" Foreground="{Binding TextColor}" Content="{Binding Handle}" HorizontalAlignment="Left" Margin="65,30,0,0" VerticalAlignment="Top"/>
                         <Image HorizontalAlignment="Right" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Width="12" Source="Resources/disclose.png"/>
                     </Grid>
                 </DataTemplate>

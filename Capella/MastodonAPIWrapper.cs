@@ -494,10 +494,10 @@ namespace Capella
             return toot;
         }
 
-        public dynamic searchUsers(Account account, String query, int count)
+        public Profile[] searchUsers(Account account, String query, int count)
         {
             String output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/search", "q=" + Uri.EscapeUriString(query) + "&limit=" + count, account, true);
-            return JsonConvert.DeserializeObject(output);
+            return JsonConvert.DeserializeObject<Profile[]>(output);
         }
 
         public dynamic getConversation(Account account, String tootID)
@@ -731,13 +731,13 @@ namespace Capella
             return favorited;
         }
 
-        public dynamic followersList(Account account, String userId, int count)
+        public Profile[] followersList(Account account, String userId, int count)
         {
             String output;
             if (userId == null || userId == "")
                 userId = account.accountID;
             output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/" + userId + "/followers", "", account, true);
-            return JsonConvert.DeserializeObject(output);
+            return JsonConvert.DeserializeObject<Profile[]>(output);
         }
 
         public bool blockUser(String userID, bool undoBlock, Account account)
@@ -768,27 +768,25 @@ namespace Capella
             return undoBlock;
         }
 
-        public dynamic followingList(Account account, String userId, int count)
+        public Profile[] followingList(Account account, String userId, int count)
         {
             String output;
             if (userId == null || userId == "")
                 userId = account.accountID;
             output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+userId+"/following", "", account, true);
-            return JsonConvert.DeserializeObject(output);
+            return JsonConvert.DeserializeObject<Profile[]>(output);
         }
 
-        public dynamic retootsList(Account account, String tootId, int count)
+        public Profile[] retootsList(Account account, String tootId, int count)
         {
             String data = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/" + tootId+"/reblogged_by", "", account, true);
-            dynamic retootUsers = JsonConvert.DeserializeObject(data);
-            return retootUsers;
+            return JsonConvert.DeserializeObject<Profile[]>(data);
         }
 
-        public dynamic favoritesList(Account account, String tootId, int count)
+        public Profile[] favoritesList(Account account, String tootId, int count)
         {
             String data = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/" + tootId + "/favourited_by", "", account, true);
-            dynamic retootUsers = JsonConvert.DeserializeObject(data);
-            return retootUsers;
+            return JsonConvert.DeserializeObject<Profile[]>(data);
         }
 
         public void handleStreamInput(String rawData, Account account, String streamName)

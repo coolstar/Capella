@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -6,44 +7,44 @@ namespace Capella.Models
 {
     public class Profile
     {
-        private String k_name = "";
-        private String k_handle = "";
-        public String accountID;
-        public Uri profilePicUri = null;
+        [JsonProperty("id")]
+        public String accountID { get; set; }
 
-        public String name
+        [JsonProperty("username")]
+        public string Username { get; set; }
+
+        [JsonProperty("acct")]
+        public String Handle { get; set; }
+
+        [JsonProperty("display_name")]
+        public String DisplayName { get; set; }
+
+        [JsonProperty("locked")]
+        public bool Locked;
+
+        public string created_at;
+        public int followers_count;
+        public int following_count;
+        public int statuses_count;
+        public string note;
+        public string url;
+        public string avatar_static;
+        public string header;
+        public string header_static;
+        public string moved;
+
+        [JsonProperty("avatar")]
+        public Uri Avatar = null;
+
+        public BitmapImage ProfilePic
         {
             get
             {
-                return k_name;
-            }
-            set
-            {
-                k_name = value;
+                return new BitmapImage(Avatar);
             }
         }
 
-        public String handle
-        {
-            get
-            {
-                return k_handle;
-            }
-            set
-            {
-                k_handle = value;
-            }
-        }
-
-        public BitmapImage profilePic
-        {
-            get
-            {
-                return new BitmapImage(profilePicUri);
-            }
-        }
-
-        public Color firstBackgroundColor
+        public Color FirstBackgroundColor
         {
             get
             {
@@ -58,7 +59,7 @@ namespace Capella.Models
             }
         }
 
-        public Color secondBackgroundColor
+        public Color SecondBackgroundColor
         {
             get
             {
@@ -73,7 +74,7 @@ namespace Capella.Models
             }
         }
 
-        public Brush textColor
+        public Brush TextColor
         {
             get
             {
