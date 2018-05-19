@@ -240,7 +240,7 @@ namespace Capella
             {
                 //no profile pic ;-;
             }
-            toot.content = (String)rawOrigToot["content"];
+            toot.Content = (String)rawOrigToot["content"];
 
             foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
             {
