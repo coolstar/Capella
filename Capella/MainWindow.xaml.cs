@@ -158,7 +158,7 @@ namespace Capella
             tabController.VerticalAlignment = VerticalAlignment.Stretch;
             tabController.HorizontalAlignment = HorizontalAlignment.Left;
             tabController.Background = Brushes.Transparent;
-            tabController.Width = this.RenderSize.Width - 77;
+            tabController.Width = Math.Max(0, this.RenderSize.Width - 77);
 
             tabController.windowWidth = this.RenderSize.Width;
 

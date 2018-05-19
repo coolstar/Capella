@@ -203,7 +203,7 @@ namespace Capella
             if (rawToot["reblog"] != null)
             {
                 toot.isRetootedStatus = true;
-                toot.origuser_name = rawUser["display_name"];
+                toot.origuser_name = rawUser.Value<string>("display_name");
                 toot.origuser_screen_name = rawUser["acct"];
                 rawOrigToot = rawToot["reblog"];
                 rawUser = rawOrigToot["account"];
@@ -218,7 +218,7 @@ namespace Capella
             //toot.clientString = (String)rawOrigToot["source"];
             if (rawOrigToot["application"] != null && rawOrigToot["application"].Type != JTokenType.Null)
             {
-                toot.clientString = rawOrigToot["application"]["name"];
+                toot.clientString = rawOrigToot["application"].Value<string>("name");
                 if (toot.clientString == "website" || rawOrigToot["application"]["website"] == null || rawOrigToot["application"]["website"].Type != JTokenType.String)
                     toot.clientLink = "https://" + twitterAccount.endpoint;
                 else
@@ -419,7 +419,7 @@ namespace Capella
             rawEntities.Add("hashtags", hashtags);
 
             JArray urls = new JArray();
-            String rawHtml = rawOrigToot["content"];
+            String rawHtml = rawOrigToot.Value<string>("content");
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(rawHtml);
             HtmlNodeCollection collection = doc.DocumentNode.SelectNodes("//a[@href and (@rel=\"nofollow noopener\" or @target=\"_blank\")]");
