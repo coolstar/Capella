@@ -81,8 +81,8 @@ namespace Capella
             }
 
             // Set the current user interface culture to the specific culture French
-            System.Threading.Thread.CurrentThread.CurrentUICulture =
-                        new System.Globalization.CultureInfo("fr");
+            //System.Threading.Thread.CurrentThread.CurrentUICulture =
+            //            new System.Globalization.CultureInfo("fr");
         }
 
         protected override void OnStartup(StartupEventArgs e)
