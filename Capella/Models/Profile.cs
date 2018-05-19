@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -31,7 +32,7 @@ namespace Capella.Models
         public string avatar_static;
         public string header;
         public string header_static;
-        public string moved;
+        public JObject moved;
 
         [JsonProperty("avatar")]
         public Uri Avatar = null;

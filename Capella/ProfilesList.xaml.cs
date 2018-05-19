@@ -77,11 +77,11 @@ namespace Capella
             //        TaskDialog.Show(config);
             //        return;
             //    }
-            //    profilesList.ItemsSource = profiles;
             //}
             //catch (Exception)
             //{
             //}
+            profilesList.ItemsSource = profiles;
         }
 
         private void backBtn_Click(object sender, RoutedEventArgs e)
