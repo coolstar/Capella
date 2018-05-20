@@ -71,7 +71,7 @@ namespace Capella.Models
 
         public String origuser_screen_name => Reblog?.user_screen_name;
         public String origuser_name => Reblog?.user_name;
-        public String userID = "";
+        public String userID => Account.accountID;
         private DateTime ktimeTooted = DateTime.Now;
         private String kclientString = "";
         public String clientLink;
@@ -229,7 +229,7 @@ namespace Capella.Models
         {
             get
             {
-                return "Boosted By " + origuser_name;
+                return "Boosted By " + Reblog?.user_name;
             }
         }
 
@@ -263,9 +263,9 @@ namespace Capella.Models
             }
         }
 
-        public String user_name { get; set; } = "";
+        public String user_name => Account.DisplayName;
 
-        public String user_screen_name { get; set; } = "";
+        public String user_screen_name => Account.Handle;
 
         public String user_display_screen_name
         {
@@ -1278,11 +1278,6 @@ namespace Capella.Models
                 if (hasQuotedToot)
                     return quotedToot.user_name;
                 return null;
-            }
-            set
-            {
-                if (hasQuotedToot)
-                    quotedToot.user_name = value;
             }
         }
 

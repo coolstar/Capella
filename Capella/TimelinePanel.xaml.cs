@@ -135,7 +135,7 @@ namespace Capella
                             rawTimeline = MastodonAPIWrapper.sharedApiWrapper.getTimeline(twitterAccount, this.timelineType, this.profileID, null);
                     } catch (Exception e2)
                     {
-                        Console.WriteLine(e2.StackTrace);
+                        Console.WriteLine(e2);
                     }
                     watch.Stop();
                     if (isConversation)
@@ -199,22 +199,21 @@ namespace Capella
             toot.twitterAccountToken = twitterAccountToken;
 
             dynamic rawOrigToot = rawToot;
-            dynamic rawUser = rawToot["account"];
+            Profile rawUser = ((JObject)rawToot["account"]).ToObject<Profile>();
+            toot.Account = rawUser;
             if (rawToot["reblog"] != null)
             {
                 toot.Reblog = new Toot
                 {
-                    user_name = rawUser.Value<string>("display_name"),
-                    user_screen_name = rawUser["acct"]
+                    Account = rawUser
                 };
                 rawOrigToot = rawToot["reblog"];
-                rawUser = rawOrigToot["account"];
+                rawUser = rawOrigToot["account"].ToObject<Profile>();
+                toot.Account = rawUser;
             }
             if ("" + rawOrigToot["id"] == conversationStartToot && quoted == false)
                 toot.isStartToot = true;
-            toot.userID = "" + rawUser["id"];
             toot.tootID = (String)rawOrigToot["id"];
-            toot.user_screen_name = (String)rawUser["acct"];
             toot.tootURL = (String)rawOrigToot["url"];
             toot.visibility = (String)rawOrigToot["visibility"];
             //toot.clientString = (String)rawOrigToot["source"];
@@ -234,10 +233,9 @@ namespace Capella
             if (twitterAccount.accountID.Equals(toot.userID))
                 twitterAccount.myHandle = toot.user_screen_name;
 
-            toot.user_name = (String)rawUser["display_name"];
             try
             {
-                toot.user_profilepicurl = new Uri((String)rawUser["avatar"], UriKind.Absolute);
+                toot.user_profilepicurl = rawUser.Avatar;
             } catch (Exception e)
             {
                 //no profile pic ;-;
