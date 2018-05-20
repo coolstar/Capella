@@ -72,15 +72,15 @@ namespace Capella.Models
         public String origuser_screen_name => Reblog?.user_screen_name;
         public String origuser_name => Reblog?.user_name;
         public String userID => Account.accountID;
-        private DateTime ktimeTooted = DateTime.Now;
-        private String kclientString = "";
+
         public String clientLink;
+
         public bool isRetootedStatus => Reblog != null;
-        public bool isStartToot = false;
-        public Uri user_profilepicurl = null;
-        public dynamic rawEntities = null;
-        public dynamic rawExtendedEntities = null;
-        public JArray orderedEntities = null;
+        public bool isStartToot;
+        public Uri user_profilepicurl;
+        public dynamic rawEntities;
+        public dynamic rawExtendedEntities;
+        public JArray orderedEntities;
 
         public String rawSpoilerText = "";
 
@@ -233,17 +233,7 @@ namespace Capella.Models
             }
         }
 
-        public String clientString
-        {
-            get
-            {
-                return kclientString;
-            }
-            set
-            {
-                kclientString = value;
-            }
-        }
+        public String clientString { get; set; } = "";
 
         public Thickness tootOffset
         {
@@ -311,23 +301,13 @@ namespace Capella.Models
             }
         }
 
-        public DateTime timeTooted
-        {
-            get
-            {
-                return ktimeTooted;
-            }
-            set
-            {
-                ktimeTooted = value;
-            }
-        }
+        public DateTime timeTooted { get; set; } = DateTime.Now;
 
         public String timeTootedString
         {
             get
             {
-                return String.Format("{0:MM/dd/yy} at {0:h:mm tt}", ktimeTooted);
+                return String.Format("{0:MM/dd/yy} at {0:h:mm tt}", timeTooted);
             }
         }
 
