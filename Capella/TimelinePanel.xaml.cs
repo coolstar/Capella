@@ -202,9 +202,11 @@ namespace Capella
             dynamic rawUser = rawToot["account"];
             if (rawToot["reblog"] != null)
             {
-                toot.isRetootedStatus = true;
-                toot.origuser_name = rawUser.Value<string>("display_name");
-                toot.origuser_screen_name = rawUser["acct"];
+                toot.Reblog = new Toot
+                {
+                    user_name = rawUser.Value<string>("display_name"),
+                    user_screen_name = rawUser["acct"]
+                };
                 rawOrigToot = rawToot["reblog"];
                 rawUser = rawOrigToot["account"];
             }

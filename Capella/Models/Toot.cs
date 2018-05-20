@@ -28,19 +28,19 @@ namespace Capella.Models
         /// The ID of the status
         /// </summary>
         [JsonProperty("id")]
-        public string tootID;
+        public string tootID { get; set; }
 
         /// <summary>
         /// A Fediverse-unique resource ID
         /// </summary>
         [JsonProperty("uri")]
-        public string tootURL;
+        public string tootURL { get; set; }
 
         /// <summary>
         /// Body of the status; this will contain HTML (remote HTML already sanitized)
         /// </summary>
         [JsonProperty("content")]
-        public string Content;
+        public string Content { get; set; }
 
         public string rawText
         {
@@ -57,15 +57,25 @@ namespace Capella.Models
             }
         }
 
-        public String origuser_screen_name = "";
-        public String origuser_name = "";
+        /// <summary>
+        /// The Account which posted the status
+        /// </summary>
+        [JsonProperty("account")]
+        public Profile Account { get; set; }
+
+        /// <summary>
+        /// null or the reblogged Status
+        /// </summary>
+        [JsonProperty("reblog")]
+        public Toot Reblog { get; set; }
+
+        public String origuser_screen_name => Reblog?.user_screen_name;
+        public String origuser_name => Reblog?.user_name;
         public String userID = "";
-        private String kuser_screen_name = "";
-        private String kuser_name = "";
         private DateTime ktimeTooted = DateTime.Now;
         private String kclientString = "";
         public String clientLink;
-        public bool isRetootedStatus = false;
+        public bool isRetootedStatus => Reblog != null;
         public bool isStartToot = false;
         public Uri user_profilepicurl = null;
         public dynamic rawEntities = null;
@@ -253,35 +263,15 @@ namespace Capella.Models
             }
         }
 
-        public String user_name
-        {
-            get
-            {
-                return kuser_name;
-            }
-            set
-            {
-                kuser_name = value;
-            }
-        }
+        public String user_name { get; set; } = "";
 
-        public String user_screen_name
-        {
-            get
-            {
-                return kuser_screen_name;
-            }
-            set
-            {
-                kuser_screen_name = value;
-            }
-        }
+        public String user_screen_name { get; set; } = "";
 
         public String user_display_screen_name
         {
             get
             {
-                return "@" + kuser_screen_name;
+                return "@" + user_screen_name;
             }
         }
 
