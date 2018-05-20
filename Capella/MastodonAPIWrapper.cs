@@ -26,7 +26,7 @@ namespace Capella
         public event TimelineChanged userTimelineChanged;
 
         public OAuthUtils sharedOAuthUtils;
-        public List<Account> accounts;
+        public List<Account> accounts = new List<Account>();
         public Account selectedAccount;
         public bool nightModeEnabled = false;
         public List<String> keywords = new List<String>();
