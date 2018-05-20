@@ -870,7 +870,7 @@ namespace Capella.Models
                 if (((String)media["type"]).Equals("gifv")) {
                     return new Uri((String)media["url"]);
                 }
-                return new Uri("");
+                return null;
             }
         }
 
