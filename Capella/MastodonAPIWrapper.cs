@@ -310,8 +310,7 @@ namespace Capella
                     if (!mute && !account.mentionsTimelineIds.Contains(tootID))
                         account.mentionsTimelineIds.Add(tootID);
                 }
-                if (mentionsTimelineChanged != null)
-                    mentionsTimelineChanged(this, "refresh", 0, account);
+                mentionsTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             return timeline;
         }
@@ -402,8 +401,7 @@ namespace Capella
                     if (!mute && !account.publicTimelineIds.Contains(tootID))
                         account.publicTimelineIds.Add(tootID);
                 }
-                if (publicTimelineChanged != null)
-                    publicTimelineChanged(this, "refresh", 0, account);
+                publicTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             if (timelineType == "home" && (targetID.Equals("") || targetID == null))
             {
@@ -429,8 +427,7 @@ namespace Capella
                     if (!mute && !account.homeTimelineIds.Contains(tootID))
                         account.homeTimelineIds.Add(tootID);
                 }
-                if (homeTimelineChanged != null)
-                    homeTimelineChanged(this, "refresh", 0, account);
+                homeTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             if (timelineType == "mentions" && (targetID.Equals("") || targetID == null))
             {
@@ -452,8 +449,7 @@ namespace Capella
                     if (!mute && !account.mentionsTimelineIds.Contains(tootID))
                         account.mentionsTimelineIds.Add(tootID);
                 }
-                if (mentionsTimelineChanged != null)
-                    mentionsTimelineChanged(this, "refresh", 0, account);
+                mentionsTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             if (timelineType == "user" && (targetID.Equals(account.accountID) && targetID != null))
             {
@@ -479,8 +475,7 @@ namespace Capella
                     if (!mute && !account.userTimelineIds.Contains(tootID))
                         account.userTimelineIds.Add(tootID);
                 }
-                if (userTimelineChanged != null)
-                    userTimelineChanged(this, "refresh", 0, account);
+                userTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             return timeline;
         }
@@ -911,8 +906,7 @@ namespace Capella
                 {
                     account.publicTimelineIds.RemoveAt(indexToDelete);
                     account.publicTimeline.RemoveAt(indexToDelete);
-                    if (publicTimelineChanged != null)
-                        publicTimelineChanged(this, "delete", indexToDelete, account);
+                    publicTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
 
                 indexToDelete = account.mentionsTimelineIds.IndexOf(id);
@@ -920,8 +914,7 @@ namespace Capella
                 {
                     account.mentionsTimelineIds.RemoveAt(indexToDelete);
                     account.mentionsTimeline.RemoveAt(indexToDelete);
-                    if (mentionsTimelineChanged != null)
-                        mentionsTimelineChanged(this, "delete", indexToDelete, account);
+                    mentionsTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
 
                 indexToDelete = account.homeTimelineIds.IndexOf(id);
@@ -929,8 +922,7 @@ namespace Capella
                 {
                     account.homeTimelineIds.RemoveAt(indexToDelete);
                     account.homeTimeline.RemoveAt(indexToDelete);
-                    if (homeTimelineChanged != null)
-                        homeTimelineChanged(this, "delete", indexToDelete, account);
+                    homeTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
 
                 indexToDelete = account.userTimelineIds.IndexOf(id);
@@ -938,8 +930,7 @@ namespace Capella
                 {
                     account.userTimelineIds.RemoveAt(indexToDelete);
                     account.userTimeline.RemoveAt(indexToDelete);
-                    if (userTimelineChanged != null)
-                        userTimelineChanged(this, "delete", indexToDelete, account);
+                    userTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
             }
         }
