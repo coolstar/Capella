@@ -24,18 +24,29 @@ namespace Capella.Models
 
         public NavController displayNavController;
 
+        /// <summary>
+        /// The ID of the status
+        /// </summary>
         [JsonProperty("id")]
         public string tootID;
+
+        /// <summary>
+        /// A Fediverse-unique resource ID
+        /// </summary>
         [JsonProperty("uri")]
         public string tootURL;
+
+        /// <summary>
+        /// Body of the status; this will contain HTML (remote HTML already sanitized)
+        /// </summary>
         [JsonProperty("content")]
-        public string content;
+        public string Content;
 
         public string rawText
         {
             get
             {
-                var text = content;
+                var text = Content;
                 text = text.Replace("<br>", "\n");
                 text = text.Replace("<br/>", "\n");
                 text = text.Replace("<br />", "\n");

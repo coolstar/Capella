@@ -62,10 +62,7 @@ namespace Capella
 
             Console.WriteLine("Initializing Capella...");
 
-            if (accountExists())
-                this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
-            else
-                this.StartupUri = new Uri("WelcomeWindow.xaml", UriKind.Relative);
+            this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
 
             if (Environment.OSVersion.Version.Major >= 6.0)
                 if (!DwmIsCompositionEnabled())
@@ -81,8 +78,8 @@ namespace Capella
             }
 
             // Set the current user interface culture to the specific culture French
-            System.Threading.Thread.CurrentThread.CurrentUICulture =
-                        new System.Globalization.CultureInfo("fr");
+            //System.Threading.Thread.CurrentThread.CurrentUICulture =
+            //            new System.Globalization.CultureInfo("fr");
         }
 
         protected override void OnStartup(StartupEventArgs e)

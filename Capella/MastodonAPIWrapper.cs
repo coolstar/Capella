@@ -26,7 +26,7 @@ namespace Capella
         public event TimelineChanged userTimelineChanged;
 
         public OAuthUtils sharedOAuthUtils;
-        public List<Account> accounts;
+        public List<Account> accounts = new List<Account>();
         public Account selectedAccount;
         public bool nightModeEnabled = false;
         public List<String> keywords = new List<String>();
@@ -48,11 +48,11 @@ namespace Capella
                     return;
                 }
                 String rawJson = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json");
-                dynamic json = JsonConvert.DeserializeObject(rawJson);
+                var json = JObject.Parse(rawJson);
 
-                if (json["version"] != null)
+                if (json.Value<double?>("version") != null)
                 {
-                    double version = json["version"];
+                    var version = json.Value<double>("version");
                     if (version < 0.3)
                     {
                         return;
@@ -62,9 +62,9 @@ namespace Capella
                     return;
                 }
 
-                if (json["nightModeEnabled"] != null)
+                if (json.Value<bool>("nightModeEnabled") != null)
                 {
-                    nightModeEnabled = (bool)json["nightModeEnabled"];
+                    nightModeEnabled = json.Value<bool>("nightModeEnabled");
                 }
 
                 if (json["mutes"] != null)
@@ -165,33 +165,25 @@ namespace Capella
             {
                 account.accountID = "" + accountData["id"];
             }
-            return accountData["username"];
+            return accountData.Value<string>("username");
         }
 
         public dynamic getProfile(String accountID, Account account)
         {
-            try
+            if (accountID == null || accountID == "")
             {
-                if (accountID == null || accountID == "")
+                var halfProfile = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/verify_credentials", "", account, true);
+                dynamic accountData = JsonConvert.DeserializeObject(halfProfile);
+                accountID = "" + accountData["id"];
+                if (account.accountID == null)
                 {
-                    String halfProfile = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/verify_credentials", "", account, true);
-                    dynamic accountData = JsonConvert.DeserializeObject(halfProfile);
-                    accountID = "" + accountData["id"];
-                    if (account.accountID == null)
-                    {
-                        account.accountID = "" + accountData["id"];
-                    }
+                    account.accountID = "" + accountData["id"];
                 }
+            }
 
-                String json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+ accountID, "", account, true);
-                dynamic profile = JsonConvert.DeserializeObject(json);
-                return profile;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw;
-            }
+            String json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+ accountID, "", account, true);
+            dynamic profile = JsonConvert.DeserializeObject(json);
+            return profile;
         }
 
         public void getProfileAvatar(Account twitterAccount, Image accountImage)

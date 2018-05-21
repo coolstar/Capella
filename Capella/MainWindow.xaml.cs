@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Capella.Models;
 using Capella.Properties;
+using System.Linq;
 
 namespace Capella
 {
@@ -140,7 +141,7 @@ namespace Capella
                 mainGrid.Background = new SolidColorBrush(Color.FromArgb(64, 0, 0, 0));
             }
 
-            this.apiWrapper = MastodonAPIWrapper.sharedApiWrapper;
+            this.apiWrapper = MastodonAPIWrapper.sharedApiWrapper ?? new MastodonAPIWrapper();
 
             new NotificationsHandler();
             sharedMainWindow = this;
@@ -158,7 +159,7 @@ namespace Capella
             tabController.VerticalAlignment = VerticalAlignment.Stretch;
             tabController.HorizontalAlignment = HorizontalAlignment.Left;
             tabController.Background = Brushes.Transparent;
-            tabController.Width = this.RenderSize.Width - 77;
+            tabController.Width = Math.Max(0, this.RenderSize.Width - 77);
 
             tabController.windowWidth = this.RenderSize.Width;
 
@@ -174,6 +175,12 @@ namespace Capella
             int topMargin = 43;
 
             accountUIHandlers = new List<AccountUIHandler>();
+
+            if (!MastodonAPIWrapper.sharedApiWrapper.accounts.Any())
+            {
+                new WelcomeWindow().ShowDialog();
+                apiWrapper = new MastodonAPIWrapper();
+            }
 
             foreach (Account twitterAccount in MastodonAPIWrapper.sharedApiWrapper.accounts)
             {
