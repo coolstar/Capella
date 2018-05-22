@@ -590,7 +590,7 @@ namespace Capella
             Console.WriteLine("Added " + added + " and skipped " + skipped);
         }
 
-        public String postToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, Account account)
+        public String PostToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
@@ -618,12 +618,25 @@ namespace Capella
             return output;
         }
 
-        public String postToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, String imageIds, Account account)
+        /// <summary>
+        /// Posts a toot
+        /// </summary>
+        /// <param name="tootText">The text of the status</param>
+        /// <param name="tootInReplyTo">local ID of the status you want to reply to</param>
+        /// <param name="spoilerText">Text to be shown as a warning before the actual content</param>
+        /// <param name="sensitive">Set this to mark the media of the status as NSFW</param>
+        /// <param name="visibility">Either "direct" (3), "private" (2), "unlisted" (1) or "public" (0)</param>
+        /// <param name="imageIds">Array of media IDs to attach to the status (maximum 4)</param>
+        /// <param name="account">The account you want to post the status with</param>
+        /// <returns></returns>
+        public String PostToot(String tootText, String tootInReplyTo, String spoilerText, bool sensitive, int visibility, String imageIds, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
             if (tootInReplyTo != "")
-                uploadText += "in_reply_to_id=" + sharedOAuthUtils.UrlEncode(tootInReplyTo) + "&";
+                uploadText += $"in_reply_to_id={sharedOAuthUtils.UrlEncode(tootInReplyTo)}&";
+            if (spoilerText != "")
+                uploadText += $"spoiler_text={Uri.EscapeDataString(spoilerText)}&";
             if (sensitive)
                 uploadText += "sensitive=true&";
             switch (visibility)
@@ -641,9 +654,10 @@ namespace Capella
                     uploadText += "visibility=direct&";
                     break;
             }
-            uploadText += "&media_ids[]=" + imageIds;
-            uploadText += "&status=" + tootText2;
-            String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses", uploadText, account, false);
+            if (imageIds != "")
+                uploadText += $"&media_ids[]={imageIds}";
+            uploadText += $"&status={tootText2}";
+            String output = sharedOAuthUtils.PostData($"https://{account.endpoint}/api/v1/statuses", uploadText, account, false);
             return output;
         }
 
