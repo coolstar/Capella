@@ -22,6 +22,7 @@ namespace Capella
         public Button mentionsBtn;
         public Button publicBtn;
         public Button userButton;
+        public Button directBtn;
         public Button searchBtn;
     }
 }

@@ -340,7 +340,7 @@ namespace Capella
                 {
                     directBtn.Opacity = 0;
                 }
-                accountUIHandler.publicBtn = publicBtn;
+                accountUIHandler.directBtn = directBtn;
 
                 tabImage = new TabImage();
                 tabImage.Height = 34;
@@ -525,6 +525,27 @@ namespace Capella
                     mentionsBtnAnimOpacity.To = 0;
                 }
 
+                ThicknessAnimation directBtnAnim = new ThicknessAnimation();
+                Storyboard.SetTarget(directBtnAnim, accountUI.directBtn);
+                Storyboard.SetTargetProperty(directBtnAnim, new PropertyPath(UserControl.MarginProperty));
+                directBtnAnim.From = accountUI.directBtn.Margin;
+                directBtnAnim.To = new Thickness(4, topMargin, 0, 0);
+
+                DoubleAnimation directBtnAnimOpacity = new DoubleAnimation();
+                Storyboard.SetTarget(directBtnAnimOpacity, accountUI.directBtn);
+                Storyboard.SetTargetProperty(directBtnAnimOpacity, new PropertyPath(UserControl.OpacityProperty));
+                directBtnAnimOpacity.From = accountUI.directBtn.Opacity;
+
+                if (twitterAccount.accessToken.Equals(MastodonAPIWrapper.sharedApiWrapper.selectedAccount.accessToken))
+                {
+                    topMargin += 50;
+                    directBtnAnimOpacity.To = 1;
+                }
+                else
+                {
+                    directBtnAnimOpacity.To = 0;
+                }
+
                 ThicknessAnimation messagesBtnAnim = new ThicknessAnimation();
                 Storyboard.SetTarget(messagesBtnAnim, accountUI.publicBtn);
                 Storyboard.SetTargetProperty(messagesBtnAnim, new PropertyPath(UserControl.MarginProperty));
@@ -600,6 +621,9 @@ namespace Capella
 
                 storyboard.Children.Add(messagesBtnAnim);
                 storyboard.Children.Add(messagesBtnAnimOpacity);
+
+                storyboard.Children.Add(directBtnAnim);
+                storyboard.Children.Add(directBtnAnimOpacity);
 
                 storyboard.Children.Add(userButtonAnim);
                 storyboard.Children.Add(userButtonAnimOpacity);
