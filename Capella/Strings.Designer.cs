@@ -133,6 +133,15 @@ namespace Capella {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Direct Messages.
+        /// </summary>
+        internal static string DirectTimeline {
+            get {
+                return ResourceManager.GetString("DirectTimeline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         internal static string Edit {

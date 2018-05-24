@@ -323,6 +323,44 @@ namespace Capella
                 tabController.addControl(navController, publicBtn);
 
                 #endregion
+                #region Direct
+                Button directBtn = new Button();
+                directBtn.HorizontalAlignment = HorizontalAlignment.Left;
+                directBtn.VerticalAlignment = VerticalAlignment.Top;
+                directBtn.Style = Resources["FlatTab"] as Style;
+                directBtn.Height = 40;
+                directBtn.Margin = new Thickness(4, topMargin, 0, 0);
+                directBtn.Cursor = Cursors.Hand;
+                this.sidebarGrid.Children.Add(directBtn);
+                if (twitterAccount.accessToken.Equals(MastodonAPIWrapper.sharedApiWrapper.selectedAccount.accessToken))
+                {
+                    topMargin += 50;
+                }
+                else
+                {
+                    directBtn.Opacity = 0;
+                }
+                accountUIHandler.publicBtn = publicBtn;
+
+                tabImage = new TabImage();
+                tabImage.Height = 34;
+                tabImage.Width = 38;
+                tabImage.Source = new BitmapImage(new Uri("Resources/sidebar_messages.png", UriKind.Relative));
+                tabImage.VerticalAlignment = VerticalAlignment.Center;
+                tabImage.HorizontalAlignment = HorizontalAlignment.Center;
+                tabImage.Margin = new Thickness(2, 1, 20, 1);
+                directBtn.Content = tabImage;
+
+                timelinePanel = new TimelinePanel();
+                timelinePanel.twitterAccountToken = twitterAccount.accessToken;
+                timelinePanel.setTitle(Strings.DirectTimeline);
+                timelinePanel.timelineType = "direct";
+                //timelinePanel.refreshTimeline();
+                navController = new NavController(timelinePanel);
+
+                navController.Margin = new Thickness(0);
+                tabController.addControl(navController, directBtn);
+                #endregion
                 #region Account
                 Button userBtn = new Button();
                 userBtn.HorizontalAlignment = HorizontalAlignment.Left;

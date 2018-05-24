@@ -141,6 +141,9 @@
   <data name="Direct" xml:space="preserve">
     <value>Direct</value>
   </data>
+  <data name="DirectTimeline" xml:space="preserve">
+    <value>Direct Messages</value>
+  </data>
   <data name="Edit" xml:space="preserve">
     <value>Edit</value>
   </data>
