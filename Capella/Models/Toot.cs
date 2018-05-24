@@ -28,19 +28,19 @@ namespace Capella.Models
         /// The ID of the status
         /// </summary>
         [JsonProperty("id")]
-        public string tootID;
+        public string tootID { get; set; }
 
         /// <summary>
         /// A Fediverse-unique resource ID
         /// </summary>
         [JsonProperty("uri")]
-        public string tootURL;
+        public string tootURL { get; set; }
 
         /// <summary>
         /// Body of the status; this will contain HTML (remote HTML already sanitized)
         /// </summary>
         [JsonProperty("content")]
-        public string Content;
+        public string Content { get; set; }
 
         public string rawText
         {
@@ -57,20 +57,30 @@ namespace Capella.Models
             }
         }
 
-        public String origuser_screen_name = "";
-        public String origuser_name = "";
-        public String userID = "";
-        private String kuser_screen_name = "";
-        private String kuser_name = "";
-        private DateTime ktimeTooted = DateTime.Now;
-        private String kclientString = "";
+        /// <summary>
+        /// The Account which posted the status
+        /// </summary>
+        [JsonProperty("account")]
+        public Profile Account { get; set; }
+
+        /// <summary>
+        /// null or the reblogged Status
+        /// </summary>
+        [JsonProperty("reblog")]
+        public Toot Reblog { get; set; }
+
+        public String origuser_screen_name => Reblog?.user_screen_name;
+        public String origuser_name => Reblog?.user_name;
+        public String userID => Account.accountID;
+
         public String clientLink;
-        public bool isRetootedStatus = false;
-        public bool isStartToot = false;
-        public Uri user_profilepicurl = null;
-        public dynamic rawEntities = null;
-        public dynamic rawExtendedEntities = null;
-        public JArray orderedEntities = null;
+
+        public bool isRetootedStatus => Reblog != null;
+        public bool isStartToot;
+        public Uri user_profilepicurl;
+        public dynamic rawEntities;
+        public dynamic rawExtendedEntities;
+        public JArray orderedEntities;
 
         public String rawSpoilerText = "";
 
@@ -219,21 +229,11 @@ namespace Capella.Models
         {
             get
             {
-                return "Boosted By " + origuser_name;
+                return "Boosted By " + Reblog?.user_name;
             }
         }
 
-        public String clientString
-        {
-            get
-            {
-                return kclientString;
-            }
-            set
-            {
-                kclientString = value;
-            }
-        }
+        public String clientString { get; set; } = "";
 
         public Thickness tootOffset
         {
@@ -253,35 +253,15 @@ namespace Capella.Models
             }
         }
 
-        public String user_name
-        {
-            get
-            {
-                return kuser_name;
-            }
-            set
-            {
-                kuser_name = value;
-            }
-        }
+        public String user_name => Account.DisplayName;
 
-        public String user_screen_name
-        {
-            get
-            {
-                return kuser_screen_name;
-            }
-            set
-            {
-                kuser_screen_name = value;
-            }
-        }
+        public String user_screen_name => Account.Handle;
 
         public String user_display_screen_name
         {
             get
             {
-                return "@" + kuser_screen_name;
+                return "@" + user_screen_name;
             }
         }
 
@@ -321,23 +301,13 @@ namespace Capella.Models
             }
         }
 
-        public DateTime timeTooted
-        {
-            get
-            {
-                return ktimeTooted;
-            }
-            set
-            {
-                ktimeTooted = value;
-            }
-        }
+        public DateTime timeTooted { get; set; } = DateTime.Now;
 
         public String timeTootedString
         {
             get
             {
-                return String.Format("{0:MM/dd/yy} at {0:h:mm tt}", ktimeTooted);
+                return String.Format("{0:MM/dd/yy} at {0:h:mm tt}", timeTooted);
             }
         }
 
@@ -880,7 +850,7 @@ namespace Capella.Models
                 if (((String)media["type"]).Equals("gifv")) {
                     return new Uri((String)media["url"]);
                 }
-                return new Uri("");
+                return null;
             }
         }
 
@@ -1288,11 +1258,6 @@ namespace Capella.Models
                 if (hasQuotedToot)
                     return quotedToot.user_name;
                 return null;
-            }
-            set
-            {
-                if (hasQuotedToot)
-                    quotedToot.user_name = value;
             }
         }
 

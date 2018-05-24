@@ -40,7 +40,7 @@
                             </Border>
                             <TextBlock MaxWidth="210" HorizontalAlignment="Left" Margin="68,6,0,0" Padding="0,0,0,10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI Symbol" MouseLeftButtonUp="nameHandleLabel_MouseLeftButtonUp">
                                 <TextBlock.Inlines>
-                                    <Run Foreground="{Binding textColor}" FontWeight="SemiBold" Text="{Binding user_name, Mode=TwoWay}" />
+                                    <Run Foreground="{Binding textColor}" FontWeight="SemiBold" Text="{Binding user_name, Mode=OneWay}" />
                                     <Run Text="{Binding user_display_screen_name, Mode=OneTime}" Foreground="{Binding nameColor}" />
                                 </TextBlock.Inlines>
                             </TextBlock>
@@ -75,7 +75,7 @@
                                     <Grid MaxHeight="250" MaxWidth="260" Margin="0,0,10,0" Background="{Binding quotedBackgroundColor}" Visibility="{Binding showQuotedToot}" PreviewMouseUp="quote_Click" Cursor="Hand">
                                         <TextBlock MaxWidth="210" HorizontalAlignment="Left" Margin="6,6,0,0" Padding="0,0,0,10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI Symbol">
                                             <TextBlock.Inlines>
-                                                <Run Foreground="{Binding textColor, Mode=OneTime}" FontWeight="SemiBold" Text="{Binding quotedUser_name}" />
+                                                <Run Foreground="{Binding textColor, Mode=OneTime}" FontWeight="SemiBold" Text="{Binding quotedUser_name, Mode=OneTime}" />
                                                 <Run Text="{Binding quotedUser_display_screen_name, Mode=OneTime}" Foreground="{Binding nameColor}" />
                                             </TextBlock.Inlines>
                                         </TextBlock>

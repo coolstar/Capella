@@ -755,11 +755,6 @@ namespace Capella.Models
                     return quotedToot.user_name;
                 return null;
             }
-            set
-            {
-                if (hasQuotedToot)
-                    quotedToot.user_name = value;
-            }
         }
 
         public String quotedUser_display_screen_name

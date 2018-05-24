@@ -93,7 +93,14 @@ namespace Capella
                     {
                         Directory.CreateDirectory(Path.GetTempPath() + "Capella\\");
                     }
-                    File.WriteAllText(Path.GetTempPath() + "Capella\\" + cachedFile + ".cache", output);
+                    try
+                    {
+                        File.WriteAllText(Path.GetTempPath() + "Capella\\" + cachedFile + ".cache", output);
+                    }
+                    catch (IOException c)
+                    {
+                        Console.WriteLine(c);
+                    }
                 }
                 reader.Dispose();
                 reader.Close();
