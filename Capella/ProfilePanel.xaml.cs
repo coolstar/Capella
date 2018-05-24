@@ -115,10 +115,10 @@ namespace Capella
                 tootsProtected.Visibility = Visibility.Visible;
             }
 
-            /*if ((bool)profile["verified"] == true)
+            if ((bool)profile["bot"] == true)
             {
-                verified.Visibility = Visibility.Visible;
-            }*/
+                bot.Visibility = Visibility.Visible;
+            }
 
             int toots_count = (int)profile["statuses_count"];
             String tootsCountStr = String.Format("{0:n0}", toots_count);
