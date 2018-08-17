@@ -32,7 +32,7 @@
                             <Capella:TimeLabel Foreground="{Binding lightTextColor}" time="{Binding timeTooted}" Content="1365d"  HorizontalAlignment="Right" Margin="74,7,4,0" Padding="0,0,0,5" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI" HorizontalContentAlignment="Right"></Capella:TimeLabel>
                             <Border Height="65" Width="300"></Border>
                             <Border CornerRadius="4" ClipToBounds="False" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="50" Margin="10,8,0,0">
-                                <Image Stretch="UniformToFill" Source="{Binding user_profilepic}">
+                                <Image Stretch="UniformToFill" Source="{Binding user_profilepic}" RenderOptions.BitmapScalingMode="HighQuality">
                                     <Image.Clip>
                                         <RectangleGeometry Rect="0,0,50,50" RadiusX="4" RadiusY="4" />
                                     </Image.Clip>
@@ -40,7 +40,7 @@
                             </Border>
                             <TextBlock MaxWidth="210" HorizontalAlignment="Left" Margin="68,6,0,0" Padding="0,0,0,10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI Symbol" MouseLeftButtonUp="nameHandleLabel_MouseLeftButtonUp">
                                 <TextBlock.Inlines>
-                                    <Run Foreground="{Binding textColor}" FontWeight="SemiBold" Text="{Binding user_name, Mode=TwoWay}" />
+                                    <Run Foreground="{Binding textColor}" FontWeight="SemiBold" Text="{Binding user_name, Mode=OneWay}" />
                                     <Run Text="{Binding user_display_screen_name, Mode=OneTime}" Foreground="{Binding nameColor}" />
                                 </TextBlock.Inlines>
                             </TextBlock>
@@ -57,18 +57,25 @@
                                     <Capella:CSTextBlock Foreground="{Binding textColor}" x:Name="tootText" InlineCollection="{Binding richText}" HorizontalAlignment="Left" Margin="{Binding richTextMargin}" Visibility="{Binding richTextVisibility}" Padding="0,0,0,10" VerticalAlignment="Top" Background="{x:Null}"  FontSize="10pt" IsHitTestVisible="True" TextWrapping="Wrap" MinHeight="45" />
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding mediaVisibility}">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="{Binding imageWidth}">
-                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
-                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Bottom" Source="{Binding mediaSource2}" MouseLeftButtonUp="Image2_MouseLeftButtonUp" Margin="0,2,0,0"></Image>
+                                            <Image Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
+                                            <Image Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" MaxHeight="250" MaxWidth="260" VerticalAlignment="Bottom" Source="{Binding mediaSource2}" MouseLeftButtonUp="Image2_MouseLeftButtonUp" Margin="0,2,0,0"></Image>
                                         </StackPanel>
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Width="{Binding imageWidth}">
-                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource3}" MouseLeftButtonUp="Image3_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
-                                            <Image Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Bottom" Source="{Binding mediaSource4}" MouseLeftButtonUp="Image4_MouseLeftButtonUp" Margin="0,2,0,0"></Image>
+                                            <Image Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" Source="{Binding mediaSource3}" MouseLeftButtonUp="Image3_MouseLeftButtonUp" Margin="0,0,0,2"></Image>
+                                            <Image Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" MaxHeight="250" MaxWidth="260" VerticalAlignment="Bottom" Source="{Binding mediaSource4}" MouseLeftButtonUp="Image4_MouseLeftButtonUp" Margin="0,2,0,0"></Image>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="240">
+                                            <!--<ffme:MediaElement Name="videoElement" Margin="0,0,0,2" Stretch="Uniform" MaxHeight="250" MaxWidth="260" VerticalAlignment="Top" LoadedBehavior="Play" Source="{Binding videoSource}">
+                                               
+                                            </ffme:MediaElement>-->
                                         </StackPanel>
                                     </StackPanel>
                                     <Grid MaxHeight="250" MaxWidth="260" Margin="0,0,10,0" Background="{Binding quotedBackgroundColor}" Visibility="{Binding showQuotedToot}" PreviewMouseUp="quote_Click" Cursor="Hand">
                                         <TextBlock MaxWidth="210" HorizontalAlignment="Left" Margin="6,6,0,0" Padding="0,0,0,10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" FontSize="10pt" FontFamily="Segoe UI Symbol">
                                             <TextBlock.Inlines>
-                                                <Run Foreground="{Binding textColor, Mode=OneTime}" FontWeight="SemiBold" Text="{Binding quotedUser_name}" />
+                                                <Run Foreground="{Binding textColor, Mode=OneTime}" FontWeight="SemiBold" Text="{Binding quotedUser_name, Mode=OneTime}" />
                                                 <Run Text="{Binding quotedUser_display_screen_name, Mode=OneTime}" Foreground="{Binding nameColor}" />
                                             </TextBlock.Inlines>
                                         </TextBlock>
@@ -109,8 +116,8 @@
                                     <Button Margin="10,1,221,1" Height="26" Width="47" Click="replyBtn_Click" Style="{DynamicResource FlatButton}">
                                         <Image Height="12" Width="19" Source="{Binding replyBtnImage}"/>
                                     </Button>
-                                    <Button Margin="81,1,150,1" Height="26" Width="47" Click="retootBtn_Click" Style="{DynamicResource FlatButton}">
-                                        <Image Height="14" Width="23" Source="{Binding retootStatusDisplay}"/>
+                                    <Button Margin="81,1,150,1" Height="32" Width="47" Click="retootBtn_Click" Style="{DynamicResource FlatButton}" IsEnabled="{Binding retootEnabled}">
+                                        <Image Height="20" Width="23" Source="{Binding retootStatusDisplay}"/>
                                     </Button>
                                     <Button Margin="152,0,79,1" Height="24" Width="47" Click="favoriteBtn_Click" Style="{DynamicResource FlatButton}">
                                         <Image Height="19" Width="20" Source="{Binding favoriteStatusDisplay}"/>

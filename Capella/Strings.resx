@@ -126,6 +126,9 @@
   <data name="Boosted" xml:space="preserve">
     <value>boosted you</value>
   </data>
+  <data name="BoostedBy" xml:space="preserve">
+    <value>Boosted By</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="Direct" xml:space="preserve">
     <value>Direct</value>
+  </data>
+  <data name="DirectTimeline" xml:space="preserve">
+    <value>Direct Messages</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Edit</value>

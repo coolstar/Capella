@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capella.Models;
+using System;
 using System.Windows.Controls;
 
 namespace Capella
@@ -21,6 +22,7 @@ namespace Capella
         public Button mentionsBtn;
         public Button publicBtn;
         public Button userButton;
+        public Button directBtn;
         public Button searchBtn;
     }
 }

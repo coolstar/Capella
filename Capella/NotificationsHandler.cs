@@ -12,6 +12,7 @@ using DesktopNotifications;
 using System.IO;
 using OsInfo;
 using OsInfo.Extensions;
+using System.Media;
 
 namespace Capella
 {
@@ -87,6 +88,7 @@ namespace Capella
                     Message = content
                 };
                 growlNotifications.AddNotification(notification);
+                PlaySound();
             }
             else
             {
@@ -127,10 +129,15 @@ namespace Capella
 
                     };
 
-                // Now we can construct the final toast content
-                ToastContent toastContent = new ToastContent()
+                    ToastAudio toastAudio = new ToastAudio();
+                    toastAudio.Src = new Uri("pack://application:,,,/Resources/notification_sound.wav");
+
+                    // Now we can construct the final toast content
+                    ToastContent toastContent = new ToastContent()
                     {
                         Visual = visual,
+                        Audio = new ToastAudio() { Silent = true },
+                    
                     //Actions = actions,
 
                     // Arguments when the user taps body of toast
@@ -140,13 +147,14 @@ namespace Capella
                         { "conversationId", conversationId.ToString() }
 
                     }.ToString()*/
-                    };
+                };
                 // And create the toast notification
                 XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.LoadXml(toastContent.GetContent());
                     var toast = new ToastNotification(xmlDoc);
                     ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
                     webClient.Dispose();
+                    PlaySound();
                 };
                 webClient.DownloadFileAsync(new Uri((String)user["avatar"]), tempFile);
             }
@@ -188,6 +196,18 @@ namespace Capella
 
             notification.Show();
             notifications.Add(notification);*/
+        }
+
+        private void PlaySound()
+        {
+            var sri = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/notification_sound.wav"));
+            if ((sri != null))
+            {
+
+                System.Media.SoundPlayer player = new System.Media.SoundPlayer(sri.Stream);
+                player.Load();
+                player.Play();
+            }
         }
     }
 }

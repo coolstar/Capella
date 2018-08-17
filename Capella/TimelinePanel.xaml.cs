@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using System.Web;
+using Capella.Models;
 
 namespace Capella
 {
@@ -134,7 +135,7 @@ namespace Capella
                             rawTimeline = MastodonAPIWrapper.sharedApiWrapper.getTimeline(twitterAccount, this.timelineType, this.profileID, null);
                     } catch (Exception e2)
                     {
-                        Console.WriteLine(e2.StackTrace);
+                        Console.WriteLine(e2);
                     }
                     watch.Stop();
                     if (isConversation)
@@ -198,25 +199,27 @@ namespace Capella
             toot.twitterAccountToken = twitterAccountToken;
 
             dynamic rawOrigToot = rawToot;
-            dynamic rawUser = rawToot["account"];
+            Profile rawUser = ((JObject)rawToot["account"]).ToObject<Profile>();
+            toot.Account = rawUser;
             if (rawToot["reblog"] != null)
             {
-                toot.isRetootedStatus = true;
-                toot.origuser_name = rawUser["display_name"];
-                toot.origuser_screen_name = rawUser["acct"];
+                toot.Reblog = new Toot
+                {
+                    Account = rawUser
+                };
                 rawOrigToot = rawToot["reblog"];
-                rawUser = rawOrigToot["account"];
+                rawUser = rawOrigToot["account"].ToObject<Profile>();
+                toot.Account = rawUser;
             }
             if ("" + rawOrigToot["id"] == conversationStartToot && quoted == false)
                 toot.isStartToot = true;
-            toot.userID = "" + rawUser["id"];
             toot.tootID = (String)rawOrigToot["id"];
-            toot.user_screen_name = (String)rawUser["acct"];
             toot.tootURL = (String)rawOrigToot["url"];
+            toot.visibility = (String)rawOrigToot["visibility"];
             //toot.clientString = (String)rawOrigToot["source"];
             if (rawOrigToot["application"] != null && rawOrigToot["application"].Type != JTokenType.Null)
             {
-                toot.clientString = rawOrigToot["application"]["name"];
+                toot.clientString = rawOrigToot["application"].Value<string>("name");
                 if (toot.clientString == "website" || rawOrigToot["application"]["website"] == null || rawOrigToot["application"]["website"].Type != JTokenType.String)
                     toot.clientLink = "https://" + twitterAccount.endpoint;
                 else
@@ -230,21 +233,14 @@ namespace Capella
             if (twitterAccount.accountID.Equals(toot.userID))
                 twitterAccount.myHandle = toot.user_screen_name;
 
-            toot.user_name = (String)rawUser["display_name"];
             try
             {
-                toot.user_profilepicurl = new Uri((String)rawUser["avatar"], UriKind.Absolute);
+                toot.user_profilepicurl = rawUser.Avatar;
             } catch (Exception e)
             {
                 //no profile pic ;-;
             }
-            toot.rawText = (String)rawOrigToot["content"];
-            toot.rawText = toot.rawText.Replace("<br>", "\n");
-            toot.rawText = toot.rawText.Replace("<br/>", "\n");
-            toot.rawText = toot.rawText.Replace("<br />", "\n");
-            toot.rawText = toot.rawText.Replace("</p><p>", "\n\n");
-            toot.rawText = Regex.Replace(toot.rawText, "<.*?>", String.Empty);
-            toot.rawText = HttpUtility.HtmlDecode(toot.rawText);
+            toot.Content = (String)rawOrigToot["content"];
 
             foreach (String keyword in MastodonAPIWrapper.sharedApiWrapper.keywords)
             {
@@ -342,6 +338,15 @@ namespace Capella
             JArray media = new JArray();
             foreach (JToken rawMedia in rawOrigToot["media_attachments"].Children())
             {
+                /*if (((String)rawMedia["type"]).Equals("gifv"))
+                {
+                    // do something
+                    JObject video = new JObject();
+                    video.Add("id", rawMedia["id"]);
+                    video.Add("url", rawMedia["url"]);
+
+                    media.Add(video);
+                }*/
                 if (((String)rawMedia["type"]).Equals("image"))
                 {
                     JObject image = new JObject();
@@ -414,7 +419,7 @@ namespace Capella
             rawEntities.Add("hashtags", hashtags);
 
             JArray urls = new JArray();
-            String rawHtml = rawOrigToot["content"];
+            String rawHtml = rawOrigToot.Value<string>("content");
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(rawHtml);
             HtmlNodeCollection collection = doc.DocumentNode.SelectNodes("//a[@href and (@rel=\"nofollow noopener\" or @target=\"_blank\")]");

@@ -21,6 +21,8 @@
     <file src="lib\net45\ru\CrashReporter.NET.resources.dll" target="lib\net45\ru\CrashReporter.NET.resources.dll" />
     <file src="lib\net45\sv\CrashReporter.NET.resources.dll" target="lib\net45\sv\CrashReporter.NET.resources.dll" />
     <file src="lib\net45\tr\CrashReporter.NET.resources.dll" target="lib\net45\tr\CrashReporter.NET.resources.dll" />
+    <file src="lib\net45\en-AU\Capella.resources.dll" target="lib\net45\en-AU\Capella.resources.dll"/>
+    <file src="lib\net45\fr\Capella.resources.dll" target="lib\net45\fr\Capella.resources.dll" />
     <file src="lib\net45\Capella.exe" target="lib\net45\Capella.exe" />
     <file src="lib\net45\ControlzEx.dll" target="lib\net45\ControlzEx.dll" />
     <file src="lib\net45\CrashReporter.NET.dll" target="lib\net45\CrashReporter.NET.dll" />
@@ -40,9 +42,9 @@
     <file src="lib\net45\SharpCompress.dll" target="lib\net45\SharpCompress.dll" />
     <file src="lib\net45\Splat.dll" target="lib\net45\Splat.dll" />
     <file src="lib\net45\Squirrel.dll" target="lib\net45\Squirrel.dll" />
-    <file src="lib\net45\System.Drawing.Primitives.dll" target="lib\net45\System.Drawing.Primitives.dll" />
     <file src="lib\net45\System.Windows.Interactivity.dll" target="lib\net45\System.Windows.Interactivity.dll" />
     <file src="lib\net45\TaskDialog.dll" target="lib\net45\TaskDialog.dll" />
     <file src="lib\net45\websocket-sharp.dll" target="lib\net45\websocket-sharp.dll" />
+    <file src="lib\net45\Hardcodet.Wpf.TaskbarNotification.dll" target="lib\net45\Hardcodet.Wpf.TaskbarNotification.dll" />
   </files>
 </package>

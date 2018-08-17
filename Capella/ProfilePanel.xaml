@@ -39,10 +39,19 @@
                             </Image>
                         </Border>
                         <StackPanel  HorizontalAlignment="Center" Margin="0,75,0,0" VerticalAlignment="Top" Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type Label}">
+                                    <Setter Property="Margin" Value="2,0,0,0"/>
+                                </Style>
+                            </StackPanel.Resources>
                             <Label x:Name="nameLabel" Content="Loading.." Foreground="White" FontSize="16" FontWeight="SemiBold" />
                             <Image Source="Resources/protected.png" Height="20" Width="20" x:Name="tootsProtected" Visibility="Collapsed"></Image>
-                            <Image Source="Resources/verified.png" Height="20" Width="20" x:Name="verified" Visibility="Collapsed"></Image>
                             <Label Background="#33000000" Height="25" Foreground="White" Content="Follows You" x:Name="follows" Visibility="Collapsed">
+                                <Label.Clip>
+                                    <RectangleGeometry Rect="0,0,72,25" RadiusX="4" RadiusY="4" />
+                                </Label.Clip>
+                            </Label>
+                            <Label Background="#33000000" Height="25" Foreground="White" Content="Bot" x:Name="bot" Visibility="Collapsed">
                                 <Label.Clip>
                                     <RectangleGeometry Rect="0,0,72,25" RadiusX="4" RadiusY="4" />
                                 </Label.Clip>

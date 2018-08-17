@@ -1,8 +1,11 @@
 # Capella
 
 [![Build Status](https://ci.appveyor.com/api/projects/status/971u5l7kgrtfmln0/branch/master?svg=true)](https://ci.appveyor.com/project/cybercatgurrl/capella-kqm0m/branch/master)
+[![Releases](https://img.shields.io/github/release/coolstar/Capella.svg)](https://github.com/coolstar/Capella/releases)
+[![Github Releases](https://img.shields.io/github/downloads/coolstar/Capella/latest/total.svg)](https://github.com/coolstar/Capella/releases)
+[![license](https://img.shields.io/github/license/coolstar/Capella.svg)](https://github.com/coolstar/Capella/blob/master/LICENSE)
 
-Capella, a social media client for Mastodon
+💬 Social media client for Mastodon
 
 https://coolstar.org/capella
 

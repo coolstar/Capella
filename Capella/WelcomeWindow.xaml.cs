@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Capella.Models;
 
 namespace Capella
 {
@@ -144,8 +145,9 @@ namespace Capella
                 };
                 worker2.RunWorkerCompleted += (sender2, e2) =>
                 {
-                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                    Application.Current.Shutdown();
+                    //System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                    //Application.Current.Shutdown();
+                    this.Close();
                 };
                 worker2.RunWorkerAsync();
             }

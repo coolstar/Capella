@@ -1,0 +1,63 @@
+﻿<Window x:Class="Capella.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:Capella.Properties"
+        xmlns:local="clr-namespace:Capella"
+        mc:Ignorable="d"
+        Title="Settings" Height="450" Width="800" ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources\FlatButton.xaml"/>
+                <ResourceDictionary Source="Resources\FlatTab.xaml"/>
+                <ResourceDictionary Source="Resources\FlatTab-selected.xaml"/>
+                <ResourceDictionary Source="Resources\ImageHD.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+                <!-- Accent and AppTheme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <TabControl HorizontalAlignment="Left" Height="409" Margin="0,0,0,0" VerticalAlignment="Top" Width="702">
+                <TabItem >
+                    <TabItem.Header>
+                        <TextBlock Text="General" FontSize="18"/>
+                    </TabItem.Header>
+                    <StackPanel Background="#FFE5E5E5" Margin="0,3,-93,-31">
+                        <!-- Invisible Seperator for spacing. Shrug. -->
+                        <Separator Margin="15,30,15,15" Background="#FFE5E5E5"/>
+                    <Controls:ToggleSwitch x:Name="startup" Margin="15,0,15,15" VerticalAlignment="Top" Click="SettingChanged" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                               Path=startup}">Open Capella</Controls:ToggleSwitch>
+                        <Label Margin="11,-10,0,15">Open Capella at startup so you never miss a toot</Label>
+                        <Separator Margin="15,1,15,15" Background="LightGray"/>
+                    <Controls:ToggleSwitch x:Name="startMinimized" Margin="15,0,15,15" VerticalAlignment="Top" Click="SettingChanged" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                               Path=startMinimized}">Start Minimized</Controls:ToggleSwitch>
+                        <Label Margin="11,-10,0,15">Capella starts in the background and remains out of the way</Label>
+                        <Separator Margin="15,2,15,15" Background="LightGray"/>
+                    <Controls:ToggleSwitch x:Name="minimizeToTray" Margin="15,0,15,15" VerticalAlignment="Top" Click="SettingChanged" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                               Path=minimizeToTray}">Minimize to Tray</Controls:ToggleSwitch>
+                        <Label Margin="11,-10,0,15">Have Cappella go to your system tray when you close it</Label>
+                    </StackPanel>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="Accounts" FontSize="18" />
+                    </TabItem.Header>
+                    <Grid Background="#FFE5E5E5" Margin="0,0,-93,-6">
+                        <Grid Width="80" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="sidebarGrid">
+                        </Grid>
+                    <Button Background="LightGreen" Margin="244,250,71,89" BorderBrush="Green" Click="AddAccount_Click">Add Account</Button>
+                    <Button Background="LightSalmon" Margin="244,316,71,23" BorderBrush="Red">Danger: Remove Account</Button>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+</Window>

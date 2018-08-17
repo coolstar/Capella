@@ -88,6 +88,15 @@ namespace Capella {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Boosted By.
+        /// </summary>
+        internal static string BoostedBy {
+            get {
+                return ResourceManager.GetString("BoostedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string Cancel {
@@ -120,6 +129,15 @@ namespace Capella {
         internal static string Direct {
             get {
                 return ResourceManager.GetString("Direct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Direct Messages.
+        /// </summary>
+        internal static string DirectTimeline {
+            get {
+                return ResourceManager.GetString("DirectTimeline", resourceCulture);
             }
         }
         

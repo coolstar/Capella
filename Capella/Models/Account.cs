@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace Capella
+namespace Capella.Models
 {
+    /// <summary>
+    /// Logged in User account.
+    /// </summary>
     public class Account
     {
         public String accessToken;

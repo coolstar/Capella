@@ -1,26 +1,24 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json.Linq;
+using Capella.Models;
 
-namespace Capella
+namespace Capella.Models
 {
-    public class Toot
+    public class Message
     {
         public String twitterAccountToken;
 
         public NavController displayNavController;
         public String tootID = "";
-        public String tootURL = "";
         public String rawText = "";
         public String origuser_screen_name = "";
         public String origuser_name = "";
@@ -30,40 +28,26 @@ namespace Capella
         private DateTime ktimeTooted = DateTime.Now;
         private String kclientString = "";
         public String clientLink;
-        public bool isRetootedStatus = false;
-        public bool isStartToot = false;
         public Uri user_profilepicurl = null;
         public dynamic rawEntities = null;
         public dynamic rawExtendedEntities = null;
         public JArray orderedEntities = null;
-
-        public String rawSpoilerText = "";
 
         private bool mediaFound = false;
         private Uri mediaUri = null;
         private Uri mediaUri2 = null;
         private Uri mediaUri3 = null;
         private Uri mediaUri4 = null;
-        private Uri fullMediaUri = null;
-        private Uri fullMediaUri2 = null;
-        private Uri fullMediaUri3 = null;
-        private Uri fullMediaUri4 = null;
 
         private int mediaCount;
 
         private bool mediaIsNotImage = false;
         private Uri rawMediaUri = null;
 
-        public bool isRetooted, isFavorited = false;
-        public bool isSensitive = false;
         public bool hasQuotedToot = false;
         public Toot quotedToot;
-        public bool hasLocation;
-        public String rawLocation;
 
-        public int numRetoots = 0, numFavorites = 0;
-
-        ~Toot()
+        ~Message()
         {
             displayNavController = null;
             tootID = null;
@@ -85,15 +69,11 @@ namespace Capella
             {
                 if (!MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled)
                 {
-                    if (!isStartToot)
-                        return Color.FromArgb(255, 241, 241, 241);
-                    return Color.FromArgb(255, 33, 33, 33);
+                    return Color.FromArgb(255, 241, 241, 241);
                 }
                 else
                 {
-                    if (!isStartToot)
-                        return Color.FromArgb(255, 33, 33, 33);
-                    return Color.FromArgb(255, 241, 241, 241);
+                    return Color.FromArgb(255, 33, 33, 33);
                 }
             }
         }
@@ -104,15 +84,11 @@ namespace Capella
             {
                 if (!MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled)
                 {
-                    if (!isStartToot)
-                        return Color.FromArgb(255, 241, 241, 241);
-                    return Color.FromArgb(255, 33, 33, 33);
+                    return Color.FromArgb(255, 241, 241, 241);
                 }
                 else
                 {
-                    if (!isStartToot)
-                        return Color.FromArgb(255, 33, 33, 33);
-                    return Color.FromArgb(255, 241, 241, 241);
+                    return Color.FromArgb(255, 33, 33, 33);
                 }
             }
         }
@@ -123,15 +99,12 @@ namespace Capella
             {
                 if (!MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled)
                 {
-                    if (!isStartToot)
-                        return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
+                    return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
                     return new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
                 }
                 else
                 {
-                    if (!isStartToot)
-                        return new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
-                    return new SolidColorBrush(Color.FromArgb(255, 40, 40, 40));
+                    return new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
                 }
             }
         }
@@ -142,15 +115,11 @@ namespace Capella
             {
                 if (!MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled)
                 {
-                    if (!isStartToot)
-                        return new SolidColorBrush(Color.FromArgb(255, 135, 153, 166));
-                    return new SolidColorBrush(Color.FromArgb(255, 238, 238, 238));
+                    return new SolidColorBrush(Color.FromArgb(255, 135, 153, 166));
                 }
                 else
                 {
-                    if (!isStartToot)
-                        return new SolidColorBrush(Color.FromArgb(255, 238, 238, 238));
-                    return new SolidColorBrush(Color.FromArgb(255, 135, 153, 166));
+                    return new SolidColorBrush(Color.FromArgb(255, 238, 238, 238));
                 }
             }
         }
@@ -169,17 +138,11 @@ namespace Capella
             {
                 if (!MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled)
                 {
-                    if (!isStartToot)
-                        return new SolidColorBrush(Color.FromArgb(255, 42, 135, 212));
-                    else
-                        return Brushes.LightBlue;
+                    return new SolidColorBrush(Color.FromArgb(255, 42, 135, 212));
                 }
                 else
                 {
-                    if (!isStartToot)
-                        return Brushes.LightBlue;
-                    else
-                        return new SolidColorBrush(Color.FromArgb(255, 42, 135, 212));
+                    return Brushes.LightBlue;
                 }
             }
         }
@@ -199,7 +162,7 @@ namespace Capella
         {
             get
             {
-                return "Boosted By " + origuser_name;
+                return "Retooted By " + origuser_name;
             }
         }
 
@@ -212,24 +175,6 @@ namespace Capella
             set
             {
                 kclientString = value;
-            }
-        }
-
-        public Thickness tootOffset
-        {
-            get
-            {
-                if (isRetootedStatus)
-                    return new Thickness(0, 0, 0, 0);
-                return new Thickness(0);
-            }
-        }
-
-        public Visibility retootedVisibility
-        {
-            get
-            {
-                return isRetootedStatus ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -280,27 +225,6 @@ namespace Capella
             }
         }
 
-        public BitmapImage locationImage
-        {
-            get
-            {
-                if (!MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled)
-                {
-                    if (!isStartToot)
-                        return new BitmapImage(new Uri("Resources/location.png", UriKind.Relative));
-                    else
-                        return new BitmapImage(new Uri("Resources/location-night.png", UriKind.Relative));
-                }
-                else
-                {
-                    if (isStartToot)
-                        return new BitmapImage(new Uri("Resources/location.png", UriKind.Relative));
-                    else
-                        return new BitmapImage(new Uri("Resources/location-night.png", UriKind.Relative));
-                }
-            }
-        }
-
         public DateTime timeTooted
         {
             get
@@ -321,47 +245,6 @@ namespace Capella
             }
         }
 
-        public Visibility showMoreDetails
-        {
-            get
-            {
-                if (isStartToot)
-                    return Visibility.Visible;
-                else
-                    return Visibility.Collapsed;
-            }
-        }
-
-        public Visibility showShareDetails
-        {
-            get
-            {
-                if (isStartToot && numRetoots > 0 && numFavorites > 0)
-                    return Visibility.Visible;
-                else
-                    return Visibility.Collapsed;
-            }
-        }
-
-        public Visibility showLocation
-        {
-            get
-            {
-                if (isStartToot && hasLocation)
-                    return Visibility.Visible;
-                else
-                    return Visibility.Collapsed;
-            }
-        }
-
-        public String location
-        {
-            get
-            {
-                return rawLocation;
-            }
-        }
-
         public void orderEntities()
         {
             orderedEntities = new JArray();
@@ -369,20 +252,10 @@ namespace Capella
             JArray userMentions = rawEntities["user_mentions"];
             foreach (JObject mention in userMentions.Children())
             {
-                int y = 0;
-                int firstIndex = (int)mention["indices"][0];
-                foreach (dynamic entity in orderedEntities.Children())
-                {
-                    if ((int)entity["indices"][0] < firstIndex)
-                        y++;
-                    else
-                        break;
-                }
-
                 if (mention["type"] != null)
                     mention.Remove("type");
                 mention.Add("type", "user_mention");
-                orderedEntities.Insert(y, mention);
+                orderedEntities.Add(mention);
             }
 
             JArray links = rawEntities["urls"];
@@ -483,11 +356,7 @@ namespace Capella
                     }
 
                     mediaFound = true;
-                    if (!isStartToot)
-                        mediaUri = new Uri((String)media["preview_url"]);
-                    else
-                        mediaUri = new Uri((String)media["url"]);
-                    fullMediaUri = new Uri((String)media["url"]);
+                    mediaUri = new Uri((String)media["media_url_https"] + ":large");
 
                     if (media["type"] != null)
                         media.Remove("type");
@@ -511,81 +380,24 @@ namespace Capella
             dynamic media = rawExtendedEntities["media"];
             foreach (dynamic picture in media.Children())
             {
-                Uri uri = null;
-                if (!isStartToot)
-                    uri = new Uri((String)picture["preview_url"]);
-                else
-                    uri = new Uri((String)picture["url"]);
-                Uri fullUri = new Uri((String)picture["url"]);
+                Uri uri = new Uri((String)picture["media_url_https"] + ":large");
                 switch (idx)
                 {
                     case 0:
                         mediaUri = uri;
-                        fullMediaUri = fullUri;
                         break;
                     case 1:
                         mediaUri2 = uri;
-                        fullMediaUri2 = fullUri;
                         break;
                     case 2:
                         mediaUri3 = uri;
-                        fullMediaUri3 = fullUri;
                         break;
                     case 3:
                         mediaUri4 = uri;
-                        fullMediaUri4 = fullUri;
                         break;
                 }
                 idx++;
                 mediaCount = idx;
-            }
-        }
-
-        public String spoilerText
-        {
-            get
-            {
-                return rawSpoilerText;
-            }
-        }
-
-        public Visibility spoilerVisibility
-        {
-            get
-            {
-                return (rawSpoilerText == null || rawSpoilerText == "") ? Visibility.Collapsed : Visibility.Visible;
-            }
-        }
-
-        public Visibility richTextVisibility
-        {
-            get
-            {
-                return (rawSpoilerText == null || rawSpoilerText == "") ? Visibility.Visible : Visibility.Hidden;
-            }
-        }
-
-        public Visibility mediaVisibility
-        {
-            get
-            {
-                if (mediaFound && !isSensitive)
-                    return Visibility.Visible;
-                return Visibility.Hidden;
-            }
-        }
-
-        public Thickness richTextMargin
-        {
-            get
-            {
-                if (rawSpoilerText == null || rawSpoilerText == "")
-                {
-                    return new Thickness(0, 24, 0, 0);
-                } else
-                {
-                    return new Thickness(0);
-                }
             }
         }
 
@@ -628,7 +440,6 @@ namespace Capella
                             panel.twitterAccountToken = twitterAccountToken;
                             panel.navController = displayNavController;
                             panel.profileScreenName = WebUtility.HtmlDecode(sub).Replace("@", "");
-                            panel.profileUserID = entity["id"];
                             panel.refreshProfile();
                             displayNavController.pushControl(panel);
                         };
@@ -653,7 +464,7 @@ namespace Capella
                         {
                             TimelinePanel panel = new TimelinePanel();
                             panel.twitterAccountToken = twitterAccountToken;
-                            panel.timelineType = "tag/"+sub.Substring(1);
+                            panel.timelineType = "search";
                             panel.isSearch = true;
                             panel.setTitle("\"" + sub + "\"");
                             panel.searchQuery = WebUtility.HtmlDecode(sub);
@@ -769,6 +580,35 @@ namespace Capella
                             else
                             {
                                 String rawURL = (String)entity["expanded_url"];
+                                if (rawURL.StartsWith("http://twitter.com") || rawURL.StartsWith("https://twitter.com"))
+                                {
+                                    Uri myUri = new Uri(rawURL);
+                                    String[] urlComponents = myUri.LocalPath.Split('/');
+                                    if (urlComponents.Count() >= 4)
+                                    {
+                                        if (urlComponents[2].ToLower().Equals("status"))
+                                        {
+                                            TimelinePanel linkedTimeline = new TimelinePanel();
+                                            linkedTimeline.twitterAccountToken = twitterAccountToken;
+                                            linkedTimeline.setTitle("");
+                                            linkedTimeline.timelineType = "conversation";
+                                            linkedTimeline.isConversation = true;
+                                            linkedTimeline.conversationStartToot = urlComponents[3];
+                                            linkedTimeline.refreshTimeline();
+                                            this.displayNavController.pushControl(linkedTimeline);
+                                            return;
+                                        }
+                                    }
+                                    if (urlComponents.Count() == 2)
+                                    {
+                                        ProfilePanel linkedProfile = new ProfilePanel();
+                                        linkedProfile.twitterAccountToken = twitterAccountToken;
+                                        linkedProfile.profileScreenName = urlComponents[1];
+                                        linkedProfile.refreshProfile();
+                                        this.displayNavController.pushControl(linkedProfile);
+                                        return;
+                                    }
+                                }
                                 Process.Start((String)entity["url"]);
                             }
                         };
@@ -787,7 +627,7 @@ namespace Capella
                         mediaFound = true;
                         if (mediaUri == null)
                         {
-                            mediaUri = (Uri)entity["url"];
+                            mediaUri = (Uri)entity["media_url_https"];
                         }
 
                         Run linkText = new Run((String)entity["display_url"]);
@@ -833,8 +673,6 @@ namespace Capella
                 int Height = 0;
                 if (mediaFound == true || hasQuotedToot == true)
                     Height += 10;
-                if (isRetootedStatus)
-                    Height = 0;
                 return new Thickness(0, Height, 0, 0);
             }
         }
@@ -843,7 +681,7 @@ namespace Capella
         {
             get
             {
-                if (mediaFound && mediaUri != null)
+                if (mediaFound)
                     return new BitmapImage(mediaUri);
                 return null;
             }
@@ -879,328 +717,13 @@ namespace Capella
             }
         }
 
-        public BitmapImage retootImage
+        public Visibility mediaVisibility
         {
             get
             {
-                if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
-                    return new BitmapImage(new Uri("Resources/retooted.png", UriKind.Relative));
-                else
-                    return new BitmapImage(new Uri("Resources/retooted.png", UriKind.Relative));
-            }
-        }
-
-        public BitmapImage retootStatusDisplay
-        {
-            get
-            {
-                if (isRetooted)
-                {
-                    return new BitmapImage(new Uri("Resources/retooted.png", UriKind.Relative));
-                }
-                else
-                {
-                    if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
-                        return new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
-                    else
-                        return new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
-                }
-            }
-        }
-
-        public BitmapImage favoriteStatusDisplay
-        {
-            get
-            {
-                if (isFavorited)
-                {
-                    return new BitmapImage(new Uri("Resources/favorite-glow.png", UriKind.Relative));
-                }
-                else
-                {
-                    if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
-                        return new BitmapImage(new Uri("Resources/favorite-night.png", UriKind.Relative));
-                    else
-                        return new BitmapImage(new Uri("Resources/favorite.png", UriKind.Relative));
-                }
-            }
-        }
-
-        public BitmapImage replyBtnImage
-        {
-            get
-            {
-                if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
-                        return new BitmapImage(new Uri("Resources/reply-night.png", UriKind.Relative));
-                else
-                        return new BitmapImage(new Uri("Resources/reply.png", UriKind.Relative));
-            }
-        }
-
-        public BitmapImage moreBtnImage
-        {
-            get
-            {
-                if (MastodonAPIWrapper.sharedApiWrapper.nightModeEnabled && !isStartToot)
-                    return new BitmapImage(new Uri("Resources/more-night.png", UriKind.Relative));
-                else
-                    return new BitmapImage(new Uri("Resources/more.png", UriKind.Relative));
-            }
-        }
-
-        public void delete_Click(object sender, RoutedEventArgs e)
-        {
-            Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
-            MastodonAPIWrapper.sharedApiWrapper.deleteToot(this.tootID, twitterAccount);
-        }
-
-        public void block_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Blocking Users hasn't been implemented yet, sorry.", "Feature Not Implemented Yet");
-        }
-
-        public void copy_Click(object sender, RoutedEventArgs e)
-        {
-            //string text = new TextRange(tootText.Document.ContentStart, tootText.Document.ContentEnd).Text;
-            System.Windows.Forms.Clipboard.SetDataObject(rawText, true, 5, 200);
-        }
-
-        public void copyLink_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.Clipboard.SetDataObject(tootURL, true, 5, 200);
-        }
-
-        public void replyBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
-            String myAccount = twitterAccount.accountID;
-
-            String usersToReplyTo = this.user_display_screen_name;
-
-            if (this.isRetootedStatus)
-            {
-                usersToReplyTo += " @" + origuser_screen_name;
-            }
-
-            String text = rawText;
-
-            bool userReplacementDone = false;
-
-            foreach (dynamic entity in orderedEntities.Children())
-            {
-                JArray indices = entity["indices"];
-
-                if ((String)entity["type"] == "user_mention")
-                {
-                    int length = ((int)indices[1]) - ((int)indices[0]);
-                    if ((int)indices[0] + length > rawText.Length)
-                        length = rawText.Length - (int)indices[0];
-                    if (length < 0)
-                        length = 0;
-                    String sub = text.Substring((int)indices[0], length);
-                    String userMention = WebUtility.HtmlDecode(sub);
-
-                    if (userMention.Equals("@" + twitterAccount.myHandle) && (!userReplacementDone))
-                    {
-                        userMention = this.user_display_screen_name;
-                        userReplacementDone = true;
-                    }
-
-                    if (usersToReplyTo.Contains(userMention))
-                        continue;
-
-                    if (!usersToReplyTo.Equals(""))
-                        usersToReplyTo += " ";
-                    usersToReplyTo += userMention;
-                }
-            }
-
-            TootWindow toot = new TootWindow(twitterAccount, this.tootID, usersToReplyTo);
-            toot.replyPreviewCell.tootID = this.tootID;
-
-            toot.Title = "Reply to " + this.user_display_screen_name;
-
-            toot.replyPreviewCell.tootText.Text = this.rawText;
-            toot.replyPreviewCell.entities = this.rawEntities;
-            toot.replyPreviewCell.highlightEntities();
-            toot.replyPreviewCell.isComposingReply = true;
-
-            toot.replyPreviewCell.tootText.Arrange(new Rect(0, 0, toot.replyPreviewCell.tootText.Width, 1000));
-            
-            toot.replyPreviewCell.profilePic.Source = this.user_profilepic;
-
-            toot.replyPreviewCell.nameHandleLabel.Text = "";
-
-            Run nameRun = new Run(this.user_name);
-            nameRun.FontWeight = FontWeights.SemiBold;
-            toot.replyPreviewCell.nameHandleLabel.Inlines.Add(nameRun);
-
-            toot.replyPreviewCell.nameHandleLabel.Inlines.Add(new Run(" "));
-
-            Run handleRun = new Run(this.user_display_screen_name);
-            handleRun.FontStyle = FontStyles.Italic;
-            handleRun.FontSize = 12;
-            handleRun.Foreground = new SolidColorBrush(Color.FromArgb(255, 156, 156, 156));
-            toot.replyPreviewCell.nameHandleLabel.Inlines.Add(handleRun);
-
-            toot.updateReply();
-
-            /*if (retootSymbol.Visibility == Visibility.Visible)
-            {
-                toot.replyPreviewCell.setIsRetooted();
-            }*/
-
-            toot.Show();
-        }
-
-        public void details_Click(object sender, RoutedEventArgs e)
-        {
-            TimelinePanel conversationView = new TimelinePanel();
-            conversationView.twitterAccountToken = twitterAccountToken;
-            conversationView.setTitle("");
-            conversationView.isConversation = true;
-            conversationView.timelineType = "conversation";
-            conversationView.conversationStartToot = this.tootID;
-            conversationView.refreshTimeline();
-            displayNavController.pushControl(conversationView);
-        }
-
-        public void quote_Click(object sender, RoutedEventArgs e)
-        {
-            TimelinePanel conversationView = new TimelinePanel();
-            conversationView.twitterAccountToken = twitterAccountToken;
-            conversationView.setTitle("");
-            conversationView.isConversation = true;
-            conversationView.timelineType = "conversation";
-            conversationView.conversationStartToot = this.quotedToot.tootID;
-            conversationView.refreshTimeline();
-            displayNavController.pushControl(conversationView);
-        }
-
-        public void retootsClick(object sender, RoutedEventArgs e)
-        {
-            Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
-
-            ProfilesList profilesList = new ProfilesList();
-            profilesList.setTitle("Boosts");
-            profilesList.twitterAccountToken = twitterAccountToken;
-            displayNavController.pushControl(profilesList);
-
-            BackgroundWorker backgroundWorker = new BackgroundWorker();
-            backgroundWorker.DoWork += (sender2, e2) =>
-            {
-                dynamic retootsList = MastodonAPIWrapper.sharedApiWrapper.retootsList(twitterAccount, tootID, 100);
-                profilesList.list = retootsList;
-                profilesList.convertList();
-            };
-            backgroundWorker.RunWorkerCompleted += (sender2, e2) =>
-            {
-                profilesList.renderList();
-            };
-            backgroundWorker.RunWorkerAsync();
-        }
-
-        public void favoritesClick(object sender, RoutedEventArgs e)
-        {
-            Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
-
-            ProfilesList profilesList = new ProfilesList();
-            profilesList.setTitle("Favorites");
-            profilesList.twitterAccountToken = twitterAccountToken;
-            displayNavController.pushControl(profilesList);
-
-            BackgroundWorker backgroundWorker = new BackgroundWorker();
-            backgroundWorker.DoWork += (sender2, e2) =>
-            {
-                dynamic favoritesList = MastodonAPIWrapper.sharedApiWrapper.favoritesList(twitterAccount, tootID, 100);
-                profilesList.list = favoritesList;
-                profilesList.convertList();
-            };
-            backgroundWorker.RunWorkerCompleted += (sender2, e2) =>
-            {
-                profilesList.renderList();
-            };
-            backgroundWorker.RunWorkerAsync();
-        }
-
-        public void retootBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Button buttonClicked = (Button)sender;
-            performRetoot((Image)buttonClicked.Content);
-        }
-
-        private void performRetoot(Image retootImg)
-        {
-            /*if (isRetooted == true)
-            {
-                MessageBox.Show("Undoing Retoots hasn't been implemented yet, sorry.", "Feature Not Implemented Yet");
-                return;
-            }*/
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += (sender, e) =>
-            {
-                Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
-                isRetooted = MastodonAPIWrapper.sharedApiWrapper.retootToot(this.tootID, isRetooted, twitterAccount);
-            };
-            worker.RunWorkerCompleted += (sender, e) =>
-            {
-                if (isRetooted)
-                {
-                    retootImg.Source = new BitmapImage(new Uri("Resources/retooted.png", UriKind.Relative));
-                }
-                else
-                {
-                    retootImg.Source = new BitmapImage(new Uri("Resources/retoot.png", UriKind.Relative));
-                }
-            };
-            worker.RunWorkerAsync();
-        }
-
-        public void favoriteBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Button buttonClicked = (Button)sender;
-            performFavorite((Image)buttonClicked.Content);
-        }
-
-        private void performFavorite(Image favoriteImg)
-        {
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += (sender, e) =>
-            {
-                Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
-                isFavorited = MastodonAPIWrapper.sharedApiWrapper.favoriteToot(this.tootID, isFavorited, twitterAccount);
-            };
-            worker.RunWorkerCompleted += (sender, e) =>
-            {
-                if (isFavorited)
-                {
-                    favoriteImg.Source = new BitmapImage(new Uri("Resources/favorite-glow.png", UriKind.Relative));
-                }
-                else
-                {
-                    favoriteImg.Source = new BitmapImage(new Uri("Resources/favorite.png", UriKind.Relative));
-                }
-            };
-            worker.RunWorkerAsync();
-        }
-
-        public String favoritesCount
-        {
-            get
-            {
-                if (numFavorites != 0)
-                    return String.Format("{0} Favorites", numFavorites);
-                return "";
-            }
-        }
-
-        public String retootsCount
-        {
-            get
-            {
-                if (numRetoots != 0)
-                    return String.Format("{0} Boosts", numRetoots);
-                return "";
+                if (mediaFound)
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
             }
         }
 
@@ -1232,11 +755,6 @@ namespace Capella
                     return quotedToot.user_name;
                 return null;
             }
-            set
-            {
-                if (hasQuotedToot)
-                    quotedToot.user_name = value;
-            }
         }
 
         public String quotedUser_display_screen_name
@@ -1267,67 +785,59 @@ namespace Capella
                 Process.Start(rawMediaUri.OriginalString);
             }
             else {
-                BitmapImage rawImage = new BitmapImage(fullMediaUri);
+                ImageSource rawImage = this.mediaSource;
 
                 var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
                 var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-                rawImage.DownloadCompleted += (s, e) => {
-                    PictureViewer viewer = new PictureViewer();
-                    viewer.image.Source = rawImage;
-                    viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                    viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                    viewer.Show();
-                };
+                PictureViewer viewer = new PictureViewer();
+                viewer.image.Source = rawImage;
+                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+                viewer.Show();
             }
         }
 
         public void mediaClick2()
         {
-            BitmapImage rawImage = new BitmapImage(fullMediaUri2);
+            ImageSource rawImage = this.mediaSource2;
 
             var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
             var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-            rawImage.DownloadCompleted += (s, e) => {
-                PictureViewer viewer = new PictureViewer();
-                viewer.image.Source = rawImage;
-                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                viewer.Show();
-            };
+            PictureViewer viewer = new PictureViewer();
+            viewer.image.Source = rawImage;
+            viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+            viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+            viewer.Show();
         }
 
         public void mediaClick3()
         {
-            BitmapImage rawImage = new BitmapImage(fullMediaUri3);
+            ImageSource rawImage = this.mediaSource3;
 
             var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
             var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-            rawImage.DownloadCompleted += (s, e) => {
-                PictureViewer viewer = new PictureViewer();
-                viewer.image.Source = rawImage;
-                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                viewer.Show();
-            };
+            PictureViewer viewer = new PictureViewer();
+            viewer.image.Source = rawImage;
+            viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+            viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+            viewer.Show();
         }
 
         public void mediaClick4()
         {
-            BitmapImage rawImage = new BitmapImage(fullMediaUri4);
+            ImageSource rawImage = this.mediaSource4;
 
             var titleHeight = SystemParameters.WindowCaptionHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
             var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
 
-            rawImage.DownloadCompleted += (s, e) => {
-                PictureViewer viewer = new PictureViewer();
-                viewer.image.Source = rawImage;
-                viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
-                viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
-                viewer.Show();
-            };
+            PictureViewer viewer = new PictureViewer();
+            viewer.image.Source = rawImage;
+            viewer.Width = rawImage.Width + (verticalBorderWidth * 2);
+            viewer.Height = rawImage.Height + titleHeight + SystemParameters.ResizeFrameHorizontalBorderHeight;
+            viewer.Show();
         }
     }
 }

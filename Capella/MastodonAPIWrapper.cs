@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using System.Security.Authentication;
+using Capella.Models;
 
 namespace Capella
 {
@@ -25,15 +26,11 @@ namespace Capella
         public event TimelineChanged userTimelineChanged;
 
         public OAuthUtils sharedOAuthUtils;
-        public List<Account> accounts;
+        public List<Account> accounts = new List<Account>();
         public Account selectedAccount;
         public bool nightModeEnabled = false;
         public List<String> keywords = new List<String>();
         public Dictionary<String, Image> accountImages;
-
-        //public String consumerKey;
-        //public String consumerSecret;
-
 
         public static MastodonAPIWrapper sharedApiWrapper;
 
@@ -51,11 +48,11 @@ namespace Capella
                     return;
                 }
                 String rawJson = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Capella\\settings.json");
-                dynamic json = JsonConvert.DeserializeObject(rawJson);
+                var json = JObject.Parse(rawJson);
 
-                if (json["version"] != null)
+                if (json.Value<double?>("version") != null)
                 {
-                    double version = json["version"];
+                    var version = json.Value<double>("version");
                     if (version < 0.3)
                     {
                         return;
@@ -65,9 +62,9 @@ namespace Capella
                     return;
                 }
 
-                if (json["nightModeEnabled"] != null)
+                if (json.Value<bool>("nightModeEnabled") != null)
                 {
-                    nightModeEnabled = (bool)json["nightModeEnabled"];
+                    nightModeEnabled = json.Value<bool>("nightModeEnabled");
                 }
 
                 if (json["mutes"] != null)
@@ -168,33 +165,25 @@ namespace Capella
             {
                 account.accountID = "" + accountData["id"];
             }
-            return accountData["username"];
+            return accountData.Value<string>("username");
         }
 
         public dynamic getProfile(String accountID, Account account)
         {
-            try
+            if (accountID == null || accountID == "")
             {
-                if (accountID == null || accountID == "")
+                var halfProfile = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/verify_credentials", "", account, true);
+                dynamic accountData = JsonConvert.DeserializeObject(halfProfile);
+                accountID = "" + accountData["id"];
+                if (account.accountID == null)
                 {
-                    String halfProfile = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/verify_credentials", "", account, true);
-                    dynamic accountData = JsonConvert.DeserializeObject(halfProfile);
-                    accountID = "" + accountData["id"];
-                    if (account.accountID == null)
-                    {
-                        account.accountID = "" + accountData["id"];
-                    }
+                    account.accountID = "" + accountData["id"];
                 }
+            }
 
-                String json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+ accountID, "", account, true);
-                dynamic profile = JsonConvert.DeserializeObject(json);
-                return profile;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw;
-            }
+            String json = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+ accountID, "", account, true);
+            dynamic profile = JsonConvert.DeserializeObject(json);
+            return profile;
         }
 
         public void getProfileAvatar(Account twitterAccount, Image accountImage)
@@ -313,8 +302,7 @@ namespace Capella
                     if (!mute && !account.mentionsTimelineIds.Contains(tootID))
                         account.mentionsTimelineIds.Add(tootID);
                 }
-                if (mentionsTimelineChanged != null)
-                    mentionsTimelineChanged(this, "refresh", 0, account);
+                mentionsTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             return timeline;
         }
@@ -405,8 +393,7 @@ namespace Capella
                     if (!mute && !account.publicTimelineIds.Contains(tootID))
                         account.publicTimelineIds.Add(tootID);
                 }
-                if (publicTimelineChanged != null)
-                    publicTimelineChanged(this, "refresh", 0, account);
+                publicTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             if (timelineType == "home" && (targetID.Equals("") || targetID == null))
             {
@@ -432,8 +419,7 @@ namespace Capella
                     if (!mute && !account.homeTimelineIds.Contains(tootID))
                         account.homeTimelineIds.Add(tootID);
                 }
-                if (homeTimelineChanged != null)
-                    homeTimelineChanged(this, "refresh", 0, account);
+                homeTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             if (timelineType == "mentions" && (targetID.Equals("") || targetID == null))
             {
@@ -455,8 +441,7 @@ namespace Capella
                     if (!mute && !account.mentionsTimelineIds.Contains(tootID))
                         account.mentionsTimelineIds.Add(tootID);
                 }
-                if (mentionsTimelineChanged != null)
-                    mentionsTimelineChanged(this, "refresh", 0, account);
+                mentionsTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             if (timelineType == "user" && (targetID.Equals(account.accountID) && targetID != null))
             {
@@ -482,8 +467,7 @@ namespace Capella
                     if (!mute && !account.userTimelineIds.Contains(tootID))
                         account.userTimelineIds.Add(tootID);
                 }
-                if (userTimelineChanged != null)
-                    userTimelineChanged(this, "refresh", 0, account);
+                userTimelineChanged?.Invoke(this, "refresh", 0, account);
             }
             return timeline;
         }
@@ -497,10 +481,10 @@ namespace Capella
             return toot;
         }
 
-        public dynamic searchUsers(Account account, String query, int count)
+        public Profile[] searchUsers(Account account, String query, int count)
         {
             String output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/search", "q=" + Uri.EscapeUriString(query) + "&limit=" + count, account, true);
-            return JsonConvert.DeserializeObject(output);
+            return JsonConvert.DeserializeObject<Profile[]>(output);
         }
 
         public dynamic getConversation(Account account, String tootID)
@@ -606,7 +590,7 @@ namespace Capella
             Console.WriteLine("Added " + added + " and skipped " + skipped);
         }
 
-        public String postToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, Account account)
+        public String PostToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
@@ -634,12 +618,25 @@ namespace Capella
             return output;
         }
 
-        public String postToot(String tootText, String tootInReplyTo, bool sensitive, int visibility, String imageIds, Account account)
+        /// <summary>
+        /// Posts a toot
+        /// </summary>
+        /// <param name="tootText">The text of the status</param>
+        /// <param name="tootInReplyTo">local ID of the status you want to reply to</param>
+        /// <param name="spoilerText">Text to be shown as a warning before the actual content</param>
+        /// <param name="sensitive">Set this to mark the media of the status as NSFW</param>
+        /// <param name="visibility">Either "direct" (3), "private" (2), "unlisted" (1) or "public" (0)</param>
+        /// <param name="imageIds">Array of media IDs to attach to the status (maximum 4)</param>
+        /// <param name="account">The account you want to post the status with</param>
+        /// <returns></returns>
+        public String PostToot(String tootText, String tootInReplyTo, String spoilerText, bool sensitive, int visibility, String imageIds, Account account)
         {
             String tootText2 = Uri.EscapeDataString(tootText);
             String uploadText = "";
             if (tootInReplyTo != "")
-                uploadText += "in_reply_to_id=" + sharedOAuthUtils.UrlEncode(tootInReplyTo) + "&";
+                uploadText += $"in_reply_to_id={sharedOAuthUtils.UrlEncode(tootInReplyTo)}&";
+            if (spoilerText != "")
+                uploadText += $"spoiler_text={Uri.EscapeDataString(spoilerText)}&";
             if (sensitive)
                 uploadText += "sensitive=true&";
             switch (visibility)
@@ -657,9 +654,10 @@ namespace Capella
                     uploadText += "visibility=direct&";
                     break;
             }
-            uploadText += "&media_ids[]=" + imageIds;
-            uploadText += "&status=" + tootText2;
-            String output = sharedOAuthUtils.PostData("https://" + account.endpoint + "/api/v1/statuses", uploadText, account, false);
+            if (imageIds != "")
+                uploadText += $"&media_ids[]={imageIds}";
+            uploadText += $"&status={tootText2}";
+            String output = sharedOAuthUtils.PostData($"https://{account.endpoint}/api/v1/statuses", uploadText, account, false);
             return output;
         }
 
@@ -734,13 +732,13 @@ namespace Capella
             return favorited;
         }
 
-        public dynamic followersList(Account account, String userId, int count)
+        public Profile[] followersList(Account account, String userId, int count)
         {
             String output;
             if (userId == null || userId == "")
                 userId = account.accountID;
             output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/" + userId + "/followers", "", account, true);
-            return JsonConvert.DeserializeObject(output);
+            return JsonConvert.DeserializeObject<Profile[]>(output);
         }
 
         public bool blockUser(String userID, bool undoBlock, Account account)
@@ -771,27 +769,25 @@ namespace Capella
             return undoBlock;
         }
 
-        public dynamic followingList(Account account, String userId, int count)
+        public Profile[] followingList(Account account, String userId, int count)
         {
             String output;
             if (userId == null || userId == "")
                 userId = account.accountID;
             output = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/accounts/"+userId+"/following", "", account, true);
-            return JsonConvert.DeserializeObject(output);
+            return JsonConvert.DeserializeObject<Profile[]>(output);
         }
 
-        public dynamic retootsList(Account account, String tootId, int count)
+        public Profile[] retootsList(Account account, String tootId, int count)
         {
             String data = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/" + tootId+"/reblogged_by", "", account, true);
-            dynamic retootUsers = JsonConvert.DeserializeObject(data);
-            return retootUsers;
+            return JsonConvert.DeserializeObject<Profile[]>(data);
         }
 
-        public dynamic favoritesList(Account account, String tootId, int count)
+        public Profile[] favoritesList(Account account, String tootId, int count)
         {
             String data = sharedOAuthUtils.GetData("https://" + account.endpoint + "/api/v1/statuses/" + tootId + "/favourited_by", "", account, true);
-            dynamic retootUsers = JsonConvert.DeserializeObject(data);
-            return retootUsers;
+            return JsonConvert.DeserializeObject<Profile[]>(data);
         }
 
         public void handleStreamInput(String rawData, Account account, String streamName)
@@ -916,8 +912,7 @@ namespace Capella
                 {
                     account.publicTimelineIds.RemoveAt(indexToDelete);
                     account.publicTimeline.RemoveAt(indexToDelete);
-                    if (publicTimelineChanged != null)
-                        publicTimelineChanged(this, "delete", indexToDelete, account);
+                    publicTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
 
                 indexToDelete = account.mentionsTimelineIds.IndexOf(id);
@@ -925,8 +920,7 @@ namespace Capella
                 {
                     account.mentionsTimelineIds.RemoveAt(indexToDelete);
                     account.mentionsTimeline.RemoveAt(indexToDelete);
-                    if (mentionsTimelineChanged != null)
-                        mentionsTimelineChanged(this, "delete", indexToDelete, account);
+                    mentionsTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
 
                 indexToDelete = account.homeTimelineIds.IndexOf(id);
@@ -934,8 +928,7 @@ namespace Capella
                 {
                     account.homeTimelineIds.RemoveAt(indexToDelete);
                     account.homeTimeline.RemoveAt(indexToDelete);
-                    if (homeTimelineChanged != null)
-                        homeTimelineChanged(this, "delete", indexToDelete, account);
+                    homeTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
 
                 indexToDelete = account.userTimelineIds.IndexOf(id);
@@ -943,8 +936,7 @@ namespace Capella
                 {
                     account.userTimelineIds.RemoveAt(indexToDelete);
                     account.userTimeline.RemoveAt(indexToDelete);
-                    if (userTimelineChanged != null)
-                        userTimelineChanged(this, "delete", indexToDelete, account);
+                    userTimelineChanged?.Invoke(this, "delete", indexToDelete, account);
                 }
             }
         }

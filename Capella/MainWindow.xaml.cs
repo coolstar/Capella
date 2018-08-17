@@ -10,6 +10,9 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Capella.Models;
+using Capella.Properties;
+using System.Linq;
 
 namespace Capella
 {
@@ -125,6 +128,12 @@ namespace Capella
         {
             InitializeComponent();
 
+            // controlled by settings :)
+            if (Settings.Default.startMinimized)
+            {
+                Application.Current.MainWindow.WindowState = WindowState.Minimized;
+            }
+
             if (Environment.OSVersion.Version.Minor == 0 || Environment.OSVersion.Version.Minor == 1) //Vista and Win7
             {
                 //roundCornersHandler.RadiusX = 10;
@@ -132,7 +141,7 @@ namespace Capella
                 mainGrid.Background = new SolidColorBrush(Color.FromArgb(64, 0, 0, 0));
             }
 
-            this.apiWrapper = MastodonAPIWrapper.sharedApiWrapper;
+            this.apiWrapper = MastodonAPIWrapper.sharedApiWrapper ?? new MastodonAPIWrapper();
 
             new NotificationsHandler();
             sharedMainWindow = this;
@@ -150,7 +159,7 @@ namespace Capella
             tabController.VerticalAlignment = VerticalAlignment.Stretch;
             tabController.HorizontalAlignment = HorizontalAlignment.Left;
             tabController.Background = Brushes.Transparent;
-            tabController.Width = this.RenderSize.Width - 77;
+            tabController.Width = Math.Max(0, this.RenderSize.Width - 77);
 
             tabController.windowWidth = this.RenderSize.Width;
 
@@ -166,6 +175,12 @@ namespace Capella
             int topMargin = 43;
 
             accountUIHandlers = new List<AccountUIHandler>();
+
+            if (!MastodonAPIWrapper.sharedApiWrapper.accounts.Any())
+            {
+                new WelcomeWindow().ShowDialog();
+                apiWrapper = new MastodonAPIWrapper();
+            }
 
             foreach (Account twitterAccount in MastodonAPIWrapper.sharedApiWrapper.accounts)
             {
@@ -259,7 +274,7 @@ namespace Capella
 
                 timelinePanel = new TimelinePanel();
                 timelinePanel.twitterAccountToken = twitterAccount.accessToken;
-                timelinePanel.setTitle("Mentions");
+                timelinePanel.setTitle(Strings.Mentions);
                 timelinePanel.timelineType = "mentions";
                 //timelinePanel.refreshTimeline();
 
@@ -299,7 +314,7 @@ namespace Capella
 
                 timelinePanel = new TimelinePanel();
                 timelinePanel.twitterAccountToken = twitterAccount.accessToken;
-                timelinePanel.setTitle("Public");
+                timelinePanel.setTitle(Strings.PublicTimeline);
                 timelinePanel.timelineType = "public";
                 //timelinePanel.refreshTimeline();
                 navController = new NavController(timelinePanel);
@@ -307,6 +322,44 @@ namespace Capella
                 navController.Margin = new Thickness(0);
                 tabController.addControl(navController, publicBtn);
 
+                #endregion
+                #region Direct
+                Button directBtn = new Button();
+                directBtn.HorizontalAlignment = HorizontalAlignment.Left;
+                directBtn.VerticalAlignment = VerticalAlignment.Top;
+                directBtn.Style = Resources["FlatTab"] as Style;
+                directBtn.Height = 40;
+                directBtn.Margin = new Thickness(4, topMargin, 0, 0);
+                directBtn.Cursor = Cursors.Hand;
+                this.sidebarGrid.Children.Add(directBtn);
+                if (twitterAccount.accessToken.Equals(MastodonAPIWrapper.sharedApiWrapper.selectedAccount.accessToken))
+                {
+                    topMargin += 50;
+                }
+                else
+                {
+                    directBtn.Opacity = 0;
+                }
+                accountUIHandler.directBtn = directBtn;
+
+                tabImage = new TabImage();
+                tabImage.Height = 34;
+                tabImage.Width = 38;
+                tabImage.Source = new BitmapImage(new Uri("Resources/sidebar_messages.png", UriKind.Relative));
+                tabImage.VerticalAlignment = VerticalAlignment.Center;
+                tabImage.HorizontalAlignment = HorizontalAlignment.Center;
+                tabImage.Margin = new Thickness(2, 1, 20, 1);
+                directBtn.Content = tabImage;
+
+                timelinePanel = new TimelinePanel();
+                timelinePanel.twitterAccountToken = twitterAccount.accessToken;
+                timelinePanel.setTitle(Strings.DirectTimeline);
+                timelinePanel.timelineType = "direct";
+                //timelinePanel.refreshTimeline();
+                navController = new NavController(timelinePanel);
+
+                navController.Margin = new Thickness(0);
+                tabController.addControl(navController, directBtn);
                 #endregion
                 #region Account
                 Button userBtn = new Button();
@@ -472,6 +525,27 @@ namespace Capella
                     mentionsBtnAnimOpacity.To = 0;
                 }
 
+                ThicknessAnimation directBtnAnim = new ThicknessAnimation();
+                Storyboard.SetTarget(directBtnAnim, accountUI.directBtn);
+                Storyboard.SetTargetProperty(directBtnAnim, new PropertyPath(UserControl.MarginProperty));
+                directBtnAnim.From = accountUI.directBtn.Margin;
+                directBtnAnim.To = new Thickness(4, topMargin, 0, 0);
+
+                DoubleAnimation directBtnAnimOpacity = new DoubleAnimation();
+                Storyboard.SetTarget(directBtnAnimOpacity, accountUI.directBtn);
+                Storyboard.SetTargetProperty(directBtnAnimOpacity, new PropertyPath(UserControl.OpacityProperty));
+                directBtnAnimOpacity.From = accountUI.directBtn.Opacity;
+
+                if (twitterAccount.accessToken.Equals(MastodonAPIWrapper.sharedApiWrapper.selectedAccount.accessToken))
+                {
+                    topMargin += 50;
+                    directBtnAnimOpacity.To = 1;
+                }
+                else
+                {
+                    directBtnAnimOpacity.To = 0;
+                }
+
                 ThicknessAnimation messagesBtnAnim = new ThicknessAnimation();
                 Storyboard.SetTarget(messagesBtnAnim, accountUI.publicBtn);
                 Storyboard.SetTargetProperty(messagesBtnAnim, new PropertyPath(UserControl.MarginProperty));
@@ -547,6 +621,9 @@ namespace Capella
 
                 storyboard.Children.Add(messagesBtnAnim);
                 storyboard.Children.Add(messagesBtnAnimOpacity);
+
+                storyboard.Children.Add(directBtnAnim);
+                storyboard.Children.Add(directBtnAnimOpacity);
 
                 storyboard.Children.Add(userButtonAnim);
                 storyboard.Children.Add(userButtonAnimOpacity);
@@ -669,12 +746,12 @@ namespace Capella
             }*/
 
             this.OnContentRendered(sender, e);
-            foreach (Account twitterAccount in MastodonAPIWrapper.sharedApiWrapper.accounts) {
-                Console.WriteLine("Start Streaming Thread for {0}...", twitterAccount.accessToken);
+            foreach (Account mastodonAccount in MastodonAPIWrapper.sharedApiWrapper.accounts) {
+                Console.WriteLine("Start Streaming Thread for {0}...", mastodonAccount.accessToken);
                 BackgroundWorker worker = new BackgroundWorker();
                 worker.DoWork += (sender2, e2) =>
                 {
-                    Console.WriteLine("Start Streaming for {0}...", twitterAccount.accessToken);
+                    Console.WriteLine("Start Streaming for {0}...", mastodonAccount.accessToken);
                     /*OAuthUtils utils = new OAuthUtils();
 
                     MastodonAPIWrapper.sharedApiWrapper.getTimeline(twitterAccount, "mentions", "", "");
@@ -689,7 +766,7 @@ namespace Capella
                         Thread.Sleep(10 * 1000);
                     }*/
 
-                    MastodonAPIWrapper.sharedApiWrapper.startStreaming(twitterAccount);
+                    MastodonAPIWrapper.sharedApiWrapper.startStreaming(mastodonAccount);
                     //utils.StreamGet("https://userstream.twitter.com/1.1/user.json", "stringify_friend_ids=true", TwitterAPIWrapper.sharedApiWrapper.handleStreamInput, twitterAccount);
                 };
                 worker.RunWorkerAsync();
@@ -752,6 +829,31 @@ namespace Capella
         {
             HwndSource hwndSource = PresentationSource.FromVisual((Visual)sender) as HwndSource;
             SendMessage(hwndSource.Handle, 0x112, (IntPtr)61448, IntPtr.Zero);
+        }
+
+        /*protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == System.Windows.WindowState.Minimized)
+                this.Hide();
+
+            base.OnStateChanged(e);
+        }*/
+
+        // minimize to system tray when applicaiton is closed
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            // setting cancel to true will cancel the close request
+            // so the application is not closed
+            if (Settings.Default.minimizeToTray)
+            {
+                e.Cancel = true;
+
+                this.Hide();
+
+                Application.Current.MainWindow.WindowState = WindowState.Minimized;
+            }
+
+            base.OnClosing(e);
         }
 
         private void OnActivated(object sender, EventArgs e)
@@ -836,11 +938,8 @@ namespace Capella
 
         private void settings_Click(object sender, RoutedEventArgs e)
         {
-            //SettingsWindow settingsWindow = new SettingsWindow();
-            //settingsWindow.ShowDialog();
-
-            WelcomeWindow welcomeWindow = new WelcomeWindow();
-            welcomeWindow.Show();
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.ShowDialog();
         }
     }
 }

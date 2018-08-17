@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
+using Capella.Models;
 
 namespace Capella
 {
@@ -37,10 +38,12 @@ namespace Capella
 
         public ProfilePanel createCopy()
         {
-            ProfilePanel panelCopy = new ProfilePanel();
-            panelCopy.twitterAccountToken = this.twitterAccountToken;
-            panelCopy.profileScreenName = this.profileScreenName;
-            panelCopy.profileUserID = this.profileUserID;
+            ProfilePanel panelCopy = new ProfilePanel
+            {
+                twitterAccountToken = this.twitterAccountToken,
+                profileScreenName = this.profileScreenName,
+                profileUserID = this.profileUserID
+            };
             return panelCopy;
         }
 
@@ -112,10 +115,10 @@ namespace Capella
                 tootsProtected.Visibility = Visibility.Visible;
             }
 
-            /*if ((bool)profile["verified"] == true)
+            if ((bool)profile["bot"] == true)
             {
-                verified.Visibility = Visibility.Visible;
-            }*/
+                bot.Visibility = Visibility.Visible;
+            }
 
             int toots_count = (int)profile["statuses_count"];
             String tootsCountStr = String.Format("{0:n0}", toots_count);
@@ -571,8 +574,7 @@ namespace Capella
             {
                 Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
                 dynamic followers = MastodonAPIWrapper.sharedApiWrapper.followersList(twitterAccount, profileUserID, 200);
-                profilesList.list = followers;
-                profilesList.convertList();
+                profilesList.profiles = followers;
             };
             worker.RunWorkerCompleted += (sender2, e2) =>
             {
@@ -593,8 +595,7 @@ namespace Capella
             {
                 Account twitterAccount = MastodonAPIWrapper.sharedApiWrapper.accountWithToken(twitterAccountToken);
                 dynamic followers = MastodonAPIWrapper.sharedApiWrapper.followingList(twitterAccount, profileUserID, 200);
-                profilesList.list = followers;
-                profilesList.convertList();
+                profilesList.profiles = followers;
             };
             worker.RunWorkerCompleted += (sender2, e2) =>
             {

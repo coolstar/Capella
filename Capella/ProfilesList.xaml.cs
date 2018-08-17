@@ -6,6 +6,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using TaskDialogInterop;
+using Capella.Models;
+using Newtonsoft.Json;
 
 namespace Capella
 {
@@ -16,8 +18,7 @@ namespace Capella
     public partial class ProfilesList : UserControl
     {
         public NavController navController;
-        public dynamic list = null;
-        public List<Profile> profiles = new List<Profile>();
+        public Profile[] profiles;
         public String twitterAccountToken;
         public ProfilesList()
         {
@@ -56,53 +57,31 @@ namespace Capella
             title.FontSize = fontSize;
         }
 
-        public void convertList()
-        {
-            foreach (dynamic rawUser in list.Children())
-            {
-                Profile profileItem = new Profile();
-                profileItem.name = (String)rawUser["display_name"];
-                profileItem.handle = "@" + (String)rawUser["acct"];
-                profileItem.profilePicUri = (Uri)rawUser["avatar"];
-                profileItem.accountID = rawUser["id"];
-                profiles.Add(profileItem);
-
-                
-                /*listItem.MouseLeftButtonUp += (sender, e) =>
-                {
-                    ProfilePanel panel = new ProfilePanel();
-                    panel.profileScreenName = rawUser.screen_name;
-                    panel.refreshProfile();
-                    navController.pushControl(panel);
-                };
-                listItem.Width = profilesList.Width;*/
-            }
-        }
-
         public void renderList()
         {
-            try
-            {
-                if (list == null)
-                {
-                    dynamic error = list.errors[0];
+            // Katelyn: This code never worked, even before I deleted `list`.
+            //try
+            //{
+            //    if (list == null)
+            //    {
+            //        dynamic error = list.errors[0]; // Like seriously, this would have thrown a NullReferenceException 100% of the time.
 
-                    TaskDialogOptions config = new TaskDialogOptions();
-                    config.Owner = MainWindow.sharedMainWindow;
-                    config.Title = "Error Loading Timeline";
-                    config.MainInstruction = "Please try again at a later time.";
-                    config.Content = "The Twitter API returned \"" + "Error " + error.code + ": " + error.message + "\".";
-                    config.ExpandedInfo = "You may try logging out and back in to twitter and see if that fixes it. If not, please wait at least 5 minutes for Twitter's (horrible) API.";
-                    config.MainIcon = VistaTaskDialogIcon.Error;
-                    config.ExpandToFooter = false;
-                    TaskDialog.Show(config);
-                    return;
-                }
-                profilesList.ItemsSource = profiles;
-            }
-            catch (Exception)
-            {
-            }
+            //        TaskDialogOptions config = new TaskDialogOptions();
+            //        config.Owner = MainWindow.sharedMainWindow;
+            //        config.Title = "Error Loading Timeline";
+            //        config.MainInstruction = "Please try again at a later time.";
+            //        config.Content = "The Twitter API returned \"" + "Error " + error.code + ": " + error.message + "\".";
+            //        config.ExpandedInfo = "You may try logging out and back in to twitter and see if that fixes it. If not, please wait at least 5 minutes for Twitter's (horrible) API.";
+            //        config.MainIcon = VistaTaskDialogIcon.Error;
+            //        config.ExpandToFooter = false;
+            //        TaskDialog.Show(config);
+            //        return;
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //}
+            profilesList.ItemsSource = profiles;
         }
 
         private void backBtn_Click(object sender, RoutedEventArgs e)
@@ -145,10 +124,12 @@ namespace Capella
         {
             Grid ctrl = (Grid)sender;
             Profile profile = (Profile)ctrl.DataContext;
-            ProfilePanel panel = new ProfilePanel();
-            panel.profileScreenName = profile.handle;
-            panel.profileUserID = profile.accountID;
-            panel.twitterAccountToken = twitterAccountToken;
+            ProfilePanel panel = new ProfilePanel
+            {
+                profileScreenName = profile.Handle,
+                profileUserID = profile.accountID,
+                twitterAccountToken = twitterAccountToken
+            };
             panel.refreshProfile();
             navController.pushControl(panel);
         }

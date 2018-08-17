@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Capella.Models;
 
 namespace Capella
 {
@@ -92,6 +93,7 @@ namespace Capella
             tootText.IsEnabled = false;
             BackgroundWorker worker = new BackgroundWorker();
             String text = this.tootText.Text;
+            String spoilerText = ""; //= this.spoilerText.Text;
             bool isSensitive = markSensitive.IsChecked.Value;
             int visibility = visibilitySelection.SelectedIndex;
             worker.DoWork += (sender2, e2) =>
@@ -101,7 +103,7 @@ namespace Capella
                     else
                         TwitterAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, imageFileName, twitterAccount);*/
                     if (imageFileNames.Count == 0)
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, isSensitive, visibility, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.PostToot(text, tootInReplyTo, spoilerText, isSensitive, visibility, "", twitterAccount);
                     else
                     {
                         ArrayList mediaIds = new ArrayList();
@@ -112,10 +114,10 @@ namespace Capella
                             mediaIds.Add((String)mediaInfo["id"]);
                             mediaURLs.Add((String)mediaInfo["text_url"]);
                         }
-                        String mediaIdsStr = string.Join("&media_ids[]=", ((String[])mediaIds.ToArray(Type.GetType("System.String"))));
-                        String mediaUrlsStr = string.Join("\n", ((String[])mediaURLs.ToArray(Type.GetType("System.String"))));
+                        String mediaIdsStr = string.Join("&media_ids[]=", ((String[])mediaIds.ToArray(typeof(string))));
+                        String mediaUrlsStr = string.Join("\n", ((String[])mediaURLs.ToArray(typeof(string))));
                         text += "\n" + mediaUrlsStr;
-                        MastodonAPIWrapper.sharedApiWrapper.postToot(text, tootInReplyTo, isSensitive, visibility, mediaIdsStr, twitterAccount);
+                        MastodonAPIWrapper.sharedApiWrapper.PostToot(text, tootInReplyTo, spoilerText, isSensitive, visibility, mediaIdsStr, twitterAccount);
                     }
                 };
             worker.RunWorkerCompleted += (sender2, e2) =>
